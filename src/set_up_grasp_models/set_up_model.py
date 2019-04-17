@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.io.plaintext import read_model_from_file
+from src.io.plaintext import import_model_from_plaintext
 from src.set_up_grasp_models.set_up_mets import set_up_mets, set_up_mets_data, set_up_thermo_mets
 from src.set_up_grasp_models.set_up_proteomics import set_up_proteomics
 from src.set_up_grasp_models.set_up_rates import set_up_ex_rates, set_up_rxns, set_up_kinetics, set_up_thermo_rxns
@@ -17,7 +17,7 @@ def get_stoic(file_in):
         rxns_order: list with reactions order.
     """
 
-    model = read_model_from_file(file_in)
+    model = import_model_from_plaintext(file_in)
     mets_order = list(model.metabolites.keys())
     rxns_order = list(model.reactions.keys())
 

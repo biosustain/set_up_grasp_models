@@ -4,9 +4,7 @@ Author: Daniel Machado
 
 """
 
-from builtins import str
 from ..model.model import Model
-from ..model.cbmodel import CBModel
 from os.path import splitext, basename
 
 INSTRUCTIONS = """
@@ -20,12 +18,11 @@ INSTRUCTIONS = """
 """
 
 
-def read_model_from_file(filename, kind=None):
+def import_model_from_plaintext(filename):
     """ Reads a model from a file.
     
     Arguments:
         filename (str): file path
-        kind (str): define kind of model to read (None or 'cb', optional)
 
     Returns:
         Model: model (or respective subclass)
@@ -33,11 +30,7 @@ def read_model_from_file(filename, kind=None):
 
     with open(filename, 'r') as stream:
         model_id = splitext(basename(filename))[0]
-
-        if kind == 'cb':
-            model = CBModel(model_id)
-        else:
-            model = Model(model_id)
+        model = Model(model_id)
 
         for line in stream:
             line = line.strip()
@@ -55,28 +48,16 @@ def read_model_from_file(filename, kind=None):
     return model
 
 
-def read_cbmodel_from_file(filename):
-    """ Reads a constraint-based model from a file.
-
-    Arguments:
-        filename (str): file path
-
-    Returns:
-        CBModel: constraint-based model
-    """
-
-    return read_model_from_file(filename, 'cb')
-
-
-def write_model_to_file(model, filename, print_instructions=True):
+def write_to_plaintext(rxn_strings, file_out, print_instructions=True):
     """ Writes a model to a file.
-    
+
     Arguments:
-        model (Model): model (currently supports Model and CBModel)
-        filename (str): file path
+        rxn_strings (list): list of string reactions
+        file_out (str): file path
         print_instructions (bool): print plain text format instructions as header
     """
-    with open(filename, 'w') as stream:
+    with open(file_out, 'w') as f_out:
         if print_instructions:
-            stream.write(INSTRUCTIONS)
-        stream.write(str(model))
+            f_out.write(INSTRUCTIONS)
+        for rxn in rxn_strings:
+            f_out.write(f'{rxn}\n')

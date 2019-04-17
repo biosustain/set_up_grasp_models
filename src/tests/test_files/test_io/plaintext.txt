@@ -1,0 +1,38 @@
+
+# Text based model representation
+# Format: "Reaction id : substrates --> products [lower bound, upper bound]"
+# valid identifiers can contain letters, numbers or underscore (_) but must begin with a letter (for SBML compatibility)
+# Use --> or <-> for irreversible or reversible reactions respectively
+# bounds are optional and can be specified only in one direction, eg: [-10.0,]
+# begin with # to comment out any line
+
+ABC: glc_D_p + atp + h2o <-> glc_D + adp + h + p
+GLK: glc_D + atp <-> adp + h + g6p
+ZWF: g6p + nadp <-> h + o_6pgl + nadph
+PGL: o_6pgl + h2o <-> h + o_6pgc
+GNTP: glcn_p + h_p <-> h + glcn
+GNUK: atp + glcn <-> adp + h + o_6pgc
+GCD: glc_D_p + h2o_p + q8_c <-> glcn_p + h_p + q8h2_c
+GAD: glcn_p + fad <-> fadh2 + o_2dhglcn_p
+KGUT: h_p + o_2dhglcn_p <-> h + o_2dhglcn
+KGUK: atp + o_2dhglcn <-> adp + h + o_6p2dhglcn
+KGUD: h + o_6p2dhglcn + nadh <-> o_6pgc + nad
+EDD: o_6pgc <-> h2o + o_2ddg6p
+EDA: o_2ddg6p <-> g3p + pyr
+PGI: f6p <-> g6p
+FBP: h2o + fdp <-> p + f6p
+FBA: g3p + glyc3p <-> fdp
+TPIA: g3p <-> glyc3p
+GAP: p + nad + g3p <-> h + nadh + o_13dpg
+PGK: adp + o_13dpg <-> atp + o_3pg
+GPML: o_3pg <-> o_2pg
+ENO: o_2pg <-> h2o + pep
+PYK: adp + h + pep <-> atp + pyr
+OPRB: glc_D_ex <-> glc_D_p
+PYR_EX: pyr <-> pyr_ex
+GND: nadp + o_6pgc <-> h + nadph + co2 + ru5p_D
+O_3PG_EX: o_3pg <-> o_3pg_ex
+PEP_EX: pep <-> pep_ex
+G6P_EX: g6p <-> g6p_ex
+F6P_EX: f6p_ex <-> f6p
+G3P_EX: g3p <-> 1.5 g3p_ex
