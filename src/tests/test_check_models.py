@@ -5,6 +5,7 @@ import pandas as pd
 from src.io.stoic import import_stoic
 from src.check_models.format_checks import check_kinetics_met_separators, check_met_rxn_order
 from src.check_models.mass_balance_checks import check_balanced_metabolites, check_flux_balance
+from src.check_models.thermodynamics_checks import check_thermodynamic_feasibility
 
 
 class TestFormatChecks(unittest.TestCase):
@@ -198,11 +199,37 @@ class TestMassBalanceChecks(unittest.TestCase):
 class TestThermodynamicsChecks(unittest.TestCase):
 
     def setUp(self):
-        self.test_folder = 'test_files/test_io'
-        self.file_in_excel = f'{self.test_folder}/putida_with_PPP.xlsx'
-        self.file_in_plaintext = f'{self.test_folder}/putida_with_PPP_plaintext.txt'
+        self.test_folder = 'test_files/test_check_models'
 
-    def test_import_stoic(self):
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    def test_check_thermodynamic_feasibility_putida(self, mock_stdout):
 
-        mets, rxns, rxn_strings = import_stoic(self.file_in_excel)
-        self.assertListEqual(rxn_strings, 1)
+        true_res = ('\nChecking if fluxes and Gibbs energies are compatible.\n\n' +
+                    'The flux and ∆G range seem to be incompatible for reaction R_G6PDH2\n' +
+                    'The flux and ∆G range seem to be incompatible for reaction R_RPE\n' +
+                    'The flux and ∆G range seem to be incompatible for reaction R_TALA\n' +
+                    'The flux and ∆G range seem to be incompatible for reaction R_PGI\n' +
+                    'The flux and ∆G range seem to be incompatible for reaction R_FBA\n' +
+                    'The flux and ∆G range seem to be incompatible for reaction R_TPI\n' +
+                    'The flux and ∆G range seem to be incompatible for reaction R_GAPD\n' +
+                    'The flux and ∆G range seem to be incompatible for reaction R_ENO\n' +
+                    'The flux and ∆G range seem to be incompatible for reaction R_EX_pyr\n' +
+                    'The flux and ∆G range seem to be incompatible for reaction R_EX_pep\n')
+
+        data_dict = pd.read_excel(f'{self.test_folder}/putida_v1_base.xlsx', sheet_name=None)
+        flag = check_thermodynamic_feasibility(data_dict)
+
+        self.assertEqual(True, flag)
+        self.assertEqual(true_res, mock_stdout.getvalue())\
+
+
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    def test_check_thermodynamic_feasibility_HMP(self, mock_stdout):
+
+        true_res = '\nChecking if fluxes and Gibbs energies are compatible.\n\n'
+
+        data_dict = pd.read_excel(f'{self.test_folder}/HMP2360_r0_t0.xlsx', sheet_name=None)
+        flag = check_thermodynamic_feasibility(data_dict)
+
+        self.assertEqual(False, flag)
+        self.assertEqual(true_res, mock_stdout.getvalue())

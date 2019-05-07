@@ -132,7 +132,7 @@ def _compute_robust_fluxes(stoic_matrix: np.ndarray, meas_rates: np.ndarray, mea
             np.transpose(np.linalg.pinv(stoic_unkn))))
         v_std[np.where(v_std == 0)] = np.diag(Dm)
     else:
-        print('System is not full determined and the fluxes cannot be determined.')
+        print('System is not fully determined and the fluxes cannot be determined.')
         exit()
 
     v_std = np.sqrt(v_std)  # Compute std
@@ -222,27 +222,30 @@ def check_thermodynamic_feasibility(data_dict: dict) -> bool:
     :return:
     """
 
-    print('\nChecking in fluxes and Gibbs energies are compatible.\n')
+    print('\nChecking if fluxes and Gibbs energies are compatible.\n')
 
     flag = False
     temperature = 298  # in K
     gas_constant = 8.314 * 10**-3  # in kJ K^-1 mol^-1
 
-    flux_df = data_dict['measRates']
     stoic_df = data_dict['stoic']
+    flux_df = data_dict['measRates']
 
     ma_df, dG_Q_df, dG_df = calculate_dG(data_dict, gas_constant, temperature)
 
     if len(stoic_df.index) != len(flux_df.index):
         flux_df = get_robust_fluxes(data_dict)
+    else:
+        flux_df.index = flux_df.iloc[:, 0]
+        flux_df = flux_df.drop(flux_df.columns[0], axis=1)
 
     for rxn in flux_df.index:
         if flux_df.loc[rxn, 'MBo10_mean'] > 0 and dG_df.loc[rxn, '∆G_min'] > 0:
-            print('The flux and ∆G range seem to be incompatible for reaction', rxn)
+            print(f'The flux and ∆G range seem to be incompatible for reaction {rxn}')
             flag = True
 
         if flux_df.loc[rxn, 'MBo10_mean'] < 0 and dG_df.loc[rxn, '∆G_max'] < 0:
-            print('The flux and ∆G range seem to be incompatible for reaction', rxn)
+            print(f'The flux and ∆G range seem to be incompatible for reaction {rxn}')
             flag = True
 
     return flag
