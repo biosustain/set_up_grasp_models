@@ -1,4 +1,5 @@
 """ This module implements methods for reading and writing models using a plain text format.
+Adapted from  https://github.com/cdanielmachado/framed
 
 Author: Daniel Machado
 

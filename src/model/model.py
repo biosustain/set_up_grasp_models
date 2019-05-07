@@ -1,4 +1,5 @@
 """ This module defines base classes for metabolic modeling.
+Adapted from https://github.com/cdanielmachado/framed
 
 Author: Daniel Machado
 

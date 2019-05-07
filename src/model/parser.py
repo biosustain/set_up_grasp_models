@@ -1,3 +1,11 @@
+""" This module parses reaction strings.
+Adapted from https://github.com/cdanielmachado/framed
+
+Author: Daniel Machado
+
+"""
+
+
 from builtins import object
 from re import compile
 from collections import OrderedDict

@@ -69,7 +69,7 @@ def _check_kinetics_column(data_dict: dict, col_name: str) -> bool:
 def check_kinetics_met_separators(data_dict: dict) -> bool:
     """
     Given the excel file as argument, in the kinetics sheet for columns where cells can have multiple values, makes
-     sure these values are not separated by a comma, semi-colon, or dot.
+    sure these values are not separated by a comma, semi-colon, or dot.
     If everything is fine flag is 0, otherwise it is set to 1.
 
     Args:
