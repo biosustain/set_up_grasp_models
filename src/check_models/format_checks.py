@@ -16,24 +16,35 @@ def check_met_rxn_order(data_dict: dict) -> bool:
     flag = False
     rxn_list = data_dict['stoic']['rxn ID'].values
     met_list = data_dict['stoic'].columns.values[1:]
+    flux_df = data_dict['measRates']
+
+    met_sheets = {'mets', 'poolConst', 'thermo_ineq_constraints', 'thermoMets', 'metsData'}
+    rxn_sheets = {'rxns', 'splitRatios', 'thermoRxns', 'protData'}
 
     for key in list(data_dict.keys())[2:]:
         id_list = data_dict[key].iloc[:, 0].values
 
-        if key != 'measRates':
-            met_bool = id_list == met_list
+        if key in met_sheets:
+
+            met_bool = np.equal(id_list, met_list)
             met_bool = all(met_bool) if isinstance(met_bool, np.ndarray) else met_bool
 
-            rxn_bool = id_list == rxn_list
+            if not met_bool:
+                print(f'Metabolite list in sheet {key} doesn\'t match the list in the stoichiometry matrix.')
+                print(f'Current list:\n {id_list}')
+                print(f'Metabolite list in stoichiometric matrix:\n {met_list}\n')
+                flag = True
+
+        elif key in rxn_sheets or key.startswith('kinetics') or \
+                (key == 'measRates' and len(rxn_list) == len(flux_df.index)):
+
+            rxn_bool = np.equal(id_list, rxn_list)
             rxn_bool = all(rxn_bool) if isinstance(rxn_bool, np.ndarray) else rxn_bool
 
-            if not met_bool and not rxn_bool:
-                print('Metabolite or reaction list in sheet ', key,
-                      'doesn\'t match the list in the stoichiometry matrix.')
-                print('Current list:\n', id_list)
-                print('Metabolite list in stoichiometry matrix:\n', met_list)
-                print('Reaction list in stoichiometry matrix:\n', rxn_list)
-                print('\n')
+            if not rxn_bool:
+                print(f'Reaction list in sheet {key} doesn\'t match the list in the stoichiometry matrix.')
+                print(f'Current list:\n {id_list}')
+                print(f'Reaction list in stoichiometric matrix:\n {rxn_list}\n')
                 flag = True
 
     return flag
@@ -45,7 +56,7 @@ def _check_kinetics_column(data_dict: dict, col_name: str) -> bool:
     col_data = data_dict[col_name].dropna()
     for row in col_data:
         if row.find(',') != -1 or row.find(';') != -1 or row.find('.') != -1:
-            print('Make sure all metabolites are separated by a single space in column "', col_name, '" row:\n', row)
+            print(f'Make sure all metabolites are separated by a single space in column "{col_name}" row:\n {row}\n')
             flag = True
 
     return flag
@@ -61,8 +72,9 @@ def check_kinetics_met_separators(data_dict: dict) -> bool:
     :return: flag
     """
 
-    print(
-        '\nChecking if values are separated by a space in the kinetics sheet in columns order, promiscuous, inhibitors, activators, negative effector, and positive effector.\nIt looks for dots, commas, and semi-colons.')
+    print('\nChecking if values are separated by a space in the kinetics sheet in columns order, promiscuous,',
+          'inhibitors, activators, negative effector, and positive effector.\nIt looks for dots, commas, and',
+          'semi-colons.\n')
 
     flag_list = []
 
