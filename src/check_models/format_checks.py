@@ -7,8 +7,12 @@ def check_met_rxn_order(data_dict: dict) -> bool:
     with the order in the stoichiometry matrix.
     If everything is fine flag is 0, otherwise it is set to 1.
 
-    :param data_dict: a dictionary that represents the excel file with the GRASP model.
-    :return: flag
+    Args:
+        data_dict (dict): a dictionary that represents the excel file with the GRASP model.
+
+    Returns:
+        bool: whether or not reactions and metabolites order in the different sheets are consistent
+
     """
 
     print('\nChecking if the order of reactions and metabolites is the same in all excel sheets.\n')
@@ -68,9 +72,13 @@ def check_kinetics_met_separators(data_dict: dict) -> bool:
      sure these values are not separated by a comma, semi-colon, or dot.
     If everything is fine flag is 0, otherwise it is set to 1.
 
-    :param data_dict: a dictionary that represents the excel file with the GRASP model.
-    :return: flag
-    """
+    Args:
+        data_dict (dict): a dictionary that represents the excel file with the GRASP model.
+
+    Returns:
+        bool: whether or not lists in the kinetics sheet are separated by a space
+
+   """
 
     print('\nChecking if values are separated by a space in the kinetics sheet in columns order, promiscuous,',
           'inhibitors, activators, negative effector, and positive effector.\nIt looks for dots, commas, and',

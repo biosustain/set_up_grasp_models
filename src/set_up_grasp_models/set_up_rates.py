@@ -7,12 +7,13 @@ def set_up_rxns(file_in_base, rxns_order, ex_rxns_to_remove):
     """
     Given the base GRASP input excel file, removes the inactive exchange reactions and sets the order consistent with
          the stoichiometric matrix.
+    Args:
+        file_in_base: path to base GRASP input excel file
+        rxns_order: order of reactions in the stoichiometric matrix
+        ex_rxns_to_remove: list of inactive exchange reactions
 
-    :param file_in_base: path to base GRASP input excel file
-    :param rxns_order: order of reactions in the stoichiometric matrix
-    :param ex_rxns_to_remove: list of inactive exchange reactions
-    :return:
-        rxns_base_df:  the dataframe for the rxns excel sheet.
+    Returns:
+        pd.Dataframe: the dataframe for the rxns excel sheet.
     """
 
     rxns_base_df = pd.read_excel(file_in_base, sheet_name='rxns', index_col=0)
@@ -25,12 +26,15 @@ def set_up_rxns(file_in_base, rxns_order, ex_rxns_to_remove):
 
 def set_up_thermo_rxns(file_in_base, rxns_order, ex_rxns):
     """
-     Given the base GRASP input excel file, adds the exchange reactions Gibbs energies.
+    Given the base GRASP input excel file, adds the exchange reactions Gibbs energies.
 
-    :param file_in_base:
-    :param rxns_order:
-    :param ex_rxns:
-    :return:
+    Args:
+        file_in_base:
+        rxns_order:
+        ex_rxns:
+
+    Returns:
+        pd.DataFrame
     """
 
     thermo_rxns_df = pd.read_excel(file_in_base, sheet_name='thermoRxns', index_col=0)

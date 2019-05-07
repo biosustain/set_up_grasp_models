@@ -18,7 +18,7 @@ INSTRUCTIONS = """
 """
 
 
-def import_model_from_plaintext(filename):
+def import_model_from_plaintext(filename: str) -> Model:
     """ Reads a model from a file.
     
     Arguments:
@@ -48,7 +48,7 @@ def import_model_from_plaintext(filename):
     return model
 
 
-def write_to_plaintext(rxn_strings, file_out, print_instructions=True):
+def write_to_plaintext(rxn_strings: list, file_out: str, print_instructions: bool = True):
     """ Writes a model to a file.
 
     Arguments:

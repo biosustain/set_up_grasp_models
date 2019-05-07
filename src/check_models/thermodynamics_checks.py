@@ -38,11 +38,14 @@ def calculate_dG(data_dict: dict, gas_constant: float, temperature: float, rxn_o
     standard dGs in thermoRxns and metabolite concentrations in thermoMets.
     It also calculates the mass-action ratio and the part of the dG based on the mass-action ratio.
 
-    :param file_in: path to the GRASP input file.
-    :param gas_constant: the gas constant to calculate the Gibbs energy.
-    :param temperature: the temperature to calculate the Gibbs energy.
-    :param rxn_order: a list with the reactions order (optional).
-    :return: ma_df, dG_Q_df, dG_df
+    Args:
+        data_dict (dict): a dictionary that represents the excel file with the GRASP model.
+        gas_constant (float): the gas constant to calculate the Gibbs energy.
+        temperature (float): the temperature to calculate the Gibbs energy.
+        rxn_order (list): a list with the reactions order (optional).
+
+    Returns:
+        tuple: mass action ratio dataframe, dG_Q dataframe, Gibbs energies dataframe
     """
 
     dG_Q_df = pd.DataFrame()
@@ -179,14 +182,16 @@ def _get_inactive_reactions(data_dict: dict) -> np.ndarray:
 
 
 def get_robust_fluxes(data_dict: dict, rxn_order: list = None) -> pd.DataFrame:
-
     """
-    Give a dictionary representing a GRASP input file, it calculates the robust fluxes (almost) as in GRASP,
+    Given a dictionary representing a GRASP input file, it calculates the robust fluxes (almost) as in GRASP,
     unless the system is not fully determined.
 
-    :param data_dict: path to the GRASP input file.
-    :param rxn_order: a list with the reactions order (optional).
-    :return: fluxes_df
+    Args:
+        data_dict (dict): path to the GRASP input file
+        rxn_order (list): a list with the reactions order (optional)
+
+    Returns:
+        pd.DataFrame: dataframe with flux mean and std values
     """
 
     fluxes_df = pd.DataFrame()
@@ -218,8 +223,12 @@ def check_thermodynamic_feasibility(data_dict: dict) -> bool:
     for a fully determined system. If the fluxes are not fully specified not the system is fully determined, it
     doesn't work.
 
-    :param data_dict: a dictionary representing a GRASP input file
-    :return:
+    Args:
+        data_dict (dict): a dictionary representing a GRASP input file
+
+    Returns:
+        bool: whether or not the model is thermodynamically feasible
+
     """
 
     print('\nChecking if fluxes and Gibbs energies are compatible.\n')

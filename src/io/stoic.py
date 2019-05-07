@@ -1,14 +1,16 @@
 import pandas as pd
 
 
-def import_stoic(file_in):
+def import_stoic(file_in: str) -> tuple:
     """
     Gets the reaction strings from the stoichiometry matrix defined in the GRASP input models.
 
-    :param file_path: path to file containing the model
-    :param sheet_name: name of the excel sheet where the model stoichiometry is, should be 'stoic'
-    :return: mets, rxns, rxn_strings
-    """
+    Args:
+        file_in (str): path to file containing the model
+
+    Returns:
+        tuple: metabolite list, reaction list, reaction strings list
+   """
 
     data_df = pd.read_excel(file_in, sheet_name='stoic', index_col=0, header=0)
     data_df = data_df.fillna('')

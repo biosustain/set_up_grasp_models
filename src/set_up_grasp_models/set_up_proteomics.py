@@ -1,5 +1,5 @@
 import pandas as pd
-from src.set_up_grasp_models.misc import get_stoic
+#from src.set_up_grasp_models.misc import get_stoic
 from src.set_up_grasp_models.set_up_rates import set_up_ex_rates
 import numpy as np
 import re

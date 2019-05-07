@@ -5,8 +5,12 @@ def check_flux_balance(data_dict: dict) -> bool:
     that are marked as balanced in the mets sheet).
     If everything is fine flag is 0, otherwise it is set to 1.
 
-    :param data_dict: a dictionary that represents the excel file with the GRASP model.
-    :return: flag
+    Args:
+        data_dict (dict): a dictionary that represents the excel file with the GRASP model
+
+    Returns:
+        bool: whether or not all metabolites mass is balanced
+
     """
 
     print('\nChecking if the fluxes for each metabolite production/consumptions add up to zero.\n')
@@ -55,8 +59,12 @@ def check_balanced_metabolites(data_dict: dict) -> bool:
     the other way around. Checking for mass balances is more accurate though.
     If everything is fine flag is 0, otherwise it is set to 1.
 
-    :param data_dict: a dictionary that represents the excel file with the GRASP model.
-    :return: flag
+    Args:
+        data_dict (dict): a dictionary that represents the excel file with the GRASP model
+
+    Returns:
+        bool: whether or not metabolites are marked balanced/fixed correctly
+
     """
 
     print('\nChecking if metabolites are both consumed and produced in the stoichiometric matrix, and if',

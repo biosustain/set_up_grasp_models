@@ -10,11 +10,12 @@ def get_stoic(file_in):
     """
     From a text file with the reactions in the model, set up a dataframe with the transposed stoichiometry matrix.
 
-    :param file_in: file path to
-    :return:
-        stoich_df: pandas dataframe with tranposed stoichiometry matrix.
-        mets_order: list with metabolites order.
-        rxns_order: list with reactions order.
+    Args:
+        file_in: file path to
+
+    Returns:
+        tuple:  pandas dataframe with tranposed stoichiometry matrix, list with metabolites order,
+                list with reactions order.
     """
 
     model = import_model_from_plaintext(file_in)
@@ -33,16 +34,16 @@ def update_stoic(stoic_df, ex_rxns, ex_mets, non_ex_mets_order):
     Updates the stoichiometry matrix dataframe by removing the exchange reactions that are not used and the
     external metabolites no longer involved in the model.
 
-    :param stoic_df: pandas dataframe with stoichiometry matrix
-    :param ex_rxns:  list with exchange reactions active in the model
-    :param ex_mets:  list with exchange metabolites active in the model
-    :param non_ex_mets_order:  list with the order of non-external metabolites
-    :return:
-        stoich_df: pandas dataframe with tranposed stoichiometry matrix.
-        mets_order: list with metabolites order.
-        rxns_order: list with reactions order.
-        ex_rxns_to_remove: list with exchange reactions to remove.
-        ex_mets_to_remove:  list with external metabolites to remove.
+    Args:
+        stoic_df: pandas dataframe with stoichiometry matrix
+        ex_rxns: list with exchange reactions active in the model
+        ex_mets: list with exchange metabolites active in the model
+        non_ex_mets_order: list with the order of non-external metabolites
+
+    Returns:
+        tuple: pandas dataframe with tranposed stoichiometry matrix, list with metabolites order,
+                list with reactions order, list with exchange reactions to remove,
+                list with external metabolites to remove.
     """
 
     all_ex_rxns = set(stoic_df.filter(regex='EX_', axis=0).index.values)

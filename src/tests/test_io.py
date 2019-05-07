@@ -45,17 +45,17 @@ class TestIO(unittest.TestCase):
     def test_import_stoic(self):
 
         mets, rxns, rxn_strings = import_stoic(self.file_in_excel)
-        self.assertListEqual(rxn_strings, TRUE_RXN_LIST)
+        self.assertListEqual(TRUE_RXN_LIST, rxn_strings)
 
     def test_import_model_from_plaintext(self):
         model = import_model_from_plaintext(self.file_in_plaintext)
-        self.assertListEqual(model.to_string().split('\n'), TRUE_RXN_LIST)
+        self.assertListEqual(TRUE_RXN_LIST, model.to_string().split('\n'))
 
     def test_write_to_plaintext(self):
         file_out = f'{self.test_folder}/plaintext.txt'
         write_to_plaintext(TRUE_RXN_LIST, file_out, print_instructions=True)
 
         model = import_model_from_plaintext(self.file_in_plaintext)
-        self.assertListEqual(model.to_string().split('\n'), TRUE_RXN_LIST)
+        self.assertListEqual(TRUE_RXN_LIST, model.to_string().split('\n'))
 
 
