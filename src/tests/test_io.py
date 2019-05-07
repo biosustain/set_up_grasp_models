@@ -35,7 +35,6 @@ TRUE_RXN_LIST = ['ABC: glc_D_p + atp + h2o <-> glc_D + adp + h + p',
                  'G3P_EX: g3p <-> 1.5 g3p_ex']
 
 
-
 class TestIO(unittest.TestCase):
 
     def setUp(self):
@@ -43,18 +42,14 @@ class TestIO(unittest.TestCase):
         self.file_in_excel = f'{self.test_folder}/putida_with_PPP.xlsx'
         self.file_in_plaintext = f'{self.test_folder}/putida_with_PPP_plaintext.txt'
 
-
     def test_import_stoic(self):
 
         mets, rxns, rxn_strings = import_stoic(self.file_in_excel)
-        print(rxn_strings)
         self.assertListEqual(rxn_strings, TRUE_RXN_LIST)
-
 
     def test_import_model_from_plaintext(self):
         model = import_model_from_plaintext(self.file_in_plaintext)
         self.assertListEqual(model.to_string().split('\n'), TRUE_RXN_LIST)
-
 
     def test_write_to_plaintext(self):
         file_out = f'{self.test_folder}/plaintext.txt'

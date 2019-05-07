@@ -1,5 +1,5 @@
 import pandas as pd
-
+import numpy as np
 from src.io.plaintext import import_model_from_plaintext
 from src.set_up_grasp_models.set_up_mets import set_up_mets, set_up_mets_data, set_up_thermo_mets
 from src.set_up_grasp_models.set_up_proteomics import set_up_proteomics
@@ -64,49 +64,34 @@ def update_stoic(stoic_df, ex_rxns, ex_mets, non_ex_mets_order):
     return stoic_df, mets_order, rxns_order, ex_rxns_to_remove, ex_mets_to_remove
 
 
-def set_up_model(file_in_base_model, file_in_stoic, file_in_met_ranges, file_in_prot_ranges, file_in_ex_fluxes, file_out,
-                 general_df, map_met_abbreviation, map_prot_abbreviation, non_ex_mets_order, time_point, replicate):
-    """
-    Given the model stoichiometry and omics data, creates an excel file to be the for GRASP.
-
-    :param file_in_base_model: an excel file with the sheets: general, mets, rxns, thermoRxns, kinetics1.
-    :param file_in_stoic: a text file with all reactions in the model.
-    :param file_in_met_ranges: an excel file with the metabolite ranges - both for metsData and thermoMets
-    :param file_in_prot_ranges: an excel file with the protein ranges for protData
-    :param file_in_ex_fluxes: an excel file with all exchange fluxes for measRates
-    :param file_out: the output excel file (with path)
-    :param general_df: the dataframe for the general sheet
-    :param map_met_abbreviation: a dictionary with the metabolites full name used in the original omics data and the corresponding abbreviation for the model
-    :param map_prot_abbreviation: a dictionary with the protein name used in the original omics data and
-    :param non_ex_mets_order: list with metabolites order excluding the external ones
-    :param time_point: time point for the model
-    :param replicate: replicate for the model
-    :return: None
-    """
-
-    # get base stoichiometry
-    stoic_df, mets_order, rxns_order = get_stoic(file_in_stoic)
-
-    # get measRates df
-    ex_rates_df, ex_rxns, ex_mets = set_up_ex_rates(rxns_order, file_in_ex_fluxes, map_met_abbreviation, time_point,
-                                                    replicate, only_EX=True)
+def set_up_model(file_in_stoic, base_excel_file, model_name, file_out, file_in_met_ranges=None, file_in_prot_ranges=None,
+                 file_in_ex_fluxes=None, file_in_kinetics=None):
 
     writer = pd.ExcelWriter(file_out, engine='xlsxwriter')
 
     # set up general
+    general_df = pd.read_excel(base_excel_file, index_col=0, header=0, sheet_name='general')
+    print(general_df)
+    general_df.iloc[0, 0] = model_name
+    print(general_df)
     general_df.to_excel(writer, sheet_name='general')
 
+
     # set up stoic
-    stoic_df, mets_order, rxns_order, ex_rxns_to_remove, ex_mets_to_remove = update_stoic(stoic_df, ex_rxns, ex_mets,
-                                                                                          non_ex_mets_order)
+    stoic_df, mets_order, rxns_order = get_stoic(file_in_stoic)
     stoic_df.to_excel(writer, sheet_name='stoic')
 
-    # set up mets
-    mets_df = set_up_mets(file_in_base_model, mets_order, ex_mets_to_remove)
+
+    # write mets
+    columns = ['Metabolite name', 'balanced?', 'active?', 'fixed?']
+    mets_df = pd.DataFrame(index=mets_order, columns=columns, data=np.zeros([len(mets_order), len(columns)]))
+    mets_df.index.name = 'ID'
     mets_df.to_excel(writer, sheet_name='mets')
 
     # set up rxns
-    rxns_df = set_up_rxns(file_in_base_model, rxns_order, ex_rxns_to_remove)
+    columns = ['reaction name', 'transportRxn?', 'modelled?']
+    rxns_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
+    rxns_df.index.name = 'ID'
     rxns_df.to_excel(writer, sheet_name='rxns')
 
     # set up splitRatios
@@ -125,31 +110,46 @@ def set_up_model(file_in_base_model, file_in_stoic, file_in_met_ranges, file_in_
     thermo_ineq_constraints_df.to_excel(writer, sheet_name='thermo_ineq_constraints')
 
     # set up thermoRxns
-    thermo_rxns_df = set_up_thermo_rxns(file_in_base_model, rxns_order, ex_rxns)
+    columns = ['∆Gr\'_min (kJ/mol)', '∆Gr\'_max (kJ/mol)']
+    thermo_rxns_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
+    thermo_rxns_df.index.name = 'rxn'
     thermo_rxns_df.to_excel(writer, sheet_name='thermoRxns')
 
     # set up thermoMets
-    thermo_mets_df = set_up_thermo_mets(mets_order, file_in_met_ranges, map_met_abbreviation, met_lb=10**-12, met_ub=10**-8)
+    columns = ['min (M)', 'max (M)']
+    thermo_mets_df = pd.DataFrame(index=mets_order, columns=columns, data=np.zeros([len(mets_order), len(columns)]))
+    thermo_mets_df.index.name = 'met'
     thermo_mets_df.to_excel(writer, sheet_name='thermoMets')
 
     # set up measRates
-    ex_rates_df.to_excel(writer, sheet_name='measRates')
+    columns = ['MBo10_mean', 'MBo10_std', 'MBo10_mean2', 'MBo10_std2']
+    meas_rates_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
+    meas_rates_df.index.name = 'Fluxes (umol/gdcw/h)'
+    meas_rates_df.to_excel(writer, sheet_name='measRates')
 
     # set up protData
-    prot_data_df = set_up_proteomics(rxns_order, ex_rxns, file_in_prot_ranges, map_prot_abbreviation, time_point, replicate, prot_lb = 0.99, prot_ub=1.01)
+    columns = ['MBo10_LB2', 'MBo10_meas2', 'MBo10_UB2']
+    prot_data_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
+    prot_data_df.index.name = 'enzyme/rxn'
     prot_data_df.to_excel(writer, sheet_name='protData')
 
     # set up metsData
-    mets_data_df = set_up_mets_data(mets_order, file_in_met_ranges, map_met_abbreviation, met_lb=0.99, met_ub=1.01)
+    columns = ['MBo10_LB2', 'MBo10_meas2', 'MBo10_UB2']
+    mets_data_df = pd.DataFrame(index=mets_order, columns=columns, data=np.zeros([len(mets_order), len(columns)]))
+    mets_data_df.index.name = 'met'
     mets_data_df.to_excel(writer, sheet_name='metsData')
 
     # set up kinetics1
-    kinetics_df = set_up_kinetics(file_in_base_model, rxns_order, ex_rxns)
+    columns = ['kinetic mechanism', 'order', 'promiscuous', 'inhibitors', 'activators',
+               'negative effector', 'positive effector', 'allosteric', 'subunits', 'comments']
+    kinetics_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
+    kinetics_df.index.name = 'reaction ID'
     kinetics_df.to_excel(writer, sheet_name='kinetics1')
 
     writer.save()
     return 0
 
+""""
 
 def prepare_set_up_models(strain, time_point, replicate):
 
@@ -198,3 +198,5 @@ def generate_models():
 
 if __name__ == '__main__':
     generate_models()
+    
+"""
