@@ -4,6 +4,7 @@ import io
 import pandas as pd
 from src.io.stoic import import_stoic
 from src.check_models.format_checks import check_kinetics_met_separators, check_met_rxn_order
+from src.check_models.mass_balance_checks import check_balanced_metabolites, check_flux_balance
 
 
 class TestFormatChecks(unittest.TestCase):
@@ -46,7 +47,7 @@ class TestFormatChecks(unittest.TestCase):
         self.assertEqual(true_res, mock_stdout.getvalue())
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
-    def test_check_check_met_rxn_order_correct(self, mock_stdout):
+    def test_check_met_rxn_order_correct(self, mock_stdout):
 
         true_res = '\nChecking if the order of reactions and metabolites is the same in all excel sheets.\n\n'
 
@@ -58,7 +59,7 @@ class TestFormatChecks(unittest.TestCase):
 
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
-    def test_check_check_met_rxn_order_not_correct(self, mock_stdout):
+    def test_check_met_rxn_order_not_correct(self, mock_stdout):
 
         true_res = ('\nChecking if the order of reactions and metabolites is the same in all excel sheets.\n\n'+
                     'Reaction list in sheet rxns doesn\'t match the list in the stoichiometry matrix.\n' +
@@ -87,7 +88,7 @@ class TestFormatChecks(unittest.TestCase):
         self.assertEqual(true_res, mock_stdout.getvalue())
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
-    def test_check_check_met_rxn_order_not_correct_meas_rates(self, mock_stdout):
+    def test_check_met_rxn_order_not_correct_meas_rates(self, mock_stdout):
 
         true_res = ('\nChecking if the order of reactions and metabolites is the same in all excel sheets.\n\n'+
                     'Reaction list in sheet rxns doesn\'t match the list in the stoichiometry matrix.\n' +
@@ -126,14 +127,72 @@ class TestFormatChecks(unittest.TestCase):
 class TestMassBalanceChecks(unittest.TestCase):
 
     def setUp(self):
-        self.test_folder = 'test_files/test_io'
-        self.file_in_excel = f'{self.test_folder}/putida_with_PPP.xlsx'
-        self.file_in_plaintext = f'{self.test_folder}/putida_with_PPP_plaintext.txt'
+        self.test_folder = 'test_files/test_check_models'
 
-    def test_import_stoic(self):
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    def test_check_balanced_metabolites(self, mock_stdout):
+        true_res = ('\nChecking if metabolites are both consumed and produced in the stoichiometric matrix, and if so ' +
+                    'checks if they are marked as balanced in the mets sheet. However, the metabolite might be ' +
+                    'balanced/not balanced anyways depending on the flux of the reactions that consume/produce it, '+
+                    'so take this with a grain of salt.\n\n' +
+                    'm_atp_c is marked as not balanced but it seems to be balanced.\n' +
+                    'm_adp_c is marked as not balanced but it seems to be balanced.\n' +
+                    'm_pi_c is marked as not balanced but it seems to be balanced.\n' +
+                    'm_glcn_e is marked as balanced but it does not seem to be balanced.\n' +
+                    'm_glcn_e is not set as constant but maybe it should, since it does not seem to be balanced.\n' +
+                    'm_2dhglcn_e is marked as balanced but it does not seem to be balanced.\n' +
+                    'm_2dhglcn_e is not set as constant but maybe it should, since it does not seem to be balanced.\n' +
+                    'm_nadph_c is marked as not balanced but it seems to be balanced.\n' +
+                    'm_nadp_c is marked as not balanced but it seems to be balanced.\n' +
+                    'm_co2_c is marked as balanced but it does not seem to be balanced.\n')
 
-        mets, rxns, rxn_strings = import_stoic(self.file_in_excel)
-        self.assertListEqual(rxn_strings, 1)
+        data_dict = pd.read_excel(f'{self.test_folder}/putida_v1_base.xlsx', sheet_name=None)
+        flag = check_balanced_metabolites(data_dict)
+
+        self.assertEqual(True, flag)
+        self.assertEqual(true_res, mock_stdout.getvalue())
+
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    def test_check_flux_balance(self, mock_stdout):
+
+        true_res = ('\nChecking if the fluxes for each metabolite production/consumptions add up to zero.\n\n' +
+                    'The flux for m_6pgc_c is not balanced. The difference in flux is -20\n' +
+                    'The flux for m_co2_c is not balanced. The difference in flux is 590\n' +
+                    'The flux for m_r5p_c is not balanced. The difference in flux is 290\n' +
+                    'The flux for m_xu5p_D_c is not balanced. The difference in flux is -10\n' +
+                    'The flux for m_g3p_c is not balanced. The difference in flux is 90\n' +
+                    'The flux for m_e4p_c is not balanced. The difference in flux is 140\n' +
+                    'The flux for m_f6p_c is not balanced. The difference in flux is 50\n' +
+                    'The flux for m_3pg_c is not balanced. The difference in flux is 750\n')
+
+        data_dict = pd.read_excel(f'{self.test_folder}/putida_v1_base.xlsx', sheet_name=None)
+        flag = check_flux_balance(data_dict)
+
+        self.assertEqual(True, flag)
+        self.assertEqual(true_res, mock_stdout.getvalue())
+
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    def test_check_flux_balance_fixed(self, mock_stdout):
+
+        true_res = '\nChecking if the fluxes for each metabolite production/consumptions add up to zero.\n\n'
+
+        data_dict = pd.read_excel(f'{self.test_folder}/putida_v1_base_fixed.xlsx', sheet_name=None)
+        flag = check_flux_balance(data_dict)
+
+        self.assertEqual(False, flag)
+        self.assertEqual(true_res, mock_stdout.getvalue())
+
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    def test_check_flux_balance_incomplete_fluxes(self, mock_stdout):
+
+        true_res = ('\nChecking if the fluxes for each metabolite production/consumptions add up to zero.\n\n\n' +
+                    'Not all fluxes are specified in measRates.\n\n')
+
+        data_dict = pd.read_excel(f'{self.test_folder}/putida_v1_base_incomplete_fluxes.xlsx', sheet_name=None)
+        flag = check_flux_balance(data_dict)
+
+        self.assertEqual(False, flag)
+        self.assertEqual(true_res, mock_stdout.getvalue())
 
 
 class TestThermodynamicsChecks(unittest.TestCase):
