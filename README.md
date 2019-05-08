@@ -6,7 +6,7 @@ At this point only the model checks are working fully, though.
 
 ## Documentation
 
-The documentation for the package can be found at [here]().
+The documentation for the package can be found at [https://set-up-grasp-models.readthedocs.io/](https://set-up-grasp-models.readthedocs.io/).
 
 ## Requirements
 
