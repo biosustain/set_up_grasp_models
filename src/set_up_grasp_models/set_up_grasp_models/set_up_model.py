@@ -1,9 +1,7 @@
-import pandas as pd
 import numpy as np
-from src.io.plaintext import import_model_from_plaintext
-from src.set_up_grasp_models.set_up_mets import set_up_mets, set_up_mets_data, set_up_thermo_mets
-from src.set_up_grasp_models.set_up_proteomics import set_up_proteomics
-from src.set_up_grasp_models.set_up_rates import set_up_ex_rates, set_up_rxns, set_up_kinetics, set_up_thermo_rxns
+import pandas as pd
+
+from ..io.plaintext import import_model_from_plaintext
 
 
 def get_stoic(file_in):

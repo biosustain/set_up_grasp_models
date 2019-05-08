@@ -1,7 +1,8 @@
+import os
 import unittest
-from src.io.stoic import import_stoic
-from src.io.plaintext import import_model_from_plaintext, write_to_plaintext
 
+from src.set_up_grasp_models.io.plaintext import import_model_from_plaintext, write_to_plaintext
+from src.set_up_grasp_models.io.stoic import import_stoic
 
 TRUE_RXN_LIST = ['ABC: glc_D_p + atp + h2o <-> glc_D + adp + h + p',
                  'GLK: glc_D + atp <-> adp + h + g6p',
@@ -38,12 +39,11 @@ TRUE_RXN_LIST = ['ABC: glc_D_p + atp + h2o <-> glc_D + adp + h + p',
 class TestIO(unittest.TestCase):
 
     def setUp(self):
-        self.test_folder = 'test_files/test_io'
-        self.file_in_excel = f'{self.test_folder}/putida_with_PPP.xlsx'
-        self.file_in_plaintext = f'{self.test_folder}/putida_with_PPP_plaintext.txt'
+        self.test_folder = os.path.join('test_files', 'test_io')
+        self.file_in_excel = os.path.join(self.test_folder, 'putida_with_PPP.xlsx')
+        self.file_in_plaintext = os.path.join(self.test_folder, 'putida_with_PPP_plaintext.txt')
 
     def test_import_stoic(self):
-
         mets, rxns, rxn_strings = import_stoic(self.file_in_excel)
         self.assertListEqual(TRUE_RXN_LIST, rxn_strings)
 
@@ -52,10 +52,8 @@ class TestIO(unittest.TestCase):
         self.assertListEqual(TRUE_RXN_LIST, model.to_string().split('\n'))
 
     def test_write_to_plaintext(self):
-        file_out = f'{self.test_folder}/plaintext.txt'
+        file_out = os.path.join(self.test_folder, 'plaintext.txt')
         write_to_plaintext(TRUE_RXN_LIST, file_out, print_instructions=True)
 
         model = import_model_from_plaintext(self.file_in_plaintext)
         self.assertListEqual(TRUE_RXN_LIST, model.to_string().split('\n'))
-
-

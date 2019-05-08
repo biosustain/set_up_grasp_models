@@ -1,7 +1,6 @@
 #from src.set_up_grasp_models.misc import get_stoic
-from src.set_up_grasp_models.set_up_rates import set_up_ex_rates
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 
 def set_up_mets(file_in_base_model, mets_order, ex_mets_to_remove):

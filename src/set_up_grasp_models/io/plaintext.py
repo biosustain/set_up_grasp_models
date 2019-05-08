@@ -5,8 +5,9 @@ Author: Daniel Machado
 
 """
 
-from ..model.model import Model
 from os.path import splitext, basename
+
+from ..model.model import Model
 
 INSTRUCTIONS = """
 # Text based model representation

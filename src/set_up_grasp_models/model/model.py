@@ -5,13 +5,13 @@ Author: Daniel Machado
 
 """
 
-from builtins import str
+import warnings
 from builtins import object
+from builtins import str
 from collections import OrderedDict
 from copy import copy, deepcopy
 
 from .parser import ReactionParser
-import warnings
 
 
 class Metabolite(object):

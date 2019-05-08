@@ -7,8 +7,8 @@ Author: Daniel Machado
 
 
 from builtins import object
-from re import compile
 from collections import OrderedDict
+from re import compile
 
 
 class ReactionParser(object):

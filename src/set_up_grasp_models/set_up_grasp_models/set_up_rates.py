@@ -1,6 +1,7 @@
-import pandas as pd
-import numpy as np
 import re
+
+import numpy as np
+import pandas as pd
 
 
 def set_up_rxns(file_in_base, rxns_order, ex_rxns_to_remove):
