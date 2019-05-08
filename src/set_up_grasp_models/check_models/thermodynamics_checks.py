@@ -216,7 +216,7 @@ def get_robust_fluxes(data_dict: dict, rxn_order: list = None) -> pd.DataFrame:
     return fluxes_df
 
 
-def check_thermodynamic_feasibility(data_dict: dict) -> bool:
+def check_thermodynamic_feasibility(data_dict: dict) -> tuple:
     """
     Given a dictionary representing a GRASP input file, it checks if the reaction's dG are compatible with the
     respective fluxes. It works both when all fluxes are specified in measRates and when robust fluxes are calculated
@@ -227,7 +227,7 @@ def check_thermodynamic_feasibility(data_dict: dict) -> bool:
         data_dict (dict): a dictionary representing a GRASP input file
 
     Returns:
-        bool: whether or not the model is thermodynamically feasible
+        tuple: whether or not the model is thermodynamically feasible plus fluxes and Gibbs energies dataframes
 
     """
 
@@ -257,4 +257,4 @@ def check_thermodynamic_feasibility(data_dict: dict) -> bool:
             print(f'The flux and ∆G range seem to be incompatible for reaction {rxn}')
             flag = True
 
-    return flag
+    return flag, flux_df, dG_df
