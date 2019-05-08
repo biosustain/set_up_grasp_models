@@ -8,8 +8,10 @@ setuptools.setup(
     description="A package to set up and check GRASP input files",
     long_description_content_type="text/markdown",
     url="https://github.com/martamatos/set_up_grasp_models",
-    packages=['pandas', 'numpy'],
-    python_requires='=3.6+',
+    package_dir={'':'src'},
+    packages=setuptools.find_packages('src'),
+    install_requires=["numpy", "pandas", "XlsxWriter"],
+    python_requires='>=3.6',
     classifiers=[
         "Programming Language :: Python :: 3.6+",
         "License :: OSI Approved :: MIT License",
