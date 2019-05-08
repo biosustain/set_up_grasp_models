@@ -8,12 +8,12 @@ Also a reaction string parser is defined.
 Model
 ----------
 
-.. automodule:: src.model.model
+.. automodule:: src.set_up_grasp_models.model.model
     :members:
 
 
 Parser
 ----------
 
-.. automodule:: src.model.parser
+.. automodule:: src.set_up_grasp_models.model.parser
     :members:
