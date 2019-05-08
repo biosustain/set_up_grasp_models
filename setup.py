@@ -10,7 +10,7 @@ setuptools.setup(
     url="https://github.com/martamatos/set_up_grasp_models",
     package_dir={'':'src'},
     packages=setuptools.find_packages('src'),
-    install_requires=["numpy", "pandas", "XlsxWriter"],
+    install_requires=["numpy", "pandas", "xlrd"],
     python_requires='>=3.6',
     classifiers=[
         "Programming Language :: Python :: 3.6+",

@@ -6,7 +6,17 @@ At this point only the model checks are working fully, though.
 
 ## Documentation
 
-The documentation for the package can be found at [https://set-up-grasp-models.readthedocs.io/](https://set-up-grasp-models.readthedocs.io/).
+The documentation for the API can be found at [https://set-up-grasp-models.readthedocs.io/](https://set-up-grasp-models.readthedocs.io/).
+
+There are also a couple of examples in the `examples` folder.
+The jupyter lab example requires (besides jupyter lab or notebook) altair v2, altair v3 will probably not work. 
+
+## Installation
+
+To install simply go to the folder and do:
+
+```pip install .```
+
 
 ## Requirements
 
@@ -14,7 +24,7 @@ The documentation for the package can be found at [https://set-up-grasp-models.r
  - Python 3.6+
  - numpy==1.16.2
  - pandas==0.24.2
- - XlsxWriter==1.1.7
+ - xlrd==1.2.0
 
 While almost any version of numpy and XlsxWriter should work, the same might not be true for pandas.  
 
