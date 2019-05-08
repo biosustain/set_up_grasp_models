@@ -51,6 +51,9 @@ def check_met_rxn_order(data_dict: dict) -> bool:
                 print(f'Reaction list in stoichiometric matrix:\n {rxn_list}\n')
                 flag = True
 
+    if flag is False:
+        print('Everything seems to be OK.\n')
+
     return flag
 
 
@@ -100,5 +103,8 @@ def check_kinetics_met_separators(data_dict: dict) -> bool:
             flag_list.append(flag)
             flag = _check_kinetics_column(data_dict[key], 'positive effector')
             flag_list.append(flag)
+
+    if not any(flag_list):
+        print('Everything seems to be OK.\n')
 
     return any(flag_list)

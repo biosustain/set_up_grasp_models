@@ -257,4 +257,7 @@ def check_thermodynamic_feasibility(data_dict: dict) -> tuple:
             print(f'The flux and ∆G range seem to be incompatible for reaction {rxn}')
             flag = True
 
+    if flag is False:
+        print('Everything seems to be OK.')
+
     return flag, flux_df, dG_df

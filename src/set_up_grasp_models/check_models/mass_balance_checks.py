@@ -47,6 +47,10 @@ def check_flux_balance(data_dict: dict) -> bool:
             elif flux_balance == 0 and met not in balanced_mets:
                 print(f'{met} should be in balanced mets')
                 flag = True
+
+        if flag is False:
+            print('Everything seems to be OK.')
+
     else:
         print('Not all fluxes are specified in measRates.\n')
 
@@ -90,5 +94,8 @@ def check_balanced_metabolites(data_dict: dict) -> bool:
             if mets_df['fixed?'][i] == 0:
                 print(f'{met} is not set as constant but maybe it should, since it does not seem to be balanced.')
                 flag = True
+
+    if flag is False:
+        print('Everything seems to be OK.')
 
     return flag

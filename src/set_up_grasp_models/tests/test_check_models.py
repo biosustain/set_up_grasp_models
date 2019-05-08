@@ -18,7 +18,8 @@ class TestFormatChecks(unittest.TestCase):
     def test_check_kinetics_met_separators_correct(self, mock_stdout):
         true_res = ('\nChecking if values are separated by a space in the kinetics sheet in columns order, ' +
                     'promiscuous, inhibitors, activators, negative effector, and positive effector.\nIt looks for ' +
-                    'dots, commas, and semi-colons.\n\n')
+                    'dots, commas, and semi-colons.\n\n' +
+                    'Everything seems to be OK.\n\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0.xlsx'), sheet_name=None)
         flag = check_kinetics_met_separators(data_dict)
@@ -48,7 +49,8 @@ class TestFormatChecks(unittest.TestCase):
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     def test_check_met_rxn_order_correct(self, mock_stdout):
-        true_res = '\nChecking if the order of reactions and metabolites is the same in all excel sheets.\n\n'
+        true_res = ('\nChecking if the order of reactions and metabolites is the same in all excel sheets.\n\n' +
+                    'Everything seems to be OK.\n\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0.xlsx'), sheet_name=None)
         flag = check_met_rxn_order(data_dict)
@@ -170,7 +172,8 @@ class TestMassBalanceChecks(unittest.TestCase):
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     def test_check_flux_balance_fixed(self, mock_stdout):
-        true_res = '\nChecking if the fluxes for each metabolite production/consumptions add up to zero.\n\n'
+        true_res = ('\nChecking if the fluxes for each metabolite production/consumptions add up to zero.\n\n'+
+                    'Everything seems to be OK.\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'putida_v1_base_fixed.xlsx'), sheet_name=None)
         flag = check_flux_balance(data_dict)
@@ -211,17 +214,18 @@ class TestThermodynamicsChecks(unittest.TestCase):
                     'The flux and ∆G range seem to be incompatible for reaction R_EX_pep\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'putida_v1_base.xlsx'), sheet_name=None)
-        flag = check_thermodynamic_feasibility(data_dict)
+        flag, dG_df, flux_df = check_thermodynamic_feasibility(data_dict)
 
         self.assertEqual(True, flag)
         self.assertEqual(true_res, mock_stdout.getvalue())
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     def test_check_thermodynamic_feasibility_HMP(self, mock_stdout):
-        true_res = '\nChecking if fluxes and Gibbs energies are compatible.\n\n'
+        true_res = ('\nChecking if fluxes and Gibbs energies are compatible.\n\n' +
+                    'Everything seems to be OK.\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0.xlsx'), sheet_name=None)
-        flag = check_thermodynamic_feasibility(data_dict)
+        flag, dG_df, flux_df = check_thermodynamic_feasibility(data_dict)
 
         self.assertEqual(False, flag)
         self.assertEqual(true_res, mock_stdout.getvalue())
