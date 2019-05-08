@@ -6,14 +6,6 @@
 Welcome to set_up_grasp_models's documentation!
 ===============================================
 
-.. toctree::
-   :maxdepth: 2
-
-   check_models
-   io
-   model
-   set_up_grasp_models
-
 
 This small package allows the user to both set up GRASP input model files and to check if they are valid.
 At this point only the checks are fully working. These include:
@@ -29,6 +21,14 @@ At this point only the checks are fully working. These include:
 
 For more details on the functions and arguments go to the respective pages using the sidebar.
 
+
+.. toctree::
+   :maxdepth: 2
+
+   check_models
+   io
+   model
+   set_up_grasp_models
 
 
 
