@@ -4,6 +4,14 @@ This small package is intended to generate GRASP input model files in a fairly a
 At this point only the model checks are working fully, though.
 
 
+### Model checks
+ - `check_met_rxn_order`: checks if the order of reactions and metabolites in all sheets is consistent with the order in the stoichiometry matrix.
+ - `check_kinetics_met_separators`: in the kinetics sheet for columns where cells can have multiple values, makes sure these values are not separated by a comma, semi-colon, or dot.
+ - `check_balanced_metabolites`: checks if metabolites that are both consumed and produced in the stoichiometric matrix are marked as balanced and the other way around. Checking for mass balances is more accurate though.
+ - `check_flux_balance`:  when all fluxes are specified in the measRates sheet, check if all metabolites are mass balanced (well, the ones that are marked as balanced in the mets sheet).
+ - `check_thermodynamic_feasibility`: given a dictionary representing a GRASP input file, it checks if the reaction's dG are compatible with the respective fluxes. It works both when all fluxes are specified in measRates and when robust fluxes are calculated for a fully determined system. If the fluxes are not fully specified not the system is fully determined, it doesn't work.
+ 
+
 ## Documentation
 
 The documentation for the API can be found at [https://set-up-grasp-models.readthedocs.io/](https://set-up-grasp-models.readthedocs.io/).
