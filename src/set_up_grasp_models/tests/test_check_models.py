@@ -180,7 +180,7 @@ class TestMassBalanceChecks(unittest.TestCase):
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     def test_check_flux_balance_incomplete_fluxes(self, mock_stdout):
-        true_res = ('\nChecking if the fluxes for each metabolite production/consumptions add up to zero.\n\n\n' +
+        true_res = ('\nChecking if the fluxes for each metabolite production/consumptions add up to zero.\n\n' +
                     'Not all fluxes are specified in measRates.\n\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'putida_v1_base_incomplete_fluxes.xlsx'),

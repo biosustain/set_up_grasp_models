@@ -48,7 +48,7 @@ def check_flux_balance(data_dict: dict) -> bool:
                 print(f'{met} should be in balanced mets')
                 flag = True
     else:
-        print('\nNot all fluxes are specified in measRates.\n')
+        print('Not all fluxes are specified in measRates.\n')
 
     return flag
 
