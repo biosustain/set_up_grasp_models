@@ -7,18 +7,18 @@ In this section you find the documentation for each function that can be used to
 Format checks
 ---------------------
 
-.. automodule:: src.set_up_grasp_models.check_models.format_checks
+.. automodule:: set_up_grasp_models.check_models.format_checks
     :members:
 
 
 Mass balance checks
 ---------------------
 
-.. automodule:: src.set_up_grasp_models.check_models.mass_balance_checks
+.. automodule:: set_up_grasp_models.check_models.mass_balance_checks
     :members:
 
 
 Thermodynamic feasibility checks
 ----------------------------------
-.. automodule:: src.set_up_grasp_models.check_models.thermodynamics_checks
+.. automodule:: set_up_grasp_models.check_models.thermodynamics_checks
     :members:

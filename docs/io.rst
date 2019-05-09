@@ -8,12 +8,12 @@ stoic contains a function to generate a list of reaction strings, ready to be wr
 Plaintext
 ----------
 
-.. automodule:: src.set_up_grasp_models.io.plaintext
+.. automodule:: set_up_grasp_models.io.plaintext
     :members:
 
 
 Parser
 ----------
 
-.. automodule:: src.set_up_grasp_models.io.stoic
+.. automodule:: set_up_grasp_models.io.stoic
     :members:

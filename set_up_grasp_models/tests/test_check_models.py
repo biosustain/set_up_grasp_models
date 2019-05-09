@@ -4,9 +4,9 @@ import unittest.mock
 
 import pandas as pd
 
-from src.set_up_grasp_models.check_models.format_checks import check_kinetics_met_separators, check_met_rxn_order
-from src.set_up_grasp_models.check_models.mass_balance_checks import check_balanced_metabolites, check_flux_balance
-from src.set_up_grasp_models.check_models.thermodynamics_checks import check_thermodynamic_feasibility
+from set_up_grasp_models.check_models.format_checks import check_kinetics_met_separators, check_met_rxn_order
+from set_up_grasp_models.check_models.mass_balance_checks import check_balanced_metabolites, check_flux_balance
+from set_up_grasp_models.check_models.thermodynamics_checks import check_thermodynamic_feasibility
 
 
 class TestFormatChecks(unittest.TestCase):

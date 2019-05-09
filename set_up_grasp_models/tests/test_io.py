@@ -1,8 +1,8 @@
 import os
 import unittest
 
-from src.set_up_grasp_models.io.plaintext import import_model_from_plaintext, write_to_plaintext
-from src.set_up_grasp_models.io.stoic import import_stoic
+from set_up_grasp_models.io.plaintext import import_model_from_plaintext, write_to_plaintext
+from set_up_grasp_models.io.stoic import import_stoic
 
 TRUE_RXN_LIST = ['ABC: glc_D_p + atp + h2o <-> glc_D + adp + h + p',
                  'GLK: glc_D + atp <-> adp + h + g6p',

@@ -6,10 +6,8 @@ setuptools.setup(
     author="Marta Matos",
     author_email="marta.ra.matos@gmail.com",
     description="A package to set up and check GRASP input files",
-    long_description_content_type="text/markdown",
     url="https://github.com/martamatos/set_up_grasp_models",
-    package_dir={'':'src'},
-    packages=setuptools.find_packages('src'),
+    packages=setuptools.find_packages(),
     install_requires=["numpy", "pandas", "xlrd"],
     python_requires='>=3.6',
     classifiers=[

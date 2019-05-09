@@ -1,8 +1,9 @@
 import os
 
 import pandas as pd
-from set_up_grasp_models import check_met_rxn_order, check_kinetics_met_separators, check_flux_balance, \
-    check_balanced_metabolites, check_thermodynamic_feasibility
+from set_up_grasp_models.check_models.format_checks import check_met_rxn_order, check_kinetics_met_separators
+from set_up_grasp_models.check_models.thermodynamics_checks import check_thermodynamic_feasibility
+from set_up_grasp_models.check_models.mass_balance_checks import check_flux_balance, check_balanced_metabolites
 
 
 # import the model
