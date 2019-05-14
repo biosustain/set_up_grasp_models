@@ -1,8 +1,6 @@
 """
 The purpose of this module is to convert an enzyme mechanism given in terms of elementary reactions into the
-format currently accepted by GRASP.
-
-Author: Marta Matos
+pattern format currently accepted by GRASP.
 """
 
 

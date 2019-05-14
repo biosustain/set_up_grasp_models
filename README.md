@@ -1,7 +1,7 @@
 # set_up_grasp_models
 
 This small package is intended to generate GRASP input model files in a fairly automatic way, and check that these are valid.
-At this point only the model checks are working fully, though.
+At this point both the model checks and the mechanism generation are working fully, but not the actual process of building the input excel file.
 
 
 ### Model checks
@@ -11,6 +11,40 @@ At this point only the model checks are working fully, though.
  - `check_flux_balance`:  when all fluxes are specified in the measRates sheet, check if all metabolites are mass balanced (well, the ones that are marked as balanced in the mets sheet).
  - `check_thermodynamic_feasibility`: given a dictionary representing a GRASP input file, it checks if the reaction's dG are compatible with the respective fluxes. It works both when all fluxes are specified in measRates and when robust fluxes are calculated for a fully determined system. If the fluxes are not fully specified not the system is fully determined, it doesn't work.
  
+### Mechanism generation
+
+Created a function `convert_er_mech_to_grasp_pattern` to convert an enzyme mechanism given in terms of elementary reactions (as in the [MASS-toolbox](http://opencobra.github.io/MASS-Toolbox/)) to the pattern file that GRASP takes as input.
+
+As an example, the enzyme mechanism given in terms of elementary reactions for an orderedBiBi mechanism with competitive inhibiting with respect to the first substrate should look like:
+
+```
+E_c + accoa_c <-> E_c&accoa_c
+E_c + pyr_c <-> E_c&pyr_c
+E_c&accoa_c + srtn_c <-> E_c&accoa_c&srnt_c
+E_c&accoa_c&srnt_c <-> E_c&coa_c&nactsrtn_c
+E_c&coa_c&nactsrtn_c <-> E_c&coa_c + nactsrtn_c
+E_c&coa_c <-> E_c + coa_c
+```
+
+The main rules here are: 
+ - enzymes must start with `E_`;
+ - reactions must be reversible and the conversion sign is `<->`.
+ 
+***Always double check the resulting pattern file!***
+
+For an example check the examples folder, script `convert_mechanism.py`.
+
+Mechanisms currently tested:
+ - orderedBiBi with and without all sorts of inhibitions and activations;
+ - orderedUniBi;
+ - randomUniBi;
+ - randomBiBi with and without competitive inhibition;
+ - pingPongBiBi;
+ - promiscuous reactions up to a point.
+
+For more details check the mechanism in the folder `tests/test_files/test_set_up_models/convert_mechanism/true_res_orderedUniBi.txt`
+ 
+
 
 ## Documentation
 
