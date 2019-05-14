@@ -17,6 +17,12 @@ activ_list = ['pyr_c']
 
 convert_er_mech_to_grasp_pattern(file_in, file_out, activ_list=activ_list)
 
+# convert uniUniPromiscuous
+file_in = os.path.join('mechanisms', 'uniUniPromiscuous_mech_er.txt')
+file_out = os.path.join('mechanisms', 'uniUniPromiscuous_pattern.txt')
+
+convert_er_mech_to_grasp_pattern(file_in, file_out, promiscuous=True)
+
 
 # convert pingPongBiBi
 file_in = os.path.join('mechanisms', 'pingPongBiBi_mech_er.txt')

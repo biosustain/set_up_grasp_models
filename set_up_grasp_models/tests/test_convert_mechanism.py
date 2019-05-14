@@ -15,7 +15,7 @@ class TestConvertMechanism(unittest.TestCase):
         file_in = os.path.join(self.test_folder, 'G6PDH_mech_er.txt')
         file_out = os.path.join(self.test_folder, 'G6PDH_mech_grasp.txt')
 
-        convert_er_mech_to_grasp_pattern(file_in, file_out)
+        convert_er_mech_to_grasp_pattern(file_in, file_out, promiscuous=True)
 
         with open(true_res_file, 'r') as f_in:
             true_res = f_in.read()
@@ -25,6 +25,7 @@ class TestConvertMechanism(unittest.TestCase):
 
         self.assertEqual(true_res, res)
 
+    # not working at the moment
     def test_convert_er_mech_to_grasp_pattern_AANATCompInhibIndep(self):
         true_res_file = os.path.join(self.test_folder, 'true_res_AANATCompInhibIndep.txt')
 
@@ -32,7 +33,7 @@ class TestConvertMechanism(unittest.TestCase):
         file_out = os.path.join(self.test_folder, 'AANATCompInhibIndep_mech_grasp.txt')
         inhib_list = ['mltn_c']
 
-        convert_er_mech_to_grasp_pattern(file_in, file_out, inhib_list=inhib_list)
+        convert_er_mech_to_grasp_pattern(file_in, file_out, promiscuous=True, inhib_list=inhib_list)
 
         with open(true_res_file, 'r') as f_in:
             true_res = f_in.read()
@@ -246,7 +247,7 @@ class TestConvertMechanism(unittest.TestCase):
         file_in = os.path.join(self.test_folder, 'uniUniPromiscuous_mech_er.txt')
         file_out = os.path.join(self.test_folder, 'uniUniPromiscuous_mech_grasp.txt')
 
-        convert_er_mech_to_grasp_pattern(file_in, file_out)
+        convert_er_mech_to_grasp_pattern(file_in, file_out, promiscuous=True)
 
         with open(true_res_file, 'r') as f_in:
             true_res = f_in.read()

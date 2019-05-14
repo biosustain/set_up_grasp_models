@@ -39,7 +39,8 @@ def _get_enz_states(er_mech: str) -> list:
     return enz_states_list
 
 
-def _generate_grasp_pattern(enz_states_list: list, inhib_list: list = None, activ_list: list = None) -> str:
+def _generate_grasp_pattern(enz_states_list: list, promiscuous: bool, inhib_list: list,
+                            activ_list: list) -> str:
     """
     Given a list of enzyme state numbers and metabolites that bind/unbind to them, generates the respective
     GRASP pattern.
@@ -62,6 +63,7 @@ def _generate_grasp_pattern(enz_states_list: list, inhib_list: list = None, acti
 
     Args:
         enz_states_list (list): list of all enzyme state numbers and ligands that bind/unbind.
+        promiscuous (bool): to indicate whether reaction is promiscuous or not.
         inhib_list (list): list of inhibiting metabolites.
         activ_list (list): list of activating metabolites.
 
@@ -79,8 +81,6 @@ def _generate_grasp_pattern(enz_states_list: list, inhib_list: list = None, acti
     activ_dic = dict((met, f'Z{i+1}') for i, met in enumerate(activ_list)) if activ_list else dict()
 
     rxn_i = 0
-    rxn_change = False
-
     n_transitions = 0
     after_transition = False
 
@@ -92,11 +92,11 @@ def _generate_grasp_pattern(enz_states_list: list, inhib_list: list = None, acti
         # if there is more than one transition step and the enzyme state is 1 again it is a promiscuous enzyme,
         #  restart dictionaries so that no repeated ligand names are used.
         if n_transitions > 0 and enz_states_list[state_i][0] == 1:
-
             rxn_i += 1
-            rxn_change = True
-            subs_dic = {}
-            prod_dic = {}
+
+            if promiscuous:
+                subs_dic = {}
+                prod_dic = {}
 
         # get binding ligand name
         bind_ligand = ''
@@ -128,10 +128,9 @@ def _generate_grasp_pattern(enz_states_list: list, inhib_list: list = None, acti
                              else f'.*{prod_dic[enz_states_list[state_i + 1][1]]}'
 
             # if ligand unbinding is the first one after the transition step name it Pi
-            if after_transition and rxn_change:
+            if after_transition and promiscuous:
                 release_ligand = f'.*P{rxn_i+1}'
                 after_transition = False
-                rxn_change = False
 
                 if rxn_i > 0:
                     prod_i -= 1
@@ -155,13 +154,15 @@ def _generate_grasp_pattern(enz_states_list: list, inhib_list: list = None, acti
     return grasp_pattern
 
 
-def convert_er_mech_to_grasp_pattern(file_in: str, file_out: str, inhib_list: list = None , activ_list: list = None):
+def convert_er_mech_to_grasp_pattern(file_in: str, file_out: str, promiscuous: bool = False,
+                                     inhib_list: list = None, activ_list: list = None):
     """
     Given an input file with a mechanism in the form of elementary reactions, converts it to a GRASP pattern file.
 
     Args:
         file_in (str): path to the input file with elementary reactions mechanism.
         file_out: path to the output file with GRASP pattern.
+        promiscuous (bool): to indicate whether reaction is promiscuous or not.
         inhib_list (list): list of inhibiting metabolites.
         activ_list (list): list of activating metabolites.
 
@@ -173,7 +174,7 @@ def convert_er_mech_to_grasp_pattern(file_in: str, file_out: str, inhib_list: li
         er_mech = f_in.read()
 
     enz_states_list = _get_enz_states(er_mech)
-    grasp_pattern = _generate_grasp_pattern(enz_states_list, inhib_list, activ_list)
+    grasp_pattern = _generate_grasp_pattern(enz_states_list, promiscuous, inhib_list, activ_list)
 
     with open(file_out, 'w+') as f_out:
         f_out.write(grasp_pattern)
