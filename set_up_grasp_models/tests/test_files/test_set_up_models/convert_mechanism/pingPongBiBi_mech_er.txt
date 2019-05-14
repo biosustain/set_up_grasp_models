@@ -1,6 +1,6 @@
 E_c + s7p_c <-> E_c&s7p_c
-E_c&s7p <-> E_mod_c&e4p_c
+E_c&s7p_c <-> E_mod_c&e4p_c
 E_mod_c&e4p_c <-> E_mod_c + e4p_c
 E_mod_c + g3p_c <-> E_mod_c&g3p_c
-E_mod_c&g3p_c <-> E_c&f6p
-E_c&f6p <-> E_c + f6p
+E_mod_c&g3p_c <-> E_c&f6p_c
+E_c&f6p_c <-> E_c + f6p_c
