@@ -1,0 +1,7 @@
+E_c + nad_c <-> E_c&nad_c
+E_c&nad_c<-> E_c&nadh_c
+E_c&nadh_c <-> E_c + nadh_c
+
+E_c + nadp_c <-> E_c&nadp_c
+E_c&nadp_c <-> E_c&nadph_c
+E_c&nadph_c <-> E_c + nadph_c

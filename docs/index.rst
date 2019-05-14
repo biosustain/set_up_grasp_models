@@ -28,7 +28,7 @@ For more details on the functions and arguments go to the respective pages using
    check_models
    io
    model
-   set_up_grasp_models
+   set_up_models
 
 
 

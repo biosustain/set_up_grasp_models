@@ -1,0 +1,13 @@
+E_c + pyr_c <-> E_c&pyr_c
+E_c&pyr_c + accoa_c <-> E_c&pyr_c&accoa_c
+E_c&pyr_c&accoa_c + srtn_c <-> E_c&pyr_c&accoa_c&srnt_c
+E_c&pyr_c&accoa_c&srnt_c <-> E_c&pyr_c&coa_c&nactsrtn_c
+E_c&pyr_c&coa_c&nactsrtn_c <-> E_c&pyr_c&coa_c + nactsrtn_c
+E_c&pyr_c&coa_c <-> E_c&pyr_c + coa_c
+
+
+E_c + accoa_c <-> E_c&accoa_c
+E_c&accoa_c + srtn_c <-> E_c&accoa_c&srnt_c
+E_c&accoa_c&srnt_c <-> E_c&coa_c&nactsrtn_c
+E_c&coa_c&nactsrtn_c <-> E_c&coa_c + nactsrtn_c
+E_c&coa_c <-> E_c + coa_c

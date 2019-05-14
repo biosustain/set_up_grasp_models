@@ -1,0 +1,13 @@
+E_c + nad_c <-> E_c&nad_c
+E_c + g6p_c <-> E_c&g6p_c
+E_c&nad_c + g6p_c <-> E_c&nad_c&g6p_c
+E_c&g6p_c + nad_c <-> E_c&nad_c&g6p_c
+
+
+
+E_c&nad_c&g6p_c <-> E_c&nadh_c&6pgl_c
+
+E_c&nadh_c&6pgl_c <-> E_c&nadh_c + 6pgl_c
+E_c&nadh_c&6pgl_c <-> E_c&6pgl_c + nadh_c
+E_c&nadh_c <-> E_c + nadh_c
+E_c&6pgl_c <-> E_c + 6pgl_c
