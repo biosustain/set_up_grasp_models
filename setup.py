@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name="set_up_grasp_models",
+    name="set_up_models",
     version="0.1.0",
     author="Marta Matos",
     author_email="marta.ra.matos@gmail.com",

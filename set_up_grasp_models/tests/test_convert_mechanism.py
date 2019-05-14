@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from set_up_grasp_models.set_up_grasp_models.convert_mechanisms import convert_er_mech_to_grasp_pattern
+from set_up_grasp_models.set_up_models.convert_mechanisms import convert_er_mech_to_grasp_pattern
 
 
 class TestConvertMechanism(unittest.TestCase):

@@ -1,4 +1,4 @@
-#from src.set_up_grasp_models.misc import get_stoic
+#from src.set_up_models.misc import get_stoic
 import numpy as np
 import pandas as pd
 
