@@ -28,10 +28,9 @@ E_c&coa_c <-> E_c + coa_c
 
 The main rules here are: 
  - enzymes must start with `E_`;
- - reactions must be reversible and the conversion sign is `<->`.
+ - reactions must be reversible and the conversion sign is `<->`;
+ - each elementary reaction must be written in a new line.
  
-***Always double check the resulting pattern file!***
-
 For an example check the examples folder, script `convert_mechanism.py`.
 
 Mechanisms currently tested:
@@ -42,9 +41,9 @@ Mechanisms currently tested:
  - pingPongBiBi;
  - promiscuous reactions up to a point.
 
-For more details check the mechanism in the folder `tests/test_files/test_set_up_models/convert_mechanism/true_res_orderedUniBi.txt`
+For more details check the mechanism in the folder `tests/test_files/test_set_up_models/convert_mechanism`
  
-
+***Always double check the resulting pattern file!***
 
 ## Documentation
 
