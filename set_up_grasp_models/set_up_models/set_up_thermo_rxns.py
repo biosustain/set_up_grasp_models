@@ -1,3 +1,8 @@
+"""
+The aim of this module is to get standard Gibbs energies for reactions given in a plain text file with the
+format "R_FBA: m_g3p_c + m_dhap_c <-> m_fdp_c". BiGG IDs must be used for metabolites.
+"""
+
 import re
 from math import isnan
 

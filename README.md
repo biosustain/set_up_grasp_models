@@ -45,6 +45,16 @@ For more details check the mechanism in the folder `tests/test_files/test_set_up
  
 ***Always double check the resulting pattern file!***
 
+
+### Getting standard Gibbs energies from [eQuilibrator](http://equilibrator.weizmann.ac.il)
+
+Created a function `get_DGs` which, given a plain text file with reactions in the form `R_FBA: m_g3p_c + m_dhap_c <-> m_fdp_c` and a file with a mapping between bigg and kegg ids, returns the standard gibbs energy and respective uncertainty for each reaction.
+
+In the folder data you can also find the file with a mapping between bigg and kegg ids named `map_bigg_to_kegg_ids.csv`.
+
+For an example check `get_dGs.py` in the examples forlder.
+
+
 ## Documentation
 
 The documentation for the API can be found at [https://set-up-grasp-models.readthedocs.io/](https://set-up-grasp-models.readthedocs.io/).
@@ -68,6 +78,8 @@ To install simply go to the folder and do:
  - xlrd==1.2.0
 
 While almost any version of numpy and XlsxWriter should work, the same might not be true for pandas.  
+
+If you use this package to get Gibbs energies from equilibrator you will also need to install equilibrator-api v0.1.26 with `pip install equilibrator-api==0.1.26`.
 
 
 #### Requirements files:
