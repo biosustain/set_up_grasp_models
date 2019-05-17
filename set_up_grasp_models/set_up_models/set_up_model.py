@@ -4,7 +4,7 @@ import pandas as pd
 from ..io.plaintext import import_model_from_plaintext
 
 
-def get_stoic(file_in):
+def get_stoic(file_in: str) -> tuple:
     """
     From a text file with the reactions in the model, set up a dataframe with the transposed stoichiometry matrix.
 
@@ -27,7 +27,7 @@ def get_stoic(file_in):
     return stoic_df, mets_order, rxns_order
 
 
-def update_stoic(stoic_df, ex_rxns, ex_mets, non_ex_mets_order):
+def update_stoic(stoic_df: pd.DataFrame, ex_rxns: list, ex_mets: list, non_ex_mets_order: list) -> tuple:
     """
     Updates the stoichiometry matrix dataframe by removing the exchange reactions that are not used and the
     external metabolites no longer involved in the model.
@@ -63,8 +63,8 @@ def update_stoic(stoic_df, ex_rxns, ex_mets, non_ex_mets_order):
     return stoic_df, mets_order, rxns_order, ex_rxns_to_remove, ex_mets_to_remove
 
 
-def set_up_model(file_in_stoic, base_excel_file, model_name, file_out, file_in_met_ranges=None, file_in_prot_ranges=None,
-                 file_in_ex_fluxes=None, file_in_kinetics=None):
+def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file_out: str,
+                 file_in_met_ranges=None, file_in_prot_ranges=None, file_in_ex_fluxes=None, file_in_kinetics=None):
 
     writer = pd.ExcelWriter(file_out, engine='xlsxwriter')
 
@@ -88,7 +88,7 @@ def set_up_model(file_in_stoic, base_excel_file, model_name, file_out, file_in_m
     mets_df.to_excel(writer, sheet_name='mets')
 
     # set up rxns
-    columns = ['reaction name', 'transportRxn?', 'modelled?']
+    columns = ['reaction name', 'transportRxn?', 'modelled?', 'isoenzymes']
     rxns_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
     rxns_df.index.name = 'ID'
     rxns_df.to_excel(writer, sheet_name='rxns')
@@ -139,14 +139,19 @@ def set_up_model(file_in_stoic, base_excel_file, model_name, file_out, file_in_m
     mets_data_df.to_excel(writer, sheet_name='metsData')
 
     # set up kinetics1
-    columns = ['kinetic mechanism', 'order', 'promiscuous', 'inhibitors', 'activators',
-               'negative effector', 'positive effector', 'allosteric', 'subunits', 'comments']
+    columns = ['kinetic mechanism', 'substrate order', 'product order', 'promiscuous', 'inhibitors',
+               'activators', 'negative effector', 'positive effector', 'allosteric', 'subunits',
+               'mechanism_ref_type', 'mechanism_ref', 'inhibitors_ref_type', 'inhibitors_ref',
+               'activators_ref_type', 'activators_ref', 'negative_effectors_ref_type', 'negative_effectors_ref',
+               'positive_effectors_ref_type', 'positive_effectors_ref', 'subunits_ref_type', 'subunits_ref',
+               'comments']
     kinetics_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
     kinetics_df.index.name = 'reaction ID'
     kinetics_df.to_excel(writer, sheet_name='kinetics1')
 
     writer.save()
-    return 0
+
+
 
 """"
 
