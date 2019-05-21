@@ -12,24 +12,16 @@ from equilibrator_api import ComponentContribution, Reaction
 from set_up_grasp_models.model.parser import ReactionParser
 
 
-def _parse_rxns(file_rxns: str) -> tuple:
+def _parse_rxns(rxn_list: list) -> set:
 
     parser = ReactionParser()
     met_bigg_ids = set()
-    rxn_list = []
 
-    with open(file_rxns, 'r') as f_in:
-        line = f_in.readline()
+    for rxn_str in rxn_list:
+        r_id, reversible, stoichiometry = parser.parse_reaction(rxn_str)
+        met_bigg_ids.update(stoichiometry.keys())
 
-        while line:
-            if not line.startswith('#'):
-                r_id, reversible, stoichiometry = parser.parse_reaction(line)
-                met_bigg_ids.update(stoichiometry.keys())
-                rxn_list.append(line.rstrip())
-
-            line = f_in.readline()
-
-    return met_bigg_ids, rxn_list
+    return met_bigg_ids
 
 
 def _convert_met_ids_to_kegg(met_bigg_ids: set, map_bigg_to_kegg_ids: pd.DataFrame):
@@ -103,7 +95,7 @@ def _convert_rxn_str_to_kegg_ids(rxn_list: list, mets_kegg_dic: dict, mets_witho
     return rxn_dict
 
 
-def convert_rxns_to_kegg(file_rxns: str, map_bigg_to_kegg_ids: pd.DataFrame) -> dict:
+def convert_rxns_to_kegg(rxn_list: list, map_bigg_to_kegg_ids: pd.DataFrame) -> dict:
     """
     Given a plain text file with a list of reactions in the form: R_FBA: m_g3p_c + m_dhap_c <-> m_fdp_c, where
     metabolite ids are bigg ids, it converts the metabolite IDs to KEEG ids: R_FBA: C00118 + C00111 = C00354.
@@ -118,7 +110,7 @@ def convert_rxns_to_kegg(file_rxns: str, map_bigg_to_kegg_ids: pd.DataFrame) -> 
                         terms of KEGG IDs (e.g. C00118 + C00111 = C00354).
     """
 
-    met_bigg_ids, rxn_list = _parse_rxns(file_rxns)
+    met_bigg_ids = _parse_rxns(rxn_list)
 
     mets_kegg_dic, mets_without_kegg_id = _convert_met_ids_to_kegg(met_bigg_ids, map_bigg_to_kegg_ids)
 
@@ -127,7 +119,7 @@ def convert_rxns_to_kegg(file_rxns: str, map_bigg_to_kegg_ids: pd.DataFrame) -> 
     return rxn_dict
 
 
-def get_dGs(file_rxns: str, file_bigg_kegg_ids: str, pH: float = 7.0, ionic_strength: float = 0.1,
+def get_dGs(rxn_list: list, file_bigg_kegg_ids: str, pH: float = 7.0, ionic_strength: float = 0.1,
             digits: int = 2) -> dict:
     """
     Given a plain text file with reactions in the form R_FBA: m_g3p_c + m_dhap_c <-> m_fdp_c and a file with a
@@ -146,7 +138,7 @@ def get_dGs(file_rxns: str, file_bigg_kegg_ids: str, pH: float = 7.0, ionic_stre
 
     map_bigg_to_kegg_ids = pd.read_csv(file_bigg_kegg_ids, index_col=0)
 
-    rxn_dict = convert_rxns_to_kegg(file_rxns, map_bigg_to_kegg_ids)
+    rxn_dict = convert_rxns_to_kegg(rxn_list, map_bigg_to_kegg_ids)
 
     rxn_dG_dict = {}
     eq_api = ComponentContribution(pH=pH, ionic_strength=ionic_strength)
