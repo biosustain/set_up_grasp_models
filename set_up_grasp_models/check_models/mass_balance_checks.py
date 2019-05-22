@@ -54,6 +54,7 @@ def check_flux_balance(data_dict: dict) -> bool:
     else:
         print('Not all fluxes are specified in measRates.\n')
 
+
     return flag
 
 

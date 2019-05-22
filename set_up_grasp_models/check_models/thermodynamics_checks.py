@@ -108,6 +108,8 @@ def _compute_robust_fluxes(stoic_matrix: np.ndarray, meas_rates: np.ndarray, mea
     # Determine measured fluxes and decompose stoichiometric matrix
     id_meas = np.where(meas_rates != 0)
     id_unkn = np.where(meas_rates == 0)
+    print(id_meas)
+    print(id_unkn)
 
     stoic_meas = stoic_matrix[:, id_meas]
     stoic_meas = np.array([row[0] for row in stoic_meas])
@@ -118,7 +120,8 @@ def _compute_robust_fluxes(stoic_matrix: np.ndarray, meas_rates: np.ndarray, mea
     # Initialize final fluxes
     v_mean = np.zeros(np.size(meas_rates))
     v_std = np.zeros(np.size(meas_rates))
-
+    print(meas_rates_std)
+    print(meas_rates_std[id_meas])
     # Compute estimate Rred
     Dm = np.diag(meas_rates_std[id_meas] ** 2)
     Rred = np.subtract(stoic_meas, np.matmul(np.matmul(stoic_unkn, np.linalg.pinv(stoic_unkn)), stoic_meas))

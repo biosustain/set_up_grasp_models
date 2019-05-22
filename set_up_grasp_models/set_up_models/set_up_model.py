@@ -6,14 +6,15 @@ from ..io.plaintext import import_model_from_plaintext
 
 def get_stoic(file_in: str) -> tuple:
     """
-    From a text file with the reactions in the model, set up a dataframe with the transposed stoichiometry matrix.
+    From a text file with the reactions in the model, set up a dataframe with the transposed stoichiometric matrix.
 
     Args:
-        file_in: file path to
+        file_in (str): path to plain text file with the model reactions.
 
     Returns:
-        tuple:  pandas dataframe with tranposed stoichiometry matrix, list with metabolites order,
-                list with reactions order.
+        stoic_df (pd.Dataframe): pandas dataframe with tranposed stoichiometric matrix.
+        mets_order (list): list with metabolites order.
+        rxns_order (list): list with reactions order.
     """
 
     model = import_model_from_plaintext(file_in)
@@ -22,7 +23,7 @@ def get_stoic(file_in: str) -> tuple:
 
     stoic_df = pd.DataFrame(model.stoichiometric_matrix(), columns=rxns_order, index=mets_order)
     stoic_df = stoic_df.transpose()
-    print(stoic_df)
+    stoic_df.index.name = 'rxn ID'
 
     return stoic_df, mets_order, rxns_order
 
@@ -39,9 +40,11 @@ def update_stoic(stoic_df: pd.DataFrame, ex_rxns: list, ex_mets: list, non_ex_me
         non_ex_mets_order: list with the order of non-external metabolites
 
     Returns:
-        tuple: pandas dataframe with tranposed stoichiometry matrix, list with metabolites order,
-                list with reactions order, list with exchange reactions to remove,
-                list with external metabolites to remove.
+        stoic_df (pd.Dataframe): pandas dataframe with tranposed stoichiometric matrix
+        mets_order (list): list with metabolites order.
+        rxns_order (list): list with reactions order.
+        ex_rxns_to_remove (list): list with exchange reactions to remove.
+        ex_mets_to_remove (list): list with external metabolites to remove
     """
 
     all_ex_rxns = set(stoic_df.filter(regex='EX_', axis=0).index.values)
@@ -55,8 +58,7 @@ def update_stoic(stoic_df: pd.DataFrame, ex_rxns: list, ex_mets: list, non_ex_me
     if non_ex_mets_order:
         non_ex_mets_order.extend(ex_mets)
         stoic_df = stoic_df.reindex(columns=non_ex_mets_order)
-    stoic_df.index.name = 'rxn ID'
-    print(stoic_df)
+
     mets_order = stoic_df.columns.values
     rxns_order = stoic_df.index.values
 
@@ -65,77 +67,132 @@ def update_stoic(stoic_df: pd.DataFrame, ex_rxns: list, ex_mets: list, non_ex_me
 
 def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file_out: str,
                  file_in_met_ranges=None, file_in_prot_ranges=None, file_in_ex_fluxes=None, file_in_kinetics=None):
+    """
+    Sets up the excel input model file template. A base excel file must be given. This file must contain at least
+    the general sheet, for that one can use the file 'GRASP_general.xlsx' in base_files. In this case an excel
+    file with all fields to be filled is generated.
+
+    If a base excel file with some of the sheets already filled or partially filled is available then  whatever fields
+    are already filled will be copied to the output model file.
+
+    Args:
+        model_name (str): name for the model.
+        file_in_stoic (str): path to plain text file with reactions in the model.
+        base_excel_file (str): path to the excel file to be used as a base.
+        file_out (str): path to the output file.
+        file_in_met_ranges:
+        file_in_prot_ranges:
+        file_in_ex_fluxes:
+        file_in_kinetics:
+
+    Returns:
+        None
+    """
 
     writer = pd.ExcelWriter(file_out, engine='xlsxwriter')
 
-    # set up general
-    general_df = pd.read_excel(base_excel_file, index_col=0, header=0, sheet_name='general')
-    print(general_df)
-    general_df.iloc[0, 0] = model_name
-    print(general_df)
-    general_df.to_excel(writer, sheet_name='general')
+    base_df = pd.read_excel(base_excel_file, index_col=0, header=0, sheet_name=None)
 
+    # set up general
+    try:
+        general_df = base_df['general']
+    except KeyError:
+        raise KeyError(f'The base excel file {base_excel_file} must contain a sheet named \'general\'')
+    general_df.iloc[0, 0] = model_name
+    general_df.to_excel(writer, sheet_name='general')
 
     # set up stoic
     stoic_df, mets_order, rxns_order = get_stoic(file_in_stoic)
     stoic_df.to_excel(writer, sheet_name='stoic')
 
-
-    # write mets
+    # set up mets
     columns = ['Metabolite name', 'balanced?', 'active?', 'fixed?']
     mets_df = pd.DataFrame(index=mets_order, columns=columns, data=np.zeros([len(mets_order), len(columns)]))
     mets_df.index.name = 'ID'
+    if 'mets' in base_df.keys():
+        index_intersection = set(base_df['mets'].index.values).intersection(mets_df.index.values)
+        mets_df.loc[index_intersection, :] = base_df['mets'].loc[index_intersection, :]
     mets_df.to_excel(writer, sheet_name='mets')
 
     # set up rxns
     columns = ['reaction name', 'transportRxn?', 'modelled?', 'isoenzymes']
     rxns_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
     rxns_df.index.name = 'ID'
+    if 'rxns' in base_df.keys():
+        index_intersection = set(base_df['rxns'].index.values).intersection(rxns_df.index.values)
+        rxns_df.loc[index_intersection, :] = base_df['rxns'].loc[index_intersection, :]
     rxns_df.to_excel(writer, sheet_name='rxns')
 
     # set up splitRatios
     split_ratios_df = pd.DataFrame(index=rxns_order)
     split_ratios_df.index.name = 'ID'
+    if 'splitRatios' in base_df.keys():
+        index_intersection = set(base_df['splitRatios'].index.values).intersection(split_ratios_df.index.values)
+        split_ratios_df.loc[index_intersection, :] = base_df['splitRatios'].loc[index_intersection, :]
     split_ratios_df.to_excel(writer, sheet_name='splitRatios')
 
     # set up poolConst
     pool_const_df = pd.DataFrame(index=mets_order)
     pool_const_df.index.name = 'met'
+    if 'poolConst' in base_df.keys():
+        index_intersection = set(base_df['poolConst'].index.values).intersection(pool_const_df.index.values)
+        pool_const_df.loc[index_intersection, :] = base_df['poolConst'].loc[index_intersection, :]
     pool_const_df.to_excel(writer, sheet_name='poolConst')
 
     # set up thermo_ineq_constraints
     thermo_ineq_constraints_df = pd.DataFrame(index=mets_order)
     thermo_ineq_constraints_df.index.name = 'met'
+    if 'thermo_ineq_constraints' in base_df.keys():
+        index_intersection = set(base_df['thermo_ineq_constraints'].index.values).intersection(
+            thermo_ineq_constraints_df.index.values)
+        thermo_ineq_constraints_df.loc[index_intersection, :] = base_df['thermo_ineq_constraints'].loc[index_intersection, :]
     thermo_ineq_constraints_df.to_excel(writer, sheet_name='thermo_ineq_constraints')
 
     # set up thermoRxns
     columns = ['∆Gr\'_min (kJ/mol)', '∆Gr\'_max (kJ/mol)']
     thermo_rxns_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
     thermo_rxns_df.index.name = 'rxn'
+    if 'thermoRxns' in base_df.keys():
+        index_intersection = set(base_df['thermoRxns'].index.values).intersection(thermo_rxns_df.index.values)
+        thermo_rxns_df.loc[index_intersection, :] = base_df['thermoRxns'].loc[index_intersection, :]
     thermo_rxns_df.to_excel(writer, sheet_name='thermoRxns')
 
     # set up thermoMets
     columns = ['min (M)', 'max (M)']
     thermo_mets_df = pd.DataFrame(index=mets_order, columns=columns, data=np.zeros([len(mets_order), len(columns)]))
     thermo_mets_df.index.name = 'met'
+    if 'thermoMets' in base_df.keys():
+        index_intersection = set(base_df['thermoMets'].index.values).intersection(thermo_mets_df.index.values)
+        thermo_mets_df.loc[index_intersection, :] = base_df['thermoMets'].loc[index_intersection, :]
     thermo_mets_df.to_excel(writer, sheet_name='thermoMets')
 
     # set up measRates
     columns = ['MBo10_mean', 'MBo10_std', 'MBo10_mean2', 'MBo10_std2']
     meas_rates_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
     meas_rates_df.index.name = 'Fluxes (umol/gdcw/h)'
+    if 'measRates' in base_df.keys():
+        index_intersection = set(base_df['measRates'].index.values).intersection(meas_rates_df.index.values)
+        meas_rates_df.loc[index_intersection, :] = base_df['measRates'].loc[index_intersection, :]
     meas_rates_df.to_excel(writer, sheet_name='measRates')
 
     # set up protData
     columns = ['MBo10_LB2', 'MBo10_meas2', 'MBo10_UB2']
-    prot_data_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
+    prot_data_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.tile(np.array([0.99, 1.00, 1.01]),
+                                                                                (len(rxns_order), 1)))
     prot_data_df.index.name = 'enzyme/rxn'
+    if 'protData' in base_df.keys():
+        index_intersection = set(base_df['protData'].index.values).intersection(prot_data_df.index.values)
+        prot_data_df.loc[index_intersection, :] = base_df['protData'].loc[index_intersection, :]
     prot_data_df.to_excel(writer, sheet_name='protData')
 
     # set up metsData
     columns = ['MBo10_LB2', 'MBo10_meas2', 'MBo10_UB2']
-    mets_data_df = pd.DataFrame(index=mets_order, columns=columns, data=np.zeros([len(mets_order), len(columns)]))
+    mets_data_df = pd.DataFrame(index=mets_order, columns=columns, data=np.tile(np.array([0.99, 1.00, 1.01]),
+                                                                                (len(mets_order), 1)))
     mets_data_df.index.name = 'met'
+    if 'metsData' in base_df.keys():
+        index_intersection = set(base_df['metsData'].index.values).intersection(mets_data_df.index.values)
+        mets_data_df.loc[index_intersection, :] = base_df['metsData'].loc[index_intersection, :]
     mets_data_df.to_excel(writer, sheet_name='metsData')
 
     # set up kinetics1
@@ -147,60 +204,9 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
                'comments']
     kinetics_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
     kinetics_df.index.name = 'reaction ID'
+    if 'kinetics1' in base_df.keys():
+        index_intersection = set(base_df['kinetics1'].index.values).intersection(kinetics_df.index.values)
+        kinetics_df.loc[index_intersection, :] = base_df['kinetics1'].loc[index_intersection, :]
     kinetics_df.to_excel(writer, sheet_name='kinetics1')
 
     writer.save()
-
-
-
-""""
-
-def prepare_set_up_models(strain, time_point, replicate):
-
-    file_in_base_model ='/home/mrama/Dropbox/Postdoc/HMP/HMP_base_python2.xlsx'
-    file_in_stoich = '/home/mrama/Dropbox/Postdoc/HMP/HMP_stoich.txt'
-
-    model_id = ''.join([strain, '_r', str(replicate), '_t', str(time_point)])
-    file_in_met_ranges = ''.join(['/home/mrama/Dropbox/Postdoc/HMP/metabolomics/met_ranges_', model_id, '.csv'])
-    file_in_prot_ranges = '/home/mrama/Dropbox/Postdoc/HMP/proteomics/technical_reproducibility/EXP_17_DL5596_Technical_reproducibility_normalized_results_std_all.csv'
-    file_in_ex_fluxes = ''.join(['/home/mrama/Dropbox/Postdoc/HMP/metabolomics/ex_fluxes_', strain, '.csv'])
-    file_out = ''.join(['/home/mrama/GRASP_test/GRASP/input_HMP_quadratic_splines/', model_id, '.xlsx'])
-
-    # get constant dataframes
-
-    general_df = pd.read_excel(file_in_base_model, sheet_name='general', index_col=0)
-    general_df.iloc[0, 0] = model_id + '_promiscuous'
-
-    map_met_abbreviation = {'accoa': 'accoa_c', 'coa': 'coa_c', 'tryptophan': 'trp_c', '5-htp': 'fivehtp_c', 'serotonin': 'srtn_c',
-                                'acetylserotonin': 'nactsertn_c', 'melatonin': 'meltn_c', 'tryptamine': 'tryptm_c',
-                                'acetyltryptamine': 'nactryptm_c', 'melatonin_e': 'meltn_e', 'serotonin_e': 'srtn_e',
-                                'acetylserotonin_e': 'nactsertn_e', 'tryptamine_e': 'tryptm_e',
-                                'acetyltryptamine_e': 'nactryptm_e', 'tryptophan_e': 'trp_e', '5-htp_e': 'fivehtp_e',
-                                'sam': 'sam_c', 'sah': 'sah_c'}
-
-    map_prot_abbreviation = {'hsTpH': 'TPH', 'ckDDC': 'DDC', 'sgAANAT': 'AANAT', 'hsASMT': 'ASMT'}
-
-    non_ex_mets_order = ['accoa_c', 'sam_c', 'pterin1_c',  'trp_v', 'fivehtp_c', 'trp_c',  'srtn_c', 'nactsertn_c', 'meltn_c',
-                         'tryptm_c', 'nactryptm_c', 'coa_c', 'sah_c', 'pterin2_c']
-    #non_ex_mets_order = None
-
-    set_up_model(file_in_base_model, file_in_stoich, file_in_met_ranges, file_in_prot_ranges, file_in_ex_fluxes, file_out,
-                 general_df, map_met_abbreviation, map_prot_abbreviation, non_ex_mets_order, time_point, replicate)
-
-
-def generate_models():
-
-    strain_list = ['HMP1489', 'HMP2360']
-    replicate_list = [0, 1]
-    time_poins_list = range(4)
-
-    for strain in strain_list:
-        for replicate in replicate_list:
-            for time_point in time_poins_list:
-                prepare_set_up_models(strain, time_point, replicate)
-
-
-if __name__ == '__main__':
-    generate_models()
-    
-"""
