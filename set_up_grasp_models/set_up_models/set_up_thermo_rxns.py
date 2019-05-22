@@ -4,8 +4,9 @@ format "R_FBA: m_g3p_c + m_dhap_c <-> m_fdp_c". BiGG IDs must be used for metabo
 """
 
 import re
+import os
 from math import isnan
-
+import numpy as np
 import pandas as pd
 from equilibrator_api import ComponentContribution, Reaction
 
@@ -71,7 +72,7 @@ def _convert_rxn_str_to_kegg_ids(rxn_list: list, mets_kegg_dic: dict, mets_witho
 
     rxn_dict = {}
     for rxn_str in rxn_list:
-        if rxn_str.find('R_EX_') == -1:
+        if not rxn_str.startswith('R_EX_'):
             try:
                 rxn_id = re.findall('(R_\S+):', rxn_str)[0]
             except IndexError:
@@ -100,6 +101,7 @@ def convert_rxns_to_kegg(rxn_list: list, map_bigg_to_kegg_ids: pd.DataFrame) -> 
     Given a plain text file with a list of reactions in the form: R_FBA: m_g3p_c + m_dhap_c <-> m_fdp_c, where
     metabolite ids are bigg ids, it converts the metabolite IDs to KEEG ids: R_FBA: C00118 + C00111 = C00354.
     To do the conversion it uses a dataframe with BiGG IDs on the index and respective KEEG ids on the column "id_kegg".
+    It skips exchange reactions, which should start with 'R_EX_'.
 
     Args:
         file_rxns (str): path to file with plain text reactions.
@@ -124,6 +126,7 @@ def get_dGs(rxn_list: list, file_bigg_kegg_ids: str, pH: float = 7.0, ionic_stre
     """
     Given a plain text file with reactions in the form R_FBA: m_g3p_c + m_dhap_c <-> m_fdp_c and a file with a
     mapping between bigg and kegg ids, returns the standard gibbs energy and respective uncertainty for each reaction.
+    It skips exchange reactions, which should start with 'R_EX_'.
 
     Args:
         file_rxns (str): path to file with plain text reactions.
@@ -154,4 +157,48 @@ def get_dGs(rxn_list: list, file_bigg_kegg_ids: str, pH: float = 7.0, ionic_stre
     return rxn_dG_dict
 
 
+def _set_up_model_thermo_rxns(base_df: dict, rxns_order: list, rxn_list: list, use_equilibrator:bool,
+                              file_bigg_kegg_ids: str, pH: float, ionic_strength: float) -> pd.DataFrame:
+    """
+    Fills in the thermoRxns sheet on the excel GRASP input file.
+    First it copies any values that may be defined in base_df, and then if use_equilibrator is set to True, it gets
+    all standard Gibbs energies from eQuilibrator.
 
+    Args:
+        base_df (dict): dictionary with base excel input file.
+        rxns_order (list): list with reaction IDs.
+        rxn_list (list): list with reaction strings.
+        use_equilibrator (bool): flag determining whether or not to get the standard Gibbs energies from eQuilibrator.
+        pH (float): pH value to use to get the standard Gibbs energies from eQuilibrator.
+        ionic_strength (float): ionic strength value to use to get the standard Gibbs energies from eQuilibrator.
+        file_bigg_kegg_ids (str): path to the file containing the metabolites mapping from BiGG to KEGG ids,
+
+    Returns:
+        thermo_rxns_df (pd.Dataframe): thermoRxns dataframe for the output excel file.
+    """
+
+    columns = ['∆Gr\'_min (kJ/mol)', '∆Gr\'_max (kJ/mol)']
+    thermo_rxns_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
+    thermo_rxns_df.index.name = 'rxn'
+
+    if 'thermoRxns' in base_df.keys():
+        index_intersection = set(base_df['thermoRxns'].index.values).intersection(thermo_rxns_df.index.values)
+        thermo_rxns_df.loc[index_intersection, :] = base_df['thermoRxns'].loc[index_intersection, :]
+
+    if use_equilibrator:
+        if file_bigg_kegg_ids and not os.path.isfile(file_bigg_kegg_ids):
+            raise FileNotFoundError(f'Didn\'t find {file_bigg_kegg_ids}. Please provide a valid ' +
+                                    'path to the file with metabolite mappings from BiGG to KEGG ids.')
+
+        elif not file_bigg_kegg_ids:
+            file_bigg_kegg_ids = os.path.join('..', '..', 'data', 'map_bigg_to_kegg_ids.csv')
+            if not os.path.isfile(file_bigg_kegg_ids):
+                raise FileNotFoundError(f'Didn\'t find map_bigg_to_kegg_ids.csv in the data folder. Please provide ' +
+                                        'the path to the file with metabolite mappings from BiGG to KEGG ids.')
+
+        rxn_dG_dict = get_dGs(rxn_list, file_bigg_kegg_ids, pH=pH, ionic_strength=ionic_strength, digits=2)
+        rxn_dG_df = pd.DataFrame().from_dict(rxn_dG_dict, orient='index')
+        rxn_dG_df.columns = columns
+        thermo_rxns_df.loc[rxn_dG_df.index.values, :] = rxn_dG_df.loc[rxn_dG_df.index.values, :]
+
+    return thermo_rxns_df
