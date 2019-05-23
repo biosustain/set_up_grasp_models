@@ -4626,7 +4626,7 @@ r15bp,MNXM722739,"D-Ribose 1,5-bisphosphate",C01151,"D-Ribose 1,5-bisphosphate|R
 r1p,MNXM295,Alpha-D-Ribose 1-phosphate,C00620,D-Ribose 1-phosphate|Ribose 1-phosphate|alpha-D-Ribose 1-phosphate
 r3mmal,MNXM2512,D-erythro-3-Methylmalate,C06032,"(2R,3S)-3-Methylmalate|D-erythro-3-Methylmalate"
 r5hbzi,MNXM7578,N1-(alpha-D-ribosyl)-5-hydroxybenzimidazole,,
-r5p,MNXM15900,Alpha-D-Ribose 5-phosphate,C03736,alpha-D-Ribose 5-phosphate
+r5p,MNXM15900,Alpha-D-Ribose 5-phosphate,C00117,alpha-D-Ribose 5-phosphate
 raffin,MNXM621,Raffinose,C00492,6G-alpha-D-galactosylsucrose|Gossypose|Melitose|Melitriose|Raffinose
 ragund,MNXM80754,Rhamanosyl-N-acetylglucosamyl-undecaprenyl diphosphate,,
 rb15bp,MNXM1276,"D-Ribulose 1,5-bisphosphate",C01182,"D-Ribulose 1,5-bisphosphate"
