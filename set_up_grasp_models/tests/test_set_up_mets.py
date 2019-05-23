@@ -10,7 +10,7 @@ class TestSetUpMets(unittest.TestCase):
     def setUp(self):
         self.test_folder = os.path.join('test_files', 'test_set_up_models', 'set_up_mets')
         self.file_in_met_conc = os.path.join(self.test_folder, 'met_concs.xlsx')
-        self.base_df = pd.read_excel(os.path.join(self.test_folder, 'putida_v1_manual2_EX.xlsx'), sheet_name=None)
+        self.base_df = pd.read_excel(os.path.join(self.test_folder, 'model_v1_manual2_EX.xlsx'), sheet_name=None)
 
     def test_get_mets_conc(self):
         true_res = pd.read_pickle(os.path.join(self.test_folder, 'true_res_met_conc.pkl'))

@@ -146,7 +146,7 @@ class TestMassBalanceChecks(unittest.TestCase):
                 'm_nadp_c is marked as not balanced but it seems to be balanced.\n' +
                 'm_co2_c is marked as balanced but it does not seem to be balanced.\n')
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'putida_v1_base.xlsx'), sheet_name=None)
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base.xlsx'), sheet_name=None)
         flag = check_balanced_metabolites(data_dict)
 
         self.assertEqual(True, flag)
@@ -164,7 +164,7 @@ class TestMassBalanceChecks(unittest.TestCase):
                     'The flux for m_f6p_c is not balanced. The difference in flux is 50\n' +
                     'The flux for m_3pg_c is not balanced. The difference in flux is 750\n')
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'putida_v1_base.xlsx'), sheet_name=None)
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base.xlsx'), sheet_name=None)
         flag = check_flux_balance(data_dict)
 
         self.assertEqual(True, flag)
@@ -175,7 +175,7 @@ class TestMassBalanceChecks(unittest.TestCase):
         true_res = ('\nChecking if the fluxes for each metabolite production/consumptions add up to zero.\n\n'+
                     'Everything seems to be OK.\n')
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'putida_v1_base_fixed.xlsx'), sheet_name=None)
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base_fixed.xlsx'), sheet_name=None)
         flag = check_flux_balance(data_dict)
 
         self.assertEqual(False, flag)
@@ -186,7 +186,7 @@ class TestMassBalanceChecks(unittest.TestCase):
         true_res = ('\nChecking if the fluxes for each metabolite production/consumptions add up to zero.\n\n' +
                     'Not all fluxes are specified in measRates.\n\n')
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'putida_v1_base_incomplete_fluxes.xlsx'),
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base_incomplete_fluxes.xlsx'),
                                   sheet_name=None)
         flag = check_flux_balance(data_dict)
 
@@ -213,7 +213,7 @@ class TestThermodynamicsChecks(unittest.TestCase):
                     'The flux and ∆G range seem to be incompatible for reaction R_EX_pyr\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_EX_pep\n')
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'putida_v1_base.xlsx'), sheet_name=None)
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base.xlsx'), sheet_name=None)
         flag, dG_df, flux_df = check_thermodynamic_feasibility(data_dict)
 
         self.assertEqual(True, flag)
