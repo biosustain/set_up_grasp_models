@@ -3,7 +3,8 @@ import pandas as pd
 import os
 
 from set_up_grasp_models.io.plaintext import import_model_from_plaintext
-from set_up_grasp_models.set_up_models.set_up_thermo_rxns import get_dGs, _set_up_model_thermo_rxns
+from set_up_grasp_models.set_up_models.set_up_thermo_rxns import _set_up_model_thermo_rxns
+from set_up_grasp_models.set_up_models.set_up_mets import _get_mets_conc, _set_up_thermo_mets, _set_up_mets_data
 
 
 def get_stoic(file_in: str) -> tuple:
@@ -71,7 +72,7 @@ def update_stoic(stoic_df: pd.DataFrame, ex_rxns: list, ex_mets: list, non_ex_me
 
 def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file_out: str,
                  use_equilibrator: bool = False, pH: float = 7.0, ionic_strength: float = 0.1,
-                 file_bigg_kegg_ids: str = None, file_in_met_ranges=None, file_in_prot_ranges=None,
+                 file_bigg_kegg_ids: str = None, file_in_mets_conc: str = None, file_in_prot_ranges=None,
                  file_in_ex_fluxes=None):
     """
     Sets up the excel input model file template. A base excel file must be given. This file must contain at least
@@ -115,6 +116,8 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
     # set up stoic
     stoic_df, rxn_list, mets_order, rxns_order = get_stoic(file_in_stoic)
     stoic_df.to_excel(writer, sheet_name='stoic')
+
+    mets_conc_df = _get_mets_conc(file_in_mets_conc, mets_order) if file_in_mets_conc else None
 
     # set up mets
     columns = ['Metabolite name', 'balanced?', 'active?', 'fixed?']
@@ -165,12 +168,7 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
     thermo_rxns_df.to_excel(writer, sheet_name='thermoRxns')
 
     # set up thermoMets
-    columns = ['min (M)', 'max (M)']
-    thermo_mets_df = pd.DataFrame(index=mets_order, columns=columns, data=np.zeros([len(mets_order), len(columns)]))
-    thermo_mets_df.index.name = 'met'
-    if 'thermoMets' in base_df.keys():
-        index_intersection = set(base_df['thermoMets'].index.values).intersection(thermo_mets_df.index.values)
-        thermo_mets_df.loc[index_intersection, :] = base_df['thermoMets'].loc[index_intersection, :]
+    thermo_mets_df = _set_up_thermo_mets(base_df, mets_order, mets_conc_df)
     thermo_mets_df.to_excel(writer, sheet_name='thermoMets')
 
     # set up measRates
@@ -193,13 +191,7 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
     prot_data_df.to_excel(writer, sheet_name='protData')
 
     # set up metsData
-    columns = ['MBo10_LB2', 'MBo10_meas2', 'MBo10_UB2']
-    mets_data_df = pd.DataFrame(index=mets_order, columns=columns, data=np.tile(np.array([0.99, 1.00, 1.01]),
-                                                                                (len(mets_order), 1)))
-    mets_data_df.index.name = 'met'
-    if 'metsData' in base_df.keys():
-        index_intersection = set(base_df['metsData'].index.values).intersection(mets_data_df.index.values)
-        mets_data_df.loc[index_intersection, :] = base_df['metsData'].loc[index_intersection, :]
+    mets_data_df = _set_up_mets_data(base_df, mets_order, mets_conc_df)
     mets_data_df.to_excel(writer, sheet_name='metsData')
 
     # set up kinetics1

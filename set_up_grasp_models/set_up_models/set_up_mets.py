@@ -1,6 +1,7 @@
 #from src.set_up_models.misc import get_stoic
 import numpy as np
 import pandas as pd
+import re
 
 
 def set_up_mets(file_in_base_model, mets_order, ex_mets_to_remove):
@@ -86,7 +87,115 @@ def set_up_mets_data(mets_order, file_in_met_ranges, map_met_abbreviation, met_l
 
         return None
 
+    return mets_data_df
+
+
+def _set_up_mets_data(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Given the base excel input file, the list of metabolites in the model and a dataframe with metabolite
+    concentrations averages and respective stdev, fills in the metsData sheet.
+    Default values for metsData are [0.99, 1.00, 1.01].
+
+    Args:
+        base_df (dict): dict representing the base input excel file.
+        mets_list (list): list of metabolites in the model.
+        mets_conc_df (pd.Dataframe): dataframe with metabolite concentrations averages and respective stdev. Must have
+                                     a column named 'average' and another named 'stdev'.
+
+    Returns:
+        mets_data_df (pd.Dataframe): metsData dataframe.
+    """
+
+    columns = ['MBo10_LB2', 'MBo10_meas2', 'MBo10_UB2']
+    mets_data_df = pd.DataFrame(index=mets_list, columns=columns, data=np.tile(np.array([0.99, 1.00, 1.01]),
+                                                                               (len(mets_list), 1)))
+    mets_data_df.index.name = 'met'
+    if 'metsData' in base_df.keys():
+        index_intersection = set(base_df['metsData'].index.values).intersection(mets_data_df.index.values)
+        mets_data_df.loc[index_intersection, :] = base_df['metsData'].loc[index_intersection, :]
+
+    if mets_conc_df is not None:
+        mets_conc_df['lb'] = (mets_conc_df['average'] - mets_conc_df['stdev']) / mets_conc_df['average']
+        mets_conc_df['ub'] = (mets_conc_df['average'] + mets_conc_df['stdev']) / mets_conc_df['average']
+        mets_conc_df = mets_conc_df.dropna()
+
+        mets_data_df.loc[mets_conc_df.index.values, 'MBo10_LB2'] = mets_conc_df.loc[mets_conc_df.index.values, 'lb']
+        mets_data_df.loc[mets_conc_df.index.values, 'MBo10_UB2'] = mets_conc_df.loc[mets_conc_df.index.values, 'ub']
 
     return mets_data_df
 
 
+def _set_up_thermo_mets(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Given the base excel input file, the list of metabolites in the model and a dataframe with metabolite
+    concentrations averages and respective stdev, fills in the thermoMets sheet.
+    Default values for thermoMets are [10^-12, 10^-1] M.
+
+    Args:
+        base_df (dict): dict representing the base input excel file.
+        mets_list (list): list of metabolites in the model.
+        mets_conc_df (pd.Dataframe): dataframe with metabolite concentrations averages and respective stdev. Must have
+                                     a column named 'average' and another named 'stdev'.
+
+    Returns:
+        thermo_mets_df (pd.Dataframe): thermoMets dataframe.
+    """
+
+    columns = ['min (M)', 'max (M)']
+    thermo_mets_df = pd.DataFrame(index=mets_list, columns=columns, data=np.tile(np.array([10**-12, 10**-1]),
+                                                                                 (len(mets_list), 1)))
+    thermo_mets_df.index.name = 'met'
+
+    if 'thermoMets' in base_df.keys():
+        index_intersection = set(base_df['thermoMets'].index.values).intersection(thermo_mets_df.index.values)
+        thermo_mets_df.loc[index_intersection, :] = base_df['thermoMets'].loc[index_intersection, :]
+
+    if mets_conc_df is not None:
+
+        mets_conc_df['min'] = mets_conc_df['average'] - mets_conc_df['stdev']
+        mets_conc_df['max'] = mets_conc_df['average'] + mets_conc_df['stdev']
+
+        thermo_mets_df.loc[mets_conc_df.index.values, 'min (M)'] = mets_conc_df.loc[mets_conc_df.index.values, 'min']
+        thermo_mets_df.loc[mets_conc_df.index.values, 'max (M)'] = mets_conc_df.loc[mets_conc_df.index.values, 'max']
+
+    return thermo_mets_df
+
+
+def _get_mets_conc(file_in_met_conc: str, mets_list: list, orient: str = 'columns') -> pd.DataFrame:
+    """
+    Given an excel file with the metabolite concentrations and the list of metabolites in the model, it returns
+    a dataframe with only the concentrations of the metabolites in the model: average and respective standard
+    deviation.
+
+    The file must have either:
+     - the metabolite names in the rows and two columns named average and stdev (set orient to 'rows')
+     - the metabolite names in the columns and two rows named average and stdev (set orient to 'columns', the default)
+
+    Args:
+        file_in_met_conc (str): path to file with metabolite concentrations.
+        mets_list (list): list of metabolites in the model.
+        orient (str): whether metabolite names are in columns (default) or in the rows.
+
+    Returns:
+        mets_conc_df (pd.Dataframe): dataframe with metabolite concentrations and respective standard deviation;
+                                        metabolite names on the rows, average and stdev on the columns.
+    """
+
+    mets_conc_df = pd.read_excel(file_in_met_conc, index_col=0, header=0)
+
+    if orient == 'rows':
+        mets_conc_df = mets_conc_df.transpose()
+    writer = pd.ExcelWriter('/home/mrama/Desktop/met_concs_rows.xlsx', engine='xlsxwriter')
+    mets_conc_df.transpose().to_excel(writer)
+    writer.save()
+
+    if 'average' not in mets_conc_df.index.values or 'stdev' not in mets_conc_df.index.values:
+        raise IndexError(f'No rows named average and stdev found in the first sheet of {file_in_met_conc}.')
+
+    mets_list = [re.findall('m?_?(\S+)', met)[0] for met in mets_list]
+    mets_conc_df = mets_conc_df.loc[['average', 'stdev'], mets_conc_df.columns.isin(mets_list)]
+
+    mets_conc_df = mets_conc_df.transpose()
+    mets_conc_df.index = [f'm_{met}' for met in mets_conc_df.index.values]
+
+    return mets_conc_df
