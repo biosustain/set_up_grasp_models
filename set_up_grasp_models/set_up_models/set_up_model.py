@@ -19,7 +19,6 @@ def get_stoic(file_in: str) -> tuple:
         mets_order (list): list with metabolites order.
         rxns_order (list): list with reactions order.
     """
-    print(file_in)
     model = import_model_from_plaintext(file_in)
     rxn_list = model.to_string().split('\n')
     mets_order = list(model.metabolites.keys())
@@ -120,7 +119,6 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
     general_df.to_excel(writer, sheet_name='general')
 
     # set up stoic
-    print(file_in_stoic)
     stoic_df, rxn_list, mets_order, rxns_order = get_stoic(file_in_stoic)
     stoic_df.to_excel(writer, sheet_name='stoic')
 
