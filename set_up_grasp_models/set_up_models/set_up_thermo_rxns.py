@@ -145,9 +145,11 @@ def get_dGs(rxn_list: list, file_bigg_kegg_ids: str, pH: float = 7.0, ionic_stre
 
     rxn_dG_dict = {}
     eq_api = ComponentContribution(pH=pH, ionic_strength=ionic_strength)
+    print(pH, ionic_strength)
 
     for rxn_id in rxn_dict.keys():
         rxn = Reaction.parse_formula(rxn_dict[rxn_id])
+        print(rxn_id, rxn)
         if not rxn.check_full_reaction_balancing():
             print(f'{rxn_id} is not balanced.')
 
@@ -158,7 +160,8 @@ def get_dGs(rxn_list: list, file_bigg_kegg_ids: str, pH: float = 7.0, ionic_stre
 
 
 def _set_up_model_thermo_rxns(base_df: dict, rxns_order: list, rxn_list: list, use_equilibrator:bool,
-                              file_bigg_kegg_ids: str, pH: float, ionic_strength: float) -> pd.DataFrame:
+                              file_bigg_kegg_ids: str = None, pH: float = 7.0, ionic_strength: float = 0.1) \
+        -> pd.DataFrame:
     """
     Fills in the thermoRxns sheet on the excel GRASP input file.
     First it copies any values that may be defined in base_df, and then if use_equilibrator is set to True, it gets
@@ -176,7 +179,8 @@ def _set_up_model_thermo_rxns(base_df: dict, rxns_order: list, rxn_list: list, u
     Returns:
         thermo_rxns_df (pd.Dataframe): thermoRxns dataframe for the output excel file.
     """
-
+    print(rxns_order)
+    print(rxn_list)
     columns = ['∆Gr\'_min (kJ/mol)', '∆Gr\'_max (kJ/mol)']
     thermo_rxns_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
     thermo_rxns_df.index.name = 'rxn'
@@ -199,7 +203,12 @@ def _set_up_model_thermo_rxns(base_df: dict, rxns_order: list, rxn_list: list, u
 
         rxn_dG_dict = get_dGs(rxn_list, file_bigg_kegg_ids, pH=pH, ionic_strength=ionic_strength, digits=2)
         rxn_dG_df = pd.DataFrame().from_dict(rxn_dG_dict, orient='index')
-        rxn_dG_df.columns = columns
-        thermo_rxns_df.loc[rxn_dG_df.index.values, :] = rxn_dG_df.loc[rxn_dG_df.index.values, :]
+        rxn_dG_df.columns = ['average', 'stdev']
 
+        rxn_dG_df['min'] = rxn_dG_df['average'] - rxn_dG_df['stdev']
+        rxn_dG_df['max'] = rxn_dG_df['average'] + rxn_dG_df['stdev']
+        thermo_rxns_df.loc[rxn_dG_df.index.values, '∆Gr\'_min (kJ/mol)'] = rxn_dG_df.loc[rxn_dG_df.index.values, 'min']
+        thermo_rxns_df.loc[rxn_dG_df.index.values, '∆Gr\'_max (kJ/mol)'] = rxn_dG_df.loc[rxn_dG_df.index.values, 'max']
+
+        print(rxn_dG_df)
     return thermo_rxns_df

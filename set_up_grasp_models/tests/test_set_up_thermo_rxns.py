@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pandas as pd
 
 from set_up_grasp_models.set_up_models.set_up_thermo_rxns import convert_rxns_to_kegg, get_dGs, _parse_rxns, \
-    _convert_met_ids_to_kegg, _convert_rxn_str_to_kegg_ids
+    _convert_met_ids_to_kegg, _convert_rxn_str_to_kegg_ids, _set_up_model_thermo_rxns
 
 
 class TestSetUpThermoRxns(unittest.TestCase):
@@ -13,6 +13,7 @@ class TestSetUpThermoRxns(unittest.TestCase):
     def setUp(self):
         self.test_folder = os.path.join('test_files', 'test_set_up_models', 'set_up_thermo_rxns',)
         self.file_bigg_kegg_ids = os.path.join(self.test_folder, 'map_bigg_to_kegg_ids.csv')
+        self.base_df = pd.read_excel(os.path.join(self.test_folder, 'model_v1_manual2_EX.xlsx'), sheet_name=None)
         self.rxn_list = ['R_GLCtex: m_glc__D_e <-> m_glc__D_p',
                          'R_GLCabcpp: m_glc__D_p + m_atp_c + m_h2o_c <-> m_glc__D_c + m_adp_c + m_pi_c',
                          'R_GLK: m_glc__D_c + m_atp_c <-> m_adp_c + m_g6p_c', 'R_GLCNtex: m_glcn_e <-> m_glcn_p',
@@ -175,3 +176,51 @@ class TestSetUpThermoRxns(unittest.TestCase):
             rxn_dG_dict = get_dGs(self.rxn_list, self.file_bigg_kegg_ids, pH=7.0, ionic_strength=0.1, digits=2)
 
         self.assertDictEqual(true_res, rxn_dG_dict)
+
+    def test_set_up_thermo_rxns(self):
+        true_res = pd.read_pickle(os.path.join(self.test_folder, 'true_res_thermo_rxns.pkl'))
+
+        rxns_order = ['R_GLCtex', 'R_GLCabcpp', 'R_GLK', 'R_GLCNt2rpp', 'R_GNK', 'R_2DHGLCNkt_tpp', 'R_2DHGLCK',
+                      'R_PGLCNDH_NAD', 'R_PGLCNDH_NADP', 'R_GLCDpp', 'R_GAD2ktpp', 'R_G6PDH2', 'R_G6PDH2_NAD',
+                      'R_G6PDH2_NADP', 'R_PGL', 'R_GND_NAD', 'R_GND_NADP', 'R_RPI', 'R_RPE', 'R_TKT1', 'R_TKT2',
+                      'R_TALA', 'R_EDD', 'R_EDA', 'R_PGI', 'R_FBP', 'R_FBA', 'R_TPI', 'R_GAPD', 'R_PGK', 'R_PGM',
+                      'R_ENO', 'R_PYK', 'R_GTHPi', 'R_GTHOr', 'R_AXPr', 'R_NADHr', 'R_NADPHr', 'R_EX_pyr', 'R_EX_pep',
+                      'R_EX_h2o2', 'R_EX_g6p', 'R_EX_6pgc', 'R_EX_r5p', 'R_EX_xu5p__D', 'R_EX_g3p', 'R_EX_e4p',
+                      'R_EX_f6p', 'R_EX_3pg']
+        rxn_list = ['R_GLCtex: m_glc__D_e <-> m_glc__D_p',
+                    'R_GLCabcpp: m_glc__D_p + m_atp_c <-> m_glc__D_c + m_adp_c + m_pi_c',
+                    'R_GLK: m_glc__D_c + m_atp_c <-> m_adp_c + m_g6p_c', 'R_GLCNt2rpp: m_glcn_p <-> m_glcn_c',
+                    'R_GNK: m_atp_c + m_glcn_c <-> m_adp_c + m_6pgc_c', 'R_2DHGLCNkt_tpp: m_2dhglcn_p <-> m_2dhglcn_c',
+                    'R_2DHGLCK: m_atp_c + m_2dhglcn_c <-> m_adp_c + m_6p2dhglcn_c',
+                    'R_PGLCNDH_NAD: m_6p2dhglcn_c + m_nadh_c <-> m_6pgc_c + m_nad_c',
+                    'R_PGLCNDH_NADP: m_6p2dhglcn_c + m_nadph_c <-> m_6pgc_c + m_nadp_c',
+                    'R_GLCDpp: m_glc__D_p + m_q8_c <-> m_glcn_p + m_q8h2_c',
+                    'R_GAD2ktpp: m_glcn_p + m_q8_c <-> m_q8h2_c + m_2dhglcn_p',
+                    'R_G6PDH2: m_g6p_c + m_nadp_c <-> m_6pgl_c + m_nadph_c',
+                    'R_G6PDH2_NAD: m_g6p_c + m_nad_c <-> m_6pgl_c + m_nadh_c',
+                    'R_G6PDH2_NADP: m_g6p_c + m_nadp_c <-> m_6pgl_c + m_nadph_c', 'R_PGL: m_6pgl_c <-> m_6pgc_c',
+                    'R_GND_NAD: m_nad_c + m_6pgc_c <-> m_nadh_c + m_co2_c + m_ru5p__D_c',
+                    'R_GND_NADP: m_nadp_c + m_6pgc_c <-> m_nadph_c + m_co2_c + m_ru5p__D_c',
+                    'R_RPI: m_ru5p__D_c <-> m_r5p_c', 'R_RPE: m_ru5p__D_c <-> m_xu5p__D_c',
+                    'R_TKT1: m_r5p_c + m_xu5p__D_c <-> m_g3p_c + m_s7p_c',
+                    'R_TKT2: m_xu5p__D_c + m_e4p_c <-> m_f6p_c + m_g3p_c',
+                    'R_TALA: m_g3p_c + m_s7p_c <-> m_e4p_c + m_f6p_c', 'R_EDD: m_6pgc_c <-> m_2ddg6p_c',
+                    'R_EDA: m_2ddg6p_c <-> m_g3p_c + m_pyr_c', 'R_PGI: m_f6p_c <-> m_g6p_c',
+                    'R_FBP: m_fdp_c <-> m_pi_c + m_f6p_c', 'R_FBA: m_g3p_c + m_dhap_c <-> m_fdp_c',
+                    'R_TPI: m_g3p_c <-> m_dhap_c', 'R_GAPD: m_pi_c + m_nad_c + m_g3p_c <-> m_nadh_c + m_13dpg_c',
+                    'R_PGK: m_adp_c + m_13dpg_c <-> m_atp_c + m_3pg_c', 'R_PGM: m_3pg_c <-> m_2pg_c',
+                    'R_ENO: m_2pg_c <-> m_pep_c', 'R_PYK: m_adp_c + m_pep_c <-> m_atp_c + m_pyr_c',
+                    'R_GTHPi: m_h2o2_c + 2.0 m_gthrd_c <-> m_gthox_c + 2.0 m_h2o_c',
+                    'R_GTHOr: m_gthox_c + m_nadph_c <-> 2.0 m_gthrd_c + m_nadp_c',
+                    'R_AXPr: m_atp_c <-> m_adp_c + m_pi_c', 'R_NADHr: m_nadh_c <-> m_nad_c',
+                    'R_NADPHr: m_nadp_c <-> m_nadph_c', 'R_EX_pyr: m_pyr_c <-> m_pyr_e',
+                    'R_EX_pep: m_pep_c <-> m_pep_e', 'R_EX_h2o2: m_h2o2_e <-> m_h2o2_c',
+                    'R_EX_g6p: m_g6p_c <-> m_g6p_e', 'R_EX_6pgc: m_6pgc_e <-> m_6pgc_c',
+                    'R_EX_r5p: m_r5p_c <-> m_r5p_e', 'R_EX_xu5p__D: m_xu5p__D_e <-> m_xu5p__D_c',
+                    'R_EX_g3p: m_g3p_c <-> m_g3p_e', 'R_EX_e4p: m_e4p_c <-> m_e4p_e', 'R_EX_f6p: m_f6p_c <-> m_f6p_e',
+                    'R_EX_3pg: m_3pg_c <-> m_3pg_e']
+
+        with patch('builtins.input', side_effect=['']):
+            res = _set_up_model_thermo_rxns(self.base_df, rxns_order, rxn_list, use_equilibrator=True)
+
+        self.assertTrue(true_res.equals(res))
