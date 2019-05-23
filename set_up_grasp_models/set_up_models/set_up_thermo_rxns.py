@@ -191,7 +191,8 @@ def _set_up_model_thermo_rxns(base_df: dict, rxns_order: list, rxn_list: list, u
                                     'path to the file with metabolite mappings from BiGG to KEGG ids.')
 
         elif not file_bigg_kegg_ids:
-            file_bigg_kegg_ids = os.path.join('..', '..', 'data', 'map_bigg_to_kegg_ids.csv')
+            this_dir, this_filename = os.path.split(__file__)
+            file_bigg_kegg_ids = os.path.join(this_dir, '..', '..', 'data', 'map_bigg_to_kegg_ids.csv')
             if not os.path.isfile(file_bigg_kegg_ids):
                 raise FileNotFoundError(f'Didn\'t find map_bigg_to_kegg_ids.csv in the data folder. Please provide ' +
                                         'the path to the file with metabolite mappings from BiGG to KEGG ids.')
