@@ -1,10 +1,9 @@
 import numpy as np
 import pandas as pd
-import os
 
 from set_up_grasp_models.io.plaintext import import_model_from_plaintext
-from set_up_grasp_models.set_up_models.set_up_thermo_rxns import _set_up_model_thermo_rxns
 from set_up_grasp_models.set_up_models.set_up_mets import _get_mets_conc, _set_up_thermo_mets, _set_up_mets_data
+from set_up_grasp_models.set_up_models.set_up_thermo_rxns import _set_up_model_thermo_rxns
 
 
 def get_stoic(file_in: str) -> tuple:
@@ -20,7 +19,7 @@ def get_stoic(file_in: str) -> tuple:
         mets_order (list): list with metabolites order.
         rxns_order (list): list with reactions order.
     """
-
+    print(file_in)
     model = import_model_from_plaintext(file_in)
     rxn_list = model.to_string().split('\n')
     mets_order = list(model.metabolites.keys())
@@ -72,17 +71,24 @@ def update_stoic(stoic_df: pd.DataFrame, ex_rxns: list, ex_mets: list, non_ex_me
 
 def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file_out: str,
                  use_equilibrator: bool = False, pH: float = 7.0, ionic_strength: float = 0.1,
-                 file_bigg_kegg_ids: str = None, file_in_mets_conc: str = None, file_in_prot_ranges=None,
-                 file_in_ex_fluxes=None):
+                 file_bigg_kegg_ids: str = None, file_in_mets_conc: str = None, mets_orient: str = 'columns',
+                 file_in_prot_ranges: str = None, file_in_meas_fluxes: str = None):
     """
     Sets up the excel input model file template. A base excel file must be given. This file must contain at least
     the general sheet, for that one can use the file 'GRASP_general.xlsx' in base_files. In this case an excel
     file with all fields to be filled is generated.
 
-    If a base excel file with some of the sheets already filled or partially filled is available then  whatever fields
+    If a base excel file with some of the sheets already filled or partially filled is available then whatever fields
     are already filled will be copied to the output model file.
 
     For thermoRxns, if use_equilibrator is set to True, it gets the standard Gibbs energies from eQuilibrator.
+
+    If file_in_mets_conc is specified, it takes the metabolite concentrations from that file to fill in thermoMets
+    and metsData. Metabolite names must have the form metBiggID_compartmentBiggID.
+    The file must have either:
+     - the metabolite names in the rows and two columns named average and stdev (set mets_orient to 'rows')
+     - the metabolite names in the columns and two rows named average and stdev (set mets_orient to 'columns', the default)
+
 
     Args:
         model_name (str): name for the model.
@@ -93,9 +99,9 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
         pH (float): pH value to use to get the standard Gibbs energies from eQuilibrator.
         ionic_strength (float): ionic strength value to use to get the standard Gibbs energies from eQuilibrator.
         file_bigg_kegg_ids (str): path to the file containing the metabolites mapping from BiGG to KEGG ids,
-        file_in_met_ranges:
-        file_in_prot_ranges:
-        file_in_ex_fluxes:
+        file_in_mets_conc (str): path to excel file containing metabolites concentrations.
+        file_in_prot_ranges: path to excel file containing protein concentrations (not in use atm).
+        file_in_meas_fluxes: path to excel file containing measured fluxes (not in use atm).
 
     Returns:
         None
@@ -114,10 +120,11 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
     general_df.to_excel(writer, sheet_name='general')
 
     # set up stoic
+    print(file_in_stoic)
     stoic_df, rxn_list, mets_order, rxns_order = get_stoic(file_in_stoic)
     stoic_df.to_excel(writer, sheet_name='stoic')
 
-    mets_conc_df = _get_mets_conc(file_in_mets_conc, mets_order) if file_in_mets_conc else None
+    mets_conc_df = _get_mets_conc(file_in_mets_conc, mets_order, orient=mets_orient) if file_in_mets_conc else None
 
     # set up mets
     columns = ['Metabolite name', 'balanced?', 'active?', 'fixed?']
@@ -159,7 +166,8 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
     if 'thermo_ineq_constraints' in base_df.keys():
         index_intersection = set(base_df['thermo_ineq_constraints'].index.values).intersection(
             thermo_ineq_constraints_df.index.values)
-        thermo_ineq_constraints_df.loc[index_intersection, :] = base_df['thermo_ineq_constraints'].loc[index_intersection, :]
+        thermo_ineq_constraints_df.loc[index_intersection, :] = base_df['thermo_ineq_constraints'].loc[
+                                                                index_intersection, :]
     thermo_ineq_constraints_df.to_excel(writer, sheet_name='thermo_ineq_constraints')
 
     # set up thermoRxns
