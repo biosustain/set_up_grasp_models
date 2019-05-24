@@ -1,0 +1,6 @@
+E_c + m_h2o2_c <-> E_c&m_h2o2_c
+E_c&m_h2o2_c + m_gthrd_c <-> E_c&m_h2o2_c&m_gthrd_c
+E_c&m_h2o2_c&m_gthrd_c + m_gthrd_c <-> E_c&m_h2o2_c&m_gthrd_c&m_gthrd_c
+E_c&m_h2o2_c&m_gthrd_c&m_gthrd_c <-> E_c&m_gthox_c
+E_c&m_gthox_c <-> E_c + m_gthox_c
+

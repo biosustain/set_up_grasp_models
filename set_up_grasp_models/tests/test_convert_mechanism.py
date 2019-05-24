@@ -1,7 +1,9 @@
 import os
 import unittest
 
-from set_up_grasp_models.set_up_models.convert_mechanisms import convert_er_mech_to_grasp_pattern
+import pandas as pd
+
+from set_up_grasp_models.set_up_models.convert_mechanisms import convert_er_mech_to_grasp_pattern, generate_mechanisms
 
 
 class TestConvertMechanism(unittest.TestCase):
@@ -33,6 +35,23 @@ class TestConvertMechanism(unittest.TestCase):
         file_in = os.path.join(self.test_folder, 'AANATCompInhibIndep_mech_er.txt')
         file_out = os.path.join(self.test_folder, 'AANATCompInhibIndep_mech_grasp.txt')
         inhib_list = ['mltn_c']
+
+        convert_er_mech_to_grasp_pattern(file_in, file_out, promiscuous=True, inhib_list=inhib_list)
+
+        with open(true_res_file, 'r') as f_in:
+            true_res = f_in.read()
+
+        with open(file_out, 'r') as f_in:
+            res = f_in.read()
+
+        self.assertEqual(true_res, res)
+
+    def test_convert_er_mech_to_grasp_pattern_G6PDH2CompInhib(self):
+        true_res_file = os.path.join(self.test_folder, 'true_res_G6PDH2CompInhib.txt')
+
+        file_in = os.path.join(self.test_folder, 'G6PDH2CompInhib_mech_er.txt')
+        file_out = os.path.join(self.test_folder, 'G6PDH2CompInhib_mech_grasp.txt')
+        inhib_list = ['m_nadph_c', 'm_nadh_c']
 
         convert_er_mech_to_grasp_pattern(file_in, file_out, promiscuous=True, inhib_list=inhib_list)
 
@@ -257,3 +276,20 @@ class TestConvertMechanism(unittest.TestCase):
             res = f_in.read()
 
         self.assertEqual(true_res, res)
+
+    def test_generate_mechanisms(self):
+        hard_coded_mechs = {'massAction', 'diffusion', 'fixedExchange', 'freeExchange'}
+
+        file_in_model = os.path.join(self.test_folder, 'model_v2_manual.xlsx')
+        mech_in_dir = os.path.join(self.test_folder, 'mechanisms')
+        pattern_out_dir = os.path.join(self.test_folder, 'patterns')
+
+        generate_mechanisms(file_in_model, mech_in_dir, pattern_out_dir)
+
+        model_df = pd.read_excel(file_in_model, sheet_name='kinetics1')
+        mech_names = model_df['kinetic mechanism'].values
+        mech_names = set(mech_names).difference(hard_coded_mechs)
+
+        for mech in mech_names:
+            print(os.path.join(pattern_out_dir, mech + '.txt'))
+            self.assertTrue(os.path.isfile(os.path.join(pattern_out_dir, mech + '.txt')))

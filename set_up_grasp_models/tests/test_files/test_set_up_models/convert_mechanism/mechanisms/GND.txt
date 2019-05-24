@@ -1,0 +1,11 @@
+E_c + m_6pgc_c <-> E_c&m_6pgc_c
+E_c&m_6pgc_c + m_nad_c <-> E_c&m_6pgc_c&m_nad_c
+E_c&m_6pgc_c&m_nad_c <-> E_c&m_ru5p_D_c&m_m_nadh_c
+E_c&m_ru5p_D_c&m_m_nadh_c <-> E_c&m_ru5p_D_c + m_m_nadh_c
+E_c&m_ru5p_D_c <-> E_c + m_ru5p_D_c
+
+E_c + m_6pgc_c <-> E_c&m_6pgc_c
+E_c&m_6pgc_c + m_nadp_c <-> E_c&m_6pgc_c&m_nadp_c
+E_c&m_6pgc_c&m_nadp_c <-> E_c&m_ru5p_D_c&m_m_nadph_c
+E_c&m_ru5p_D_c&m_m_nadph_c <-> E_c&m_ru5p_D_c + m_m_nadph_c
+E_c&m_ru5p_D_c <-> E_c + m_ru5p_D_c

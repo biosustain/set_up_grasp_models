@@ -3,6 +3,10 @@ The purpose of this module is to convert an enzyme mechanism given in terms of e
 pattern format currently accepted by GRASP.
 """
 
+import os
+
+import pandas as pd
+
 
 def _get_enz_states(er_mech: str) -> list:
     """
@@ -178,3 +182,42 @@ def convert_er_mech_to_grasp_pattern(file_in: str, file_out: str, promiscuous: b
 
     with open(file_out, 'w+') as f_out:
         f_out.write(grasp_pattern)
+
+
+def generate_mechanisms(file_in_model: str, mech_in_dir: str, pattern_out_dir: str,
+                        hard_coded_mechs: list = None):
+    """
+    Given the GRASP input excel file, goes through the mechanisms defined in the kinetics sheet and checks if a .txt
+    file with the same name exists in the pattern_out_dir, if not it checks the mech_in_dir for a .txt file with
+    the mechanism name and converts it to a patter file to be stored in the pattern_out_dir.
+
+    Args:
+        file_in_model (str): path to GRASP input excel file.
+        mech_in_dir: path to folder with the mechanism files in terms of elementary reactions.
+        pattern_out_dir: path to folder with pattern files used by GRASP.
+
+    Returns:
+        None
+    """
+
+    hard_coded_mechs = {'massAction', 'diffusion', 'fixedExchange', 'freeExchange'} if not hard_coded_mechs \
+        else set(hard_coded_mechs)
+
+    kinetics_df = pd.read_excel(file_in_model, sheet_name='kinetics1')
+
+    for ind, mech in enumerate(kinetics_df['kinetic mechanism']):
+
+        if mech not in hard_coded_mechs:
+            if not os.path.isfile(os.path.join(pattern_out_dir, mech + '.txt')):
+
+                file_in = os.path.join(mech_in_dir, mech + '.txt')
+                file_out = os.path.join(pattern_out_dir, mech + '.txt')
+
+                promiscuous = False if type(kinetics_df.loc[ind, 'promiscuous']) is float else True
+
+                inhib_list = None if type(kinetics_df.loc[ind, 'inhibitors']) is float \
+                    else kinetics_df.loc[ind, 'inhibitors'].split()
+                activ_list = None if type(kinetics_df.loc[ind, 'activators']) is float \
+                    else kinetics_df.loc[ind, 'activators'].split()
+
+                convert_er_mech_to_grasp_pattern(file_in, file_out, promiscuous, inhib_list, activ_list)

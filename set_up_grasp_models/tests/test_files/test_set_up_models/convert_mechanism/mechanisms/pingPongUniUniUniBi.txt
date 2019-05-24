@@ -1,0 +1,7 @@
+E_c + m_nadph_c <-> E_c&m_nadph_c
+E_c&m_nadph_c <-> E_mod_c&m_nadp_c
+E_mod_c&m_nadp_c <-> E_mod_c + m_nadp_c
+E_mod_c + m_gthox_c <-> E_mod_c&m_gthox_c
+E_mod_c&m_gthox_c <-> E_c&m_gthrd_c&m_gthrd_c
+E_c&m_gthrd_c&m_gthrd_c <-> E_c&m_gthrd_c + m_gthrd_c
+E_c&m_gthrd_c <-> E_c + m_gthrd_c

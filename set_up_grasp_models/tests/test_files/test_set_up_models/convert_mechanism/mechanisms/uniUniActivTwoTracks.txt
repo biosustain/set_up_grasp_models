@@ -1,0 +1,8 @@
+E_c + m_nadph_c <-> E_c&m_nadph_c
+E_c&m_nadph_c + m_6pgc_c_c <-> E_c&m_nadph_c&m_6pgc_c_c
+E_c&m_nadph_c&m_6pgc_c_c <-> E_c&m_nadph_c&m_2ddg6p_c
+E_c&m_nadph_c&m_2ddg6p_c <-> E_c&m_nadph_c + m_2ddg6p_c
+
+E_c + m_6pgc_c_c <-> E_c&m_6pgc_c_c
+E_c&m_6pgc_c_c <-> E_c&m_2ddg6p_c
+E_c&m_2ddg6p_c <-> E_c + m_2ddg6p_c
