@@ -91,7 +91,9 @@ def check_kinetics_met_separators(data_dict: dict) -> bool:
 
     for key in list(data_dict.keys()):
         if key.startswith('kinetics'):
-            flag = _check_kinetics_column(data_dict[key], 'order')
+            flag = _check_kinetics_column(data_dict[key], 'substrate order')
+            flag_list.append(flag)
+            flag = _check_kinetics_column(data_dict[key], 'product order')
             flag_list.append(flag)
             flag = _check_kinetics_column(data_dict[key], 'promiscuous')
             flag_list.append(flag)

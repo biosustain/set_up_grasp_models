@@ -32,11 +32,17 @@ class TestFormatChecks(unittest.TestCase):
         true_res = ('\nChecking if values are separated by a space in the kinetics sheet in columns order, ' +
                     'promiscuous, inhibitors, activators, negative effector, and positive effector.\nIt looks for ' +
                     'dots, commas, and semi-colons.\n\n' +
-                    'Make sure all metabolites are separated by a single space in column "order" row:\n' +
+                    'Make sure all metabolites are separated by a single space in column "substrate order" row:\n' +
                     ' pterin1_c trp_c, trp_c fivehtp_c pterin2_c\n\n' +
-                    'Make sure all metabolites are separated by a single space in column "order" row:\n' +
+                    'Make sure all metabolites are separated by a single space in column "substrate order" row:\n' +
                     ' sam_c nactsertn_c meltn_c.sah_c\n\n' +
-                    'Make sure all metabolites are separated by a single space in column "order" row:\n' +
+                    'Make sure all metabolites are separated by a single space in column "substrate order" row:\n' +
+                    ' accoa_c srtn_c accoa_c tryptm_c meltn_c;nactsertn_c nactryptm_c coa_c coa_c\n\n' +
+                    'Make sure all metabolites are separated by a single space in column "product order" row:\n' +
+                    ' pterin1_c trp_c, trp_c fivehtp_c pterin2_c\n\n' +
+                    'Make sure all metabolites are separated by a single space in column "product order" row:\n' +
+                    ' sam_c nactsertn_c meltn_c.sah_c\n\n' +
+                    'Make sure all metabolites are separated by a single space in column "product order" row:\n' +
                     ' accoa_c srtn_c accoa_c tryptm_c meltn_c;nactsertn_c nactryptm_c coa_c coa_c\n\n' +
                     'Make sure all metabolites are separated by a single space in column "promiscuous" row:\n' +
                     ' AANAT;AANAT_tryptm\n\n')
