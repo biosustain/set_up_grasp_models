@@ -71,7 +71,7 @@ R_GTHOr: m_gthox_c + m_nadph_c <-> 2 m_gthrd_c + m_nadp_c
 # cofactor regeneration
 R_AXPr: m_atp_c <-> m_adp_c + m_pi_c
 R_NADHr: m_nadh_c <-> m_nad_c
-R_NADPHr: m_nadp_c <-> m_nadph_c
+R_NADPHr: m_nadph_c <-> m_nadp_c
 #
 #
 # exchange reactions

@@ -6,8 +6,8 @@ import os
 
 def generate_base_model():
 
-    file_in_stoic = os.path.join(os.getcwd(), 'build_model', 'model_with_PPP_plaintext.txt')
-    general_file = os.path.join('..', '..', 'base_files', 'GRASP_general.xlsx')
+    file_in_stoic = os.path.join('build_model', 'model_with_PPP_plaintext.txt')
+    general_file = os.path.join('..', 'base_files', 'GRASP_general.xlsx')
     model_name = 'model_v1'
     file_out = os.path.join('build_model', model_name + '.xlsx')
 
@@ -34,6 +34,6 @@ def generate_model_from_base():
                  file_in_mets_conc=file_in_mets_conc)
 
 
-generate_base_model()
+#generate_base_model()
 #check_fluxes()
-#generate_model_from_base()
+generate_model_from_base()
