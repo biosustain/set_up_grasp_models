@@ -209,7 +209,6 @@ class TestThermodynamicsChecks(unittest.TestCase):
     def test_check_thermodynamic_feasibility_putida(self, mock_stdout):
         true_res = ('\nChecking if fluxes and Gibbs energies are compatible.\n\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_G6PDH2\n' +
-                    'The flux and ∆G range seem to be incompatible for reaction R_RPE\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_TALA\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_PGI\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_FBA\n' +
@@ -220,8 +219,7 @@ class TestThermodynamicsChecks(unittest.TestCase):
                     'The flux and ∆G range seem to be incompatible for reaction R_EX_pep\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base.xlsx'), sheet_name=None)
-        flag, dG_df, flux_df = check_thermodynamic_feasibility(data_dict)
-
+        flag, flux_df, dG_df = check_thermodynamic_feasibility(data_dict)
         self.assertEqual(True, flag)
         self.assertEqual(true_res, mock_stdout.getvalue())
 
