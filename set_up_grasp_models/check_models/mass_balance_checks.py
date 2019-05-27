@@ -41,7 +41,7 @@ def check_flux_balance(data_dict: dict) -> bool:
 
             flux_balance = sum([met_in_rxns[met][key] * flux_df.loc[key, mean_col] for key in met_in_rxns[met].keys()])
 
-            if flux_balance != 0 and met in balanced_mets:
+            if abs(flux_balance) > 10**-8 and met in balanced_mets:
                 print(f'The flux for {met} is not balanced. The difference in flux is {flux_balance}')
                 flag = True
             elif flux_balance == 0 and met not in balanced_mets:
