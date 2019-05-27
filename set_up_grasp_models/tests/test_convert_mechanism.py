@@ -27,8 +27,6 @@ class TestConvertMechanism(unittest.TestCase):
 
         self.assertEqual(true_res, res)
 
-    # not working at the moment
-    @unittest.expectedFailure
     def test_convert_er_mech_to_grasp_pattern_AANATCompInhibIndep(self):
         true_res_file = os.path.join(self.test_folder, 'true_res_AANATCompInhibIndep.txt')
 
