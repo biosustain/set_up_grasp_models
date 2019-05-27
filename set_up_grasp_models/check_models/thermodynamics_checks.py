@@ -10,8 +10,10 @@ def _get_dG_list(rxn_names: list, stoic_matrix: np.ndarray, sub_conc: np.ndarray
     ma_ratio_list = []
 
     for rxn_i in range(len(rxn_names)):
-        rxn_subs_conc = stoic_matrix[rxn_i, :] * sub_conc
-        rxn_prods_conc = stoic_matrix[rxn_i, :] * prod_conc
+
+        rxn_subs_conc = np.sign(stoic_matrix[rxn_i, :]) * (sub_conc ** np.abs(stoic_matrix[rxn_i, :]))
+        rxn_prods_conc = np.sign(stoic_matrix[rxn_i, :]) * (prod_conc ** np.abs(stoic_matrix[rxn_i, :]))
+
         subs_ind = np.where(rxn_subs_conc < 0)
         subs_conc = rxn_subs_conc[subs_ind]
         prods_ind = np.where(rxn_prods_conc > 0)

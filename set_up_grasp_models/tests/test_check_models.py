@@ -6,7 +6,7 @@ import pandas as pd
 
 from set_up_grasp_models.check_models.format_checks import check_kinetics_met_separators, check_met_rxn_order
 from set_up_grasp_models.check_models.mass_balance_checks import check_balanced_metabolites, check_flux_balance
-from set_up_grasp_models.check_models.thermodynamics_checks import check_thermodynamic_feasibility
+from set_up_grasp_models.check_models.thermodynamics_checks import check_thermodynamic_feasibility, calculate_dG
 
 
 class TestFormatChecks(unittest.TestCase):
@@ -235,3 +235,18 @@ class TestThermodynamicsChecks(unittest.TestCase):
 
         self.assertEqual(False, flag)
         self.assertEqual(true_res, mock_stdout.getvalue())
+
+    def test_calculate_dG(self):
+        true_res_ma = pd.read_pickle(os.path.join(self.test_folder, 'true_res_ma.pkl'))
+        true_res_dG = pd.read_pickle(os.path.join(self.test_folder, 'true_res_dG.pkl'))
+        true_res_dG_Q = pd.read_pickle(os.path.join(self.test_folder, 'true_res_dG_Q.pkl'))
+
+        temperature = 298  # in K
+        gas_constant = 8.314 * 10 ** -3  # in kJ K^-1 mol^-1
+
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v2_manual.xlsx'), sheet_name=None)
+        ma_df, dG_Q_df, dG_df = calculate_dG(data_dict, gas_constant, temperature)
+
+        self.assertTrue(ma_df.equals(true_res_ma))
+        self.assertTrue(dG_Q_df.equals(true_res_dG_Q))
+        self.assertTrue(dG_df.equals(true_res_dG))
