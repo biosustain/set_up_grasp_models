@@ -4,7 +4,8 @@ import unittest.mock
 
 import pandas as pd
 
-from set_up_grasp_models.check_models.format_checks import check_kinetics_met_separators, check_met_rxn_order
+from set_up_grasp_models.check_models.format_checks import check_kinetics_met_separators, check_met_rxn_order, \
+    check_rxn_mechanism_order
 from set_up_grasp_models.check_models.mass_balance_checks import check_balanced_metabolites, check_flux_balance
 from set_up_grasp_models.check_models.thermodynamics_checks import check_thermodynamic_feasibility, calculate_dG
 
@@ -125,6 +126,26 @@ class TestFormatChecks(unittest.TestCase):
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0_not_correct_meas_rates.xlsx'),
                                   sheet_name=None)
         flag = check_met_rxn_order(data_dict)
+
+        self.assertEqual(True, flag)
+        self.assertEqual(true_res, mock_stdout.getvalue())
+
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    def test_check_rxn_mechanism_order(self, mock_stdout):
+        true_res = ('\nChecking if non enzymatic mechanisms come only after enzymatic ones and if fixedExchange is ' +
+                    'the very last one.\n\n' +
+                    'Enzymatic mechanism orderedBiBi for reaction ASMT should come before \'diffusion\', ' +
+                    '\'freeExchange\', \'fixedExchange\', \'massAction\'.\n' +
+                    'Enzymatic mechanism UniUniPromiscuous for reaction DDC_tryptm should come before \'diffusion\', ' +
+                    '\'freeExchange\', \'fixedExchange\', \'massAction\'.\n' +
+                    'Enzymatic mechanism AANATCompInhibIndep for reaction AANAT_tryptm should come before ' +
+                    '\'diffusion\', \'freeExchange\', \'fixedExchange\', \'massAction\'.\n' +
+                    'Mechanism massAction for reaction EX_nactsertn should come before fixedExchange mechanisms.\n' +
+                    'Mechanism massAction for reaction EX_meltn should come before fixedExchange mechanisms.\n')
+
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0_mech_order.xlsx'),
+                                  sheet_name=None)
+        flag = check_rxn_mechanism_order(data_dict)
 
         self.assertEqual(True, flag)
         self.assertEqual(true_res, mock_stdout.getvalue())

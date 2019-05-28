@@ -110,3 +110,39 @@ def check_kinetics_met_separators(data_dict: dict) -> bool:
         print('Everything seems to be OK.\n')
 
     return any(flag_list)
+
+
+def check_rxn_mechanism_order(data_dict: dict) -> bool:
+
+    print('\nChecking if non enzymatic mechanisms come only after enzymatic ones and if fixedExchange is the ' +
+          'very last one.\n')
+
+    hard_coded_mechs = {'diffusion', 'freeExchange', 'fixedExchange', 'massAction'}
+    kinetics_df = data_dict['kinetics1']
+    flag = False
+    mech_hard_coded = 0
+    fixed_exchange = 0
+
+    for i, mech in enumerate(kinetics_df['kinetic mechanism']):
+
+        if mech_hard_coded == 1 and mech.strip() not in hard_coded_mechs:
+            print(f'Enzymatic mechanism {mech} for reaction {kinetics_df.iloc[i]["reaction ID"]} ' +
+                  f'should come before \'diffusion\', \'freeExchange\', \'fixedExchange\', \'massAction\'.')
+            flag = True
+
+        if fixed_exchange == 1 and mech.strip() != 'fixedExchange':
+            print(f'Mechanism {mech} for reaction {kinetics_df.iloc[i]["reaction ID"]} should come before ' +
+                  f'fixedExchange mechanisms.')
+            flag = True
+
+        if mech.strip() in hard_coded_mechs:
+            mech_hard_coded = 1
+
+        if mech.strip() == 'fixedExchange':
+            fixed_exchange = 1
+
+    return flag
+
+
+
+

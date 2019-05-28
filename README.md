@@ -10,7 +10,10 @@ At this point both the model checks and the mechanism generation are working ful
  - `check_balanced_metabolites`: checks if metabolites that are both consumed and produced in the stoichiometric matrix are marked as balanced and the other way around. Checking for mass balances is more accurate though.
  - `check_flux_balance`:  when all fluxes are specified in the measRates sheet, check if all metabolites are mass balanced (well, the ones that are marked as balanced in the mets sheet).
  - `check_thermodynamic_feasibility`: given a dictionary representing a GRASP input file, it checks if the reaction's dG are compatible with the respective fluxes. It works both when all fluxes are specified in measRates and when robust fluxes are calculated for a fully determined system. If the fluxes are not fully specified not the system is fully determined, it doesn't work.
+ - `check_rxn_mechanism_order`: given a dictionary representing a GRASP input file, checks if the order of kinetic mechanisms in the kinetics sheet is correct, i.e. massAction, diffusion, freeExchange, and fixedExchange mechanisms come after enzymatic mechanisms and also if fixedExchange mechanisms are the very last ones. 
  
+For an example on how to use these check the file `check_input_model.py` in the examples folder.
+
 ### Mechanism generation
 
 Created a function `convert_er_mech_to_grasp_pattern` to convert an enzyme mechanism given in terms of elementary reactions (as in the [MASS-toolbox](http://opencobra.github.io/MASS-Toolbox/)) to the pattern file that GRASP takes as input.
