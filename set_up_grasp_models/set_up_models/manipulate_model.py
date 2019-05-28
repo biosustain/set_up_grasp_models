@@ -2,6 +2,18 @@ import pandas as pd
 
 
 def reorder_reactions(data_dict: dict, rxn_list: list, file_out: str):
+    """
+    Given a dictionary representing a GRASP input excel and a list of reactions it reorders the reaction in
+    all excel sheets that and writes the new reordered sheets to file_out
+            
+    Args:
+        data_dict (dict): dictionary representing GRASP input excel file.
+        rxn_list (list): list with the new reaction order.
+        file_out (str): path to excel input file to be outputed.
+
+    Returns:
+        None
+    """
 
     sheets_to_reorder = ['stoic', 'rxns', 'splitRatios', 'thermoRxns', 'measRates', 'protData', 'kinetics1']
     writer = pd.ExcelWriter(file_out, engine='xlsxwriter')
