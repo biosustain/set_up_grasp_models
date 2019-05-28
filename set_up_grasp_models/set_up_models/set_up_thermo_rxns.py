@@ -145,11 +145,9 @@ def get_dGs(rxn_list: list, file_bigg_kegg_ids: str, pH: float = 7.0, ionic_stre
 
     rxn_dG_dict = {}
     eq_api = ComponentContribution(pH=pH, ionic_strength=ionic_strength)
-    print(pH, ionic_strength)
 
     for rxn_id in rxn_dict.keys():
         rxn = Reaction.parse_formula(rxn_dict[rxn_id])
-        print(rxn_id, rxn)
         if not rxn.check_full_reaction_balancing():
             print(f'{rxn_id} is not balanced.')
 
@@ -179,8 +177,7 @@ def _set_up_model_thermo_rxns(base_df: dict, rxns_order: list, rxn_list: list, u
     Returns:
         thermo_rxns_df (pd.Dataframe): thermoRxns dataframe for the output excel file.
     """
-    print(rxns_order)
-    print(rxn_list)
+
     columns = ['∆Gr\'_min (kJ/mol)', '∆Gr\'_max (kJ/mol)']
     thermo_rxns_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
     thermo_rxns_df.index.name = 'rxn'
@@ -210,5 +207,4 @@ def _set_up_model_thermo_rxns(base_df: dict, rxns_order: list, rxn_list: list, u
         thermo_rxns_df.loc[rxn_dG_df.index.values, '∆Gr\'_min (kJ/mol)'] = rxn_dG_df.loc[rxn_dG_df.index.values, 'min']
         thermo_rxns_df.loc[rxn_dG_df.index.values, '∆Gr\'_max (kJ/mol)'] = rxn_dG_df.loc[rxn_dG_df.index.values, 'max']
 
-        print(rxn_dG_df)
     return thermo_rxns_df

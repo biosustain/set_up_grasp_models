@@ -10,7 +10,7 @@ class TestConvertMechanism(unittest.TestCase):
 
     def setUp(self):
         this_dir, this_filename = os.path.split(__file__)
-        self.test_folder = os.path.join(this_dir, 'test_set_up_models', 'convert_mechanism')
+        self.test_folder = os.path.join(this_dir, 'test_files', 'test_set_up_models', 'convert_mechanism')
 
     def test_convert_er_mech_to_grasp_pattern_G6PD(self):
         true_res_file = os.path.join(self.test_folder, 'true_res_G6PDH_mech_grasp.txt')
@@ -290,5 +290,4 @@ class TestConvertMechanism(unittest.TestCase):
         mech_names = set(mech_names).difference(hard_coded_mechs)
 
         for mech in mech_names:
-            print(os.path.join(pattern_out_dir, mech + '.txt'))
             self.assertTrue(os.path.isfile(os.path.join(pattern_out_dir, mech + '.txt')))

@@ -133,7 +133,8 @@ class TestFormatChecks(unittest.TestCase):
 class TestMassBalanceChecks(unittest.TestCase):
 
     def setUp(self):
-        self.test_folder = os.path.join('test_files', 'test_check_models')
+        this_dir, this_filename = os.path.split(__file__)
+        self.test_folder = os.path.join(this_dir, 'test_files', 'test_check_models')
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     def test_check_balanced_metabolites(self, mock_stdout):
@@ -204,7 +205,8 @@ class TestMassBalanceChecks(unittest.TestCase):
 class TestThermodynamicsChecks(unittest.TestCase):
 
     def setUp(self):
-        self.test_folder = os.path.join('test_files', 'test_check_models')
+        this_dir, this_filename = os.path.split(__file__)
+        self.test_folder = os.path.join(this_dir, 'test_files', 'test_check_models')
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     def test_check_thermodynamic_feasibility_putida(self, mock_stdout):

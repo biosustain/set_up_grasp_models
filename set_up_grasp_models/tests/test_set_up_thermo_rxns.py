@@ -129,7 +129,7 @@ class TestSetUpThermoRxns(unittest.TestCase):
         mets_without_kegg_id = ['q8h2']
 
         rxn_dict = _convert_rxn_str_to_kegg_ids(self.rxn_list, mets_kegg_dic, mets_without_kegg_id)
-        print(rxn_dict)
+
         self.assertDictEqual(true_res, rxn_dict)
 
     def test_get_convert_rxns_to_kegg(self):
