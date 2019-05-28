@@ -113,6 +113,17 @@ def check_kinetics_met_separators(data_dict: dict) -> bool:
 
 
 def check_rxn_mechanism_order(data_dict: dict) -> bool:
+    """
+    Given the excel file as argument, it goes through the 'kinetic mechanism' column in the 'kinetics1' sheet
+    and checks if hard coded mechanisms ('diffusion', 'freeExchange', 'fixedExchange', 'massAction') come before
+    enzymatic mechanisms. Also checks if 'fixedExchange' mechanisms are the very last ones. 
+
+    Args:
+        data_dict (dict): a dictionary that represents the excel file with the GRASP model.
+
+    Returns:
+        bool: whether or not lists in the kinetics sheet are separated by a space
+    """
 
     print('\nChecking if non enzymatic mechanisms come only after enzymatic ones and if fixedExchange is the ' +
           'very last one.\n')
