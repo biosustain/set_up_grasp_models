@@ -5,7 +5,7 @@ def reorder_reactions(data_dict: dict, rxn_list: list, file_out: str):
     """
     Given a dictionary representing a GRASP input excel and a list of reactions it reorders the reaction in
     all excel sheets that and writes the new reordered sheets to file_out
-            
+
     Args:
         data_dict (dict): dictionary representing GRASP input excel file.
         rxn_list (list): list with the new reaction order.

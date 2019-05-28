@@ -13,7 +13,7 @@ class TestIO(unittest.TestCase):
         self.test_folder = os.path.join(this_dir, 'test_files', 'test_set_up_models', 'manipulate_model')
 
     def test_reorder_reactions(self):
-        true_res = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0_mech_order_fixed.xlsx'),
+        true_res = pd.read_excel(os.path.join(self.test_folder, 'true_res_HMP2360_r0_t0_mech_order_fixed.xlsx'),
                                  sheet_name=None, index_col=0)
 
         rxn_list = ['TPH', 'DDC', 'AANAT', 'ASMT', 'DDC_tryptm', 'AANAT_tryptm', 'IN_trp',
