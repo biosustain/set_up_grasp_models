@@ -98,9 +98,6 @@ def _get_mets_conc(file_in_met_conc: str, mets_list: list, orient: str = 'column
 
     if orient == 'rows':
         mets_conc_df = mets_conc_df.transpose()
-    writer = pd.ExcelWriter('/home/mrama/Desktop/met_concs_rows.xlsx', engine='xlsxwriter')
-    mets_conc_df.transpose().to_excel(writer)
-    writer.save()
 
     if 'average' not in mets_conc_df.index.values or 'stdev' not in mets_conc_df.index.values:
         raise IndexError(f'No rows named average and stdev found in the first sheet of {file_in_met_conc}.')
