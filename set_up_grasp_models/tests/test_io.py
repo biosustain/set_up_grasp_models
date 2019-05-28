@@ -39,7 +39,8 @@ TRUE_RXN_LIST = ['ABC: glc_D_p + atp + h2o <-> glc_D + adp + h + p',
 class TestIO(unittest.TestCase):
 
     def setUp(self):
-        self.test_folder = os.path.join('test_files', 'test_io')
+        this_dir, this_filename = os.path.split(__file__)
+        self.test_folder = os.path.join(this_dir, 'test_files', 'test_io')
         self.file_in_excel = os.path.join(self.test_folder, 'model_with_PPP.xlsx')
         self.file_in_plaintext = os.path.join(self.test_folder, 'model_with_PPP_plaintext.txt')
 

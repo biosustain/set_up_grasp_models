@@ -9,7 +9,8 @@ from set_up_grasp_models.set_up_models.set_up_model import set_up_model
 class TestSetUpModel(unittest.TestCase):
 
     def setUp(self):
-        self.test_folder = os.path.join('test_files', 'test_set_up_models', 'set_up_model')
+        this_dir, this_filename = os.path.split(__file__)
+        self.test_folder = os.path.join(this_dir, 'test_files', 'test_set_up_models', 'set_up_model')
         self.file_in_stoic = os.path.join(self.test_folder, 'model_with_PPP_plaintext.txt')
 
     def test_set_up_model_empty_base(self):

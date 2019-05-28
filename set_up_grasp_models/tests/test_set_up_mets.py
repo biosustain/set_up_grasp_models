@@ -8,7 +8,8 @@ from set_up_grasp_models.set_up_models.set_up_mets import _get_mets_conc, _set_u
 class TestSetUpMets(unittest.TestCase):
 
     def setUp(self):
-        self.test_folder = os.path.join('test_files', 'test_set_up_models', 'set_up_mets')
+        this_dir, this_filename = os.path.split(__file__)
+        self.test_folder = os.path.join(this_dir, 'test_files', 'test_set_up_models', 'set_up_mets')
         self.file_in_met_conc = os.path.join(self.test_folder, 'met_concs.xlsx')
         self.base_df = pd.read_excel(os.path.join(self.test_folder, 'model_v1_manual2_EX.xlsx'), sheet_name=None)
 

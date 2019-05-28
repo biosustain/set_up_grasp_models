@@ -11,7 +11,8 @@ from set_up_grasp_models.set_up_models.set_up_thermo_rxns import convert_rxns_to
 class TestSetUpThermoRxns(unittest.TestCase):
 
     def setUp(self):
-        self.test_folder = os.path.join('test_files', 'test_set_up_models', 'set_up_thermo_rxns',)
+        this_dir, this_filename = os.path.split(__file__)
+        self.test_folder = os.path.join(this_dir, 'test_files', 'test_set_up_models', 'set_up_thermo_rxns',)
         self.file_bigg_kegg_ids = os.path.join(self.test_folder, 'map_bigg_to_kegg_ids.csv')
         self.base_df = pd.read_excel(os.path.join(self.test_folder, 'model_v1_manual2_EX.xlsx'), sheet_name=None)
         self.rxn_list = ['R_GLCtex: m_glc__D_e <-> m_glc__D_p',

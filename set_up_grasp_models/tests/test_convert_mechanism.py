@@ -9,7 +9,8 @@ from set_up_grasp_models.set_up_models.convert_mechanisms import convert_er_mech
 class TestConvertMechanism(unittest.TestCase):
 
     def setUp(self):
-        self.test_folder = os.path.join('test_files', 'test_set_up_models', 'convert_mechanism')
+        this_dir, this_filename = os.path.split(__file__)
+        self.test_folder = os.path.join(this_dir, 'test_set_up_models', 'convert_mechanism')
 
     def test_convert_er_mech_to_grasp_pattern_G6PD(self):
         true_res_file = os.path.join(self.test_folder, 'true_res_G6PDH_mech_grasp.txt')

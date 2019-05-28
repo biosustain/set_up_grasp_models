@@ -12,7 +12,8 @@ from set_up_grasp_models.check_models.thermodynamics_checks import check_thermod
 class TestFormatChecks(unittest.TestCase):
 
     def setUp(self):
-        self.test_folder = os.path.join('test_files', 'test_check_models')
+        this_dir, this_filename = os.path.split(__file__)
+        self.test_folder = os.path.join(this_dir, 'test_files', 'test_check_models')
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     def test_check_kinetics_met_separators_correct(self, mock_stdout):
