@@ -1,8 +1,2 @@
-[report]
-exclude_lines =
-    def __repr__
-    raise NotImplementedError
-
 [run]
-source =
-set_up_grasp_models
+source = set_up_grasp_models
