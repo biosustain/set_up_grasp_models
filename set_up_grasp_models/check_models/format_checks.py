@@ -11,7 +11,7 @@ def check_met_rxn_order(data_dict: dict) -> bool:
         data_dict (dict): a dictionary that represents the excel file with the GRASP model.
 
     Returns:
-        bool: whether or not reactions and metabolites order in the different sheets are consistent
+        flag (bool): whether or not reactions and metabolites order in the different sheets are consistent
 
     """
 
@@ -79,7 +79,7 @@ def check_kinetics_met_separators(data_dict: dict) -> bool:
         data_dict (dict): a dictionary that represents the excel file with the GRASP model.
 
     Returns:
-        bool: whether or not lists in the kinetics sheet are separated by a space
+        flag (bool): whether or not lists in the kinetics sheet are separated by a space
 
    """
 
@@ -115,14 +115,14 @@ def check_kinetics_met_separators(data_dict: dict) -> bool:
 def check_rxn_mechanism_order(data_dict: dict) -> bool:
     """
     Given the excel file as argument, it goes through the 'kinetic mechanism' column in the 'kinetics1' sheet
-    and checks if hard coded mechanisms ('diffusion', 'freeExchange', 'fixedExchange', 'massAction') come before
+    and checks if hard coded mechanisms ('diffusion', 'freeExchange', 'fixedExchange', 'massAction') come before 
     enzymatic mechanisms. Also checks if 'fixedExchange' mechanisms are the very last ones. 
-
+    
     Args:
         data_dict (dict): a dictionary that represents the excel file with the GRASP model.
 
     Returns:
-        bool: whether or not lists in the kinetics sheet are separated by a space
+        flag (bool): whether or not lists in the kinetics sheet are separated by a space
     """
 
     print('\nChecking if non enzymatic mechanisms come only after enzymatic ones and if fixedExchange is the ' +
@@ -155,5 +155,40 @@ def check_rxn_mechanism_order(data_dict: dict) -> bool:
     return flag
 
 
+def check_met_names_kinetics_order(data_dict: dict) -> bool:
+    """
+    Given a GRASP input excel file, check if the metabolite names in the substrate and product order columns in
+    the kinetics sheet are valid, i.e. if they exist int he kinetics sheet.
 
+    Args:
+        data_dict (dict): a dictionary that represents the excel file with the GRASP model.
 
+    Returns:
+        flag (bool): whether or not lists in the kinetics sheet are separated by a space
+    """
+
+    print('\nChecking if the metabolite names in the substrate and product order columns in the kinetics sheet are '
+          'valid, i.e., if they exist in the mets sheet.\n')
+
+    flag = False
+    met_set = set(data_dict['mets'].index.values)
+    kinetics_df = data_dict['kinetics1']
+
+    for rxn in kinetics_df.index:
+        subs_order = kinetics_df.loc[rxn, 'substrate order']
+        subs_set = set(subs_order.split()) if type(subs_order) is str else None
+
+        if subs_set is not None and len(subs_set.intersection(met_set)) != len(subs_set):
+            print(f'The following metabolites in the substrate order column for reaction {rxn} are not part of '
+                  f'the metabolite list in the mets sheet:\n{subs_set.difference(met_set)}\n')
+            flag = True
+
+        prod_order = kinetics_df.loc[rxn, 'product order']
+        prod_set = set(prod_order.split()) if type(prod_order) is str else None
+
+        if prod_set is not None and len(prod_set.intersection(met_set)) != len(prod_set):
+            print(f'The following metabolites in the product order column for reaction {rxn} are not part of '
+                  f'the metabolite list in the mets sheet:\n{prod_set.difference(met_set)}\n')
+            flag = True
+
+    return flag
