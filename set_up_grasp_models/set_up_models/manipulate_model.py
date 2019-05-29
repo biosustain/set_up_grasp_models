@@ -33,3 +33,24 @@ def reorder_reactions(data_dict: dict, rxn_list: list, file_out: str):
             data_dict[sheet].to_excel(writer, sheet_name=sheet)
 
     writer.save()
+
+
+def remove_spaces(data_dict: dict, file_out: str):
+    """
+    Given a GRASP input model file removes trailing and leading spaces from all cells that contain strings.
+
+    Args:
+        data_dict (dict): dictionary representing GRASP input excel file.
+        file_out (str): path to excel input file to be outputed.
+
+    Returns:
+        None
+    """
+
+    writer = pd.ExcelWriter(file_out, engine='xlsxwriter')
+
+    for sheet in data_dict.keys():
+        data_dict[sheet] = data_dict[sheet].apply(lambda x: x.str.strip() if type(x) == str else x)
+        data_dict[sheet].to_excel(writer, sheet_name=sheet)
+
+    writer.save()

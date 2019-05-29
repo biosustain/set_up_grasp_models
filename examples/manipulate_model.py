@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 
-from set_up_grasp_models.set_up_models.manipulate_model import reorder_reactions
+from set_up_grasp_models.set_up_models.manipulate_model import remove_spaces, reorder_reactions
 
 
 # list with reaction order
@@ -16,4 +16,9 @@ data_dict = pd.read_excel(os.path.join('models', 'HMP2360_r0_t0_mech_order.xlsx'
 # path to the model with re-ordered reactions
 file_out = os.path.join('models', 'HMP2360_r0_t0_mech_order_fixed.xlsx')
 
+# re-order reactions according to rxn_list
 reorder_reactions(data_dict, rxn_list, file_out)
+
+
+# remove any leading or trailing spaces in all string cells
+remove_spaces(data_dict, file_out)
