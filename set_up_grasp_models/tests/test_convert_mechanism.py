@@ -62,6 +62,22 @@ class TestConvertMechanism(unittest.TestCase):
 
         self.assertEqual(true_res, res)
 
+    def test_convert_er_mech_to_grasp_pattern_G6PDH2Promiscuous(self):
+        true_res_file = os.path.join(self.test_folder, 'true_res_G6PDH2Promiscuous.txt')
+
+        file_in = os.path.join(self.test_folder, 'G6PDH2Promiscuous_mech_er.txt')
+        file_out = os.path.join(self.test_folder, 'G6PDH2Promiscuous_mech_grasp.txt')
+
+        convert_er_mech_to_grasp_pattern(file_in, file_out, promiscuous=True)
+
+        with open(true_res_file, 'r') as f_in:
+            true_res = f_in.read()
+
+        with open(file_out, 'r') as f_in:
+            res = f_in.read()
+
+        self.assertEqual(true_res, res)
+
     def test_convert_er_mech_to_grasp_pattern_orderedBiBi(self):
         true_res_file = os.path.join(self.test_folder, 'true_res_orderedBiBi.txt')
 

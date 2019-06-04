@@ -5,6 +5,7 @@ pattern format currently accepted by GRASP.
 
 import os
 
+import numpy as np
 import pandas as pd
 
 
@@ -49,9 +50,11 @@ def _generate_grasp_pattern(enz_states_list: list, promiscuous: bool, inhib_list
     Given a list of enzyme state numbers and metabolites that bind/unbind to them, generates the respective
     GRASP pattern.
 
-    For this to work both with promiscuous reactions and ping-pong mechanisms a few steps are taken:
+    For this to work both with promiscuous reactions where one reaction has an ordered mechanism and another a random
+     mechanism as well as ping-pong mechanisms a few steps are taken:
        - the number of reactions in a mechanism is counted. A new reaction starts when the enzyme state to which
-       a ligand can bind is 1 (i.e. the free enzyme) and there has been more than one transition step. This allows
+       a ligand can bind is 1 (i.e. the free enzyme), there has been more than one transition step and there
+       has been a new transition step since it was checked. This allows
        one to distinguish different reactions in a given promiscuous enzyme mechanism and naming each first product
        to be released after a transition step as P{i}, where i stands for the number of the reaction. This is important
        so GRASP can later on write the flux equation correctly for each reaction catalyzed by a promiscuous enzyme.
@@ -86,6 +89,7 @@ def _generate_grasp_pattern(enz_states_list: list, promiscuous: bool, inhib_list
 
     rxn_i = 0
     n_transitions = 0
+    previous_n_transitions = 0
     after_transition = False
 
     grasp_pattern = ''
@@ -93,9 +97,11 @@ def _generate_grasp_pattern(enz_states_list: list, promiscuous: bool, inhib_list
 
     for state_i in range(0, len(enz_states_list), 2):
 
-        # if there is more than one transition step and the enzyme state is 1 again it is a promiscuous enzyme,
-        #  restart dictionaries so that no repeated ligand names are used.
-        if n_transitions > 0 and enz_states_list[state_i][0] == 1:
+        # if there is more than one transition step, there has been a transition step since the last one
+        #  and the enzyme state is 1 again then it is a new reaction
+        # if the enzyme is promiscuous restart dictionaries so that no repeated ligand names are used.
+        if n_transitions > 0 and n_transitions > previous_n_transitions and enz_states_list[state_i][0] == 1:
+            previous_n_transitions = n_transitions
             rxn_i += 1
 
             if promiscuous:
@@ -104,6 +110,7 @@ def _generate_grasp_pattern(enz_states_list: list, promiscuous: bool, inhib_list
 
         # get binding ligand name
         bind_ligand = ''
+
         if len(enz_states_list[state_i]) == 2:
             if enz_states_list[state_i][1] in inhib_dic.keys():
                 bind_ligand = f'.*{inhib_dic[enz_states_list[state_i][1]]}'
@@ -134,6 +141,7 @@ def _generate_grasp_pattern(enz_states_list: list, promiscuous: bool, inhib_list
             # if ligand unbinding is the first one after the transition step name it Pi
             if after_transition and promiscuous:
                 release_ligand = f'.*P{rxn_i+1}'
+                prod_dic[enz_states_list[state_i + 1][1]] = f'P{rxn_i+1}'
                 after_transition = False
 
                 if rxn_i > 0:
@@ -209,15 +217,16 @@ def generate_mechanisms(file_in_model: str, mech_in_dir: str, pattern_out_dir: s
 
         if mech not in hard_coded_mechs:
             if not os.path.isfile(os.path.join(pattern_out_dir, mech + '.txt')):
+                print(mech)
 
                 file_in = os.path.join(mech_in_dir, mech + '.txt')
                 file_out = os.path.join(pattern_out_dir, mech + '.txt')
 
                 promiscuous = False if type(kinetics_df.loc[ind, 'promiscuous']) is float else True
 
-                inhib_list = None if type(kinetics_df.loc[ind, 'inhibitors']) is float \
+                inhib_list = None if type(kinetics_df.loc[ind, 'inhibitors']) is float or np.float \
                     else kinetics_df.loc[ind, 'inhibitors'].split()
-                activ_list = None if type(kinetics_df.loc[ind, 'activators']) is float \
+                activ_list = None if type(kinetics_df.loc[ind, 'activators']) is float or np.float \
                     else kinetics_df.loc[ind, 'activators'].split()
 
                 convert_er_mech_to_grasp_pattern(file_in, file_out, promiscuous, inhib_list, activ_list)
