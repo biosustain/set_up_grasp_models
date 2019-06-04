@@ -5,7 +5,7 @@ import unittest.mock
 import pandas as pd
 
 from set_up_grasp_models.check_models.format_checks import check_kinetics_met_separators, check_met_rxn_order, \
-    check_rxn_mechanism_order
+    check_rxn_mechanism_order, check_met_names_kinetics_order
 from set_up_grasp_models.check_models.mass_balance_checks import check_balanced_metabolites, check_flux_balance
 from set_up_grasp_models.check_models.thermodynamics_checks import check_thermodynamic_feasibility, calculate_dG
 
@@ -146,6 +146,26 @@ class TestFormatChecks(unittest.TestCase):
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0_mech_order.xlsx'),
                                   sheet_name=None)
         flag = check_rxn_mechanism_order(data_dict)
+
+        self.assertEqual(True, flag)
+        self.assertEqual(true_res, mock_stdout.getvalue())
+
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    def test_check_met_names_kinetics_order(self, mock_stdout):
+        true_res = ('\nChecking if the metabolite names in the substrate and product order columns in the kinetics ' +
+                    'sheet are valid, i.e., if they exist in the mets sheet.\n\n' +
+                    'The following metabolites in the substrate order column for reaction DDC are not part of the ' +
+                    'metabolite list in the mets sheet:\n{\'srt_c\'}\n\n' +
+                    'The following metabolites in the product order column for reaction AANAT are not part of the ' +
+                    'metabolite list in the mets sheet:\n{\'m_accoa_c\'}\n\n' +
+                    'The following metabolites in the product order column for reaction DDC_tryptm are not part of ' +
+                    'the metabolite list in the mets sheet:\n{\'tryptm_c1\'}\n\n' +
+                    'The following metabolites in the substrate order column for reaction AANAT_tryptm are not part ' +
+                    'of the metabolite list in the mets sheet:\n{\'accoa__c\'}\n\n')
+
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0_mech_met_names_kinetics.xlsx'),
+                                  sheet_name=None, index_col=0)
+        flag = check_met_names_kinetics_order(data_dict)
 
         self.assertEqual(True, flag)
         self.assertEqual(true_res, mock_stdout.getvalue())
