@@ -217,16 +217,19 @@ def generate_mechanisms(file_in_model: str, mech_in_dir: str, pattern_out_dir: s
 
         if mech not in hard_coded_mechs:
             if not os.path.isfile(os.path.join(pattern_out_dir, mech + '.txt')):
-                print(mech)
 
                 file_in = os.path.join(mech_in_dir, mech + '.txt')
                 file_out = os.path.join(pattern_out_dir, mech + '.txt')
 
                 promiscuous = False if type(kinetics_df.loc[ind, 'promiscuous']) is float else True
 
-                inhib_list = None if type(kinetics_df.loc[ind, 'inhibitors']) is float or np.float \
+                inhib_list = None if type(kinetics_df.loc[ind, 'inhibitors']) is float or \
+                                     type(kinetics_df.loc[ind, 'inhibitors']) is np.float or \
+                                     type(kinetics_df.loc[ind, 'inhibitors']) is np.float64 \
                     else kinetics_df.loc[ind, 'inhibitors'].split()
-                activ_list = None if type(kinetics_df.loc[ind, 'activators']) is float or np.float \
-                    else kinetics_df.loc[ind, 'activators'].split()
+                activ_list = None if type(kinetics_df.loc[ind, 'activators']) is float or \
+                                     type(kinetics_df.loc[ind, 'activators']) is np.float or \
+                                     type(kinetics_df.loc[ind, 'activators']) is np.float64 \
+                                else kinetics_df.loc[ind, 'activators'].split()
 
                 convert_er_mech_to_grasp_pattern(file_in, file_out, promiscuous, inhib_list, activ_list)
