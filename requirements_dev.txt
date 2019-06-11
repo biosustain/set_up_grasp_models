@@ -6,12 +6,13 @@ backports.csv==1.0.7
 certifi==2019.3.9
 cffi==1.12.3
 chardet==3.0.4
-component-contribution==0.2.0
+component-contribution==0.2.1b1
 cryptography==2.6.1
 cycler==0.10.0
 defusedxml==0.6.0
 docutils==0.14
-equilibrator-api==0.1.26
+equilibrator-api==0.2.1b1
+equilibrator-cache==0.2.1b1
 et-xmlfile==1.0.1
 future==0.17.1
 idna==2.8
