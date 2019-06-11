@@ -8,7 +8,7 @@ import os
 from math import isnan
 import numpy as np
 import pandas as pd
-from equilibrator_api import ComponentContribution, Reaction
+from equilibrator_api import ComponentContribution, Reaction, Q_, ccache
 
 from set_up_grasp_models.model.parser import ReactionParser
 
@@ -144,15 +144,15 @@ def get_dGs(rxn_list: list, file_bigg_kegg_ids: str, pH: float = 7.0, ionic_stre
     rxn_dict = convert_rxns_to_kegg(rxn_list, map_bigg_to_kegg_ids)
 
     rxn_dG_dict = {}
-    eq_api = ComponentContribution(pH=pH, ionic_strength=ionic_strength)
+    eq_api = ComponentContribution(p_h=Q_(pH), ionic_strength=Q_(ionic_strength, 'M'))
 
     for rxn_id in rxn_dict.keys():
-        rxn = Reaction.parse_formula(rxn_dict[rxn_id])
-        if not rxn.check_full_reaction_balancing():
+        rxn = Reaction.parse_formula(ccache.get_compound, rxn_dict[rxn_id])
+        if not rxn.is_balanced():
             print(f'{rxn_id} is not balanced.')
 
-        dG0, dG0_std = eq_api.dG0_prime(rxn)
-        rxn_dG_dict[rxn_id] = (round(dG0, digits), round(dG0_std, digits))
+        dG0, dG0_std = eq_api.standard_dg_prime(rxn)
+        rxn_dG_dict[rxn_id] = (round(dG0.magnitude, digits), round(dG0_std.magnitude, digits))
 
     return rxn_dG_dict
 

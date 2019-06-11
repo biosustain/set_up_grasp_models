@@ -67,6 +67,7 @@ class TestSetUpModel(unittest.TestCase):
 
         self.assertListEqual(list(true_res.keys()), list(res.keys()))
         for key in true_res:
+            print(key)
             self.assertTrue(true_res[key].equals(res[key]))
 
     def test_set_up_model_not_empty_base_mets_file(self):
