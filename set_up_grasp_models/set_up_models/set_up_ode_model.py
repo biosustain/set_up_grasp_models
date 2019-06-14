@@ -46,11 +46,12 @@ def convert_to_ode_model(file_in: str):
                 ode_model += new_line
 
             if line.startswith('E('):
-                new_line = re.sub('E\((\d+),:\) = x\(\d+,:', r'E(\1,:) = Eref(\1,:)', line)
+                new_line = re.sub('E\((\d+),:\) = x\(\d+,:', r'E(\1,:) = Eref(\1,:', line)
                 ode_model += new_line
 
             if line.startswith('v('):
-                ode_model += line
+                new_line = line.replace('size(x,', 'size(y,')
+                ode_model += new_line
 
             line = f_in.readline()
 
