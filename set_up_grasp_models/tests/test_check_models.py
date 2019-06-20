@@ -187,7 +187,7 @@ class TestFormatChecks(unittest.TestCase):
                     '\'nactsertn_c\'}\n\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0_mech_met_names_kinetics.xlsx'),
-                                  sheet_name=None, index_col=0)
+                                  sheet_name=None)
         flag = check_kinetics_subs_prod_order(data_dict)
 
         self.assertEqual(True, flag)
@@ -204,7 +204,7 @@ class TestFormatChecks(unittest.TestCase):
                     'the reaction products:\n{\'m_f6p_c\'}\n\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v2_3_no_reg_ma_EMP_ED_2.xlsx'),
-                                  sheet_name=None, index_col=0)
+                                  sheet_name=None)
         flag = check_kinetics_subs_prod_order(data_dict)
 
         self.assertEqual(True, flag)

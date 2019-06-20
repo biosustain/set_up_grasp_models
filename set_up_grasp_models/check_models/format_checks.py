@@ -180,10 +180,16 @@ def check_kinetics_subs_prod_order(data_dict: dict) -> bool:
     flag = False
 
     mets_df = data_dict['mets']
+    mets_df.index = mets_df.iloc[:, 0]
     inactive_mets = set(mets_df[mets_df['active?'].eq(0)].index.values)
 
     stoic_df = data_dict['stoic']
+    stoic_df.index = stoic_df.iloc[:, 0]
+    stoic_df = stoic_df.drop(stoic_df.columns[0], axis=1)
+
     kinetics_df = data_dict['kinetics1']
+    kinetics_df.index = kinetics_df.iloc[:, 0]
+
     kinetics_df.columns = kinetics_df.columns.str.lower()
     for rxn in kinetics_df.index:
 
