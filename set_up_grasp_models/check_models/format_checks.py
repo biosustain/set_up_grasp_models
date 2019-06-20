@@ -138,12 +138,12 @@ def check_rxn_mechanism_order(data_dict: dict) -> bool:
     for i, mech in enumerate(kinetics_df['kinetic mechanism']):
 
         if mech_hard_coded == 1 and mech.strip() not in hard_coded_mechs:
-            print(f'Enzymatic mechanism {mech} for reaction {kinetics_df.iloc[i]["reaction ID"]} ' +
+            print(f'Enzymatic mechanism {mech} for reaction {kinetics_df.iloc[i][0]} ' +
                   f'should come before \'diffusion\', \'freeExchange\', \'fixedExchange\', \'massAction\'.')
             flag = True
 
         if fixed_exchange == 1 and mech.strip() != 'fixedExchange':
-            print(f'Mechanism {mech} for reaction {kinetics_df.iloc[i]["reaction ID"]} should come before ' +
+            print(f'Mechanism {mech} for reaction {kinetics_df.iloc[i][0]} should come before ' +
                   f'fixedExchange mechanisms.')
             flag = True
 
