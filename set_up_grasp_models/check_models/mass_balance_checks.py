@@ -20,6 +20,9 @@ def check_flux_balance(data_dict: dict) -> bool:
     mets_df = data_dict['mets']
     stoic_df = data_dict['stoic']
 
+    flux_df_orig = flux_df.copy()
+    stoic_df_orig = stoic_df.copy()
+
     if len(stoic_df.index) == len(flux_df.index):
 
         stoic_df.index = stoic_df['rxn ID']
@@ -54,6 +57,8 @@ def check_flux_balance(data_dict: dict) -> bool:
     else:
         print('Not all fluxes are specified in measRates.\n')
 
+    data_dict['measRates'] = flux_df_orig
+    data_dict['stoic'] = stoic_df_orig
 
     return flag
 
@@ -79,6 +84,7 @@ def check_balanced_metabolites(data_dict: dict) -> bool:
 
     flag = False
     stoic_df = data_dict['stoic']
+    stoic_df_orig = stoic_df.copy()
     stoic_df.index = stoic_df['rxn ID']
     stoic_df = stoic_df.drop('rxn ID', axis=1)
     mets_df = data_dict['mets']
@@ -98,5 +104,7 @@ def check_balanced_metabolites(data_dict: dict) -> bool:
 
     if flag is False:
         print('Everything seems to be OK.')
+
+    data_dict['stoic'] = stoic_df_orig
 
     return flag
