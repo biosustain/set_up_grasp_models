@@ -31,26 +31,38 @@ def check_met_rxn_order(data_dict: dict) -> bool:
 
         if key in met_sheets:
 
-            met_bool = np.equal(id_list, met_list)
-            met_bool = all(met_bool) if isinstance(met_bool, np.ndarray) else met_bool
-
-            if not met_bool:
-                print(f'Metabolite list in sheet {key} doesn\'t match the list in the stoichiometric matrix.')
-                print(f'Current list:\n {id_list}')
-                print(f'Metabolite list in stoichiometric matrix:\n {met_list}\n')
+            if len(id_list) != len(met_list):
+                print(f'Metabolite list in sheet {key} doesn\'t have the same length of the list in the stoichiometric'
+                      f' matrix')
                 flag = True
+
+            else:
+                met_bool = np.equal(id_list, met_list)
+                met_bool = all(met_bool) if isinstance(met_bool, np.ndarray) else met_bool
+
+                if not met_bool:
+                    print(f'Metabolite list in sheet {key} doesn\'t match the list in the stoichiometric matrix.')
+                    print(f'Current list:\n {id_list}')
+                    print(f'Metabolite list in stoichiometric matrix:\n {met_list}\n')
+                    flag = True
 
         elif key in rxn_sheets or key.startswith('kinetics') or \
                 (key == 'measRates' and len(rxn_list) == len(flux_df.index)):
 
-            rxn_bool = np.equal(id_list, rxn_list)
-            rxn_bool = all(rxn_bool) if isinstance(rxn_bool, np.ndarray) else rxn_bool
-
-            if not rxn_bool:
-                print(f'Reaction list in sheet {key} doesn\'t match the list in the stoichiometric matrix.')
-                print(f'Current list:\n {id_list}')
-                print(f'Reaction list in stoichiometric matrix:\n {rxn_list}\n')
+            if len(id_list) != len(rxn_list):
+                print(f'Reaction list in sheet {key} doesn\'t have the same length of the list in the stoichiometric'
+                      f' matrix')
                 flag = True
+
+            else:
+                rxn_bool = np.equal(id_list, rxn_list)
+                rxn_bool = all(rxn_bool) if isinstance(rxn_bool, np.ndarray) else rxn_bool
+
+                if not rxn_bool:
+                    print(f'Reaction list in sheet {key} doesn\'t match the list in the stoichiometric matrix.')
+                    print(f'Current list:\n {id_list}')
+                    print(f'Reaction list in stoichiometric matrix:\n {rxn_list}\n')
+                    flag = True
 
     if flag is False:
         print('Everything seems to be OK.\n')
