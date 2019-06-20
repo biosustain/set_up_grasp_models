@@ -57,10 +57,11 @@ def check_met_rxn_order(data_dict: dict) -> bool:
     return flag
 
 
-def _check_kinetics_column(data_dict: dict, col_name: str) -> bool:
+def _check_kinetics_column(kinetics_df: dict, col_name: str) -> bool:
 
     flag = False
-    col_data = data_dict[col_name].dropna()
+    kinetics_df.columns = kinetics_df.columns.str.lower()
+    col_data = kinetics_df[col_name].dropna()
     for row in col_data:
         if row.find(',') != -1 or row.find(';') != -1 or row.find('.') != -1:
             print(f'Make sure all metabolites are separated by a single space in column "{col_name}" row:\n {row}\n')
