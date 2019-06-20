@@ -63,9 +63,13 @@ def _check_kinetics_column(kinetics_df: dict, col_name: str) -> bool:
     kinetics_df.columns = kinetics_df.columns.str.lower()
     col_data = kinetics_df[col_name].dropna()
     for row in col_data:
-        if row.find(',') != -1 or row.find(';') != -1 or row.find('.') != -1:
-            print(f'Make sure all metabolites are separated by a single space in column "{col_name}" row:\n {row}\n')
-            flag = True
+        try:
+            if row.find(',') != -1 or row.find(';') != -1 or row.find('.') != -1:
+                print(f'Make sure all metabolites are separated by a single space in column "{col_name}" row:\n {row}\n')
+                flag = True
+
+        except AttributeError:
+            raise AttributeError('Make sure the columns in the kinetics sheet contain text and not numbers.')
 
     return flag
 
