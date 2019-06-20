@@ -18,7 +18,7 @@ def check_met_rxn_order(data_dict: dict) -> bool:
     print('\nChecking if the order of reactions and metabolites is the same in all excel sheets.\n')
 
     flag = False
-    rxn_list = data_dict['stoic']['rxn ID'].values
+    rxn_list = data_dict['stoic'].iloc[:, 0].values
     met_list = data_dict['stoic'].columns.values[1:]
     flux_df = data_dict['measRates']
 
@@ -26,6 +26,7 @@ def check_met_rxn_order(data_dict: dict) -> bool:
     rxn_sheets = {'rxns', 'splitRatios', 'thermoRxns', 'protData'}
 
     for key in list(data_dict.keys())[2:]:
+
         id_list = data_dict[key].iloc[:, 0].values
 
         if key in met_sheets:
@@ -34,7 +35,7 @@ def check_met_rxn_order(data_dict: dict) -> bool:
             met_bool = all(met_bool) if isinstance(met_bool, np.ndarray) else met_bool
 
             if not met_bool:
-                print(f'Metabolite list in sheet {key} doesn\'t match the list in the stoichiometry matrix.')
+                print(f'Metabolite list in sheet {key} doesn\'t match the list in the stoichiometric matrix.')
                 print(f'Current list:\n {id_list}')
                 print(f'Metabolite list in stoichiometric matrix:\n {met_list}\n')
                 flag = True
@@ -46,7 +47,7 @@ def check_met_rxn_order(data_dict: dict) -> bool:
             rxn_bool = all(rxn_bool) if isinstance(rxn_bool, np.ndarray) else rxn_bool
 
             if not rxn_bool:
-                print(f'Reaction list in sheet {key} doesn\'t match the list in the stoichiometry matrix.')
+                print(f'Reaction list in sheet {key} doesn\'t match the list in the stoichiometric matrix.')
                 print(f'Current list:\n {id_list}')
                 print(f'Reaction list in stoichiometric matrix:\n {rxn_list}\n')
                 flag = True
@@ -184,7 +185,6 @@ def check_kinetics_subs_prod_order(data_dict: dict) -> bool:
     stoic_df = data_dict['stoic']
     kinetics_df = data_dict['kinetics1']
     kinetics_df.columns = kinetics_df.columns.str.lower()
-
     for rxn in kinetics_df.index:
 
         rxn_subs = set(stoic_df.loc[rxn][stoic_df.loc[rxn].lt(0)].index.values).difference(inactive_mets)
