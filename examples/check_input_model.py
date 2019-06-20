@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 from set_up_grasp_models.check_models.format_checks import check_met_rxn_order, check_kinetics_met_separators, \
-    check_rxn_mechanism_order, check_met_names_kinetics_order
+    check_rxn_mechanism_order, check_kinetics_subs_prod_order
 from set_up_grasp_models.check_models.thermodynamics_checks import check_thermodynamic_feasibility
 from set_up_grasp_models.check_models.mass_balance_checks import check_flux_balance, check_balanced_metabolites
 
@@ -34,4 +34,4 @@ check_rxn_mechanism_order(data_dict)
 
 # checks if the metabolite names in the substrate and product order columns in the kinetics sheet are valid,
 #  i.e., if they exist in the mets sheet
-check_met_names_kinetics_order(data_dict)
+check_kinetics_subs_prod_order(data_dict)

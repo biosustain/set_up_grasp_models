@@ -160,10 +160,11 @@ def check_rxn_mechanism_order(data_dict: dict) -> bool:
     return flag
 
 
-def check_met_names_kinetics_order(data_dict: dict) -> bool:
+def check_kinetics_subs_prod_order(data_dict: dict) -> bool:
     """
     Given a GRASP input excel file, check if the metabolite names in the substrate and product order columns in
-    the kinetics sheet are valid, i.e. if they exist int he kinetics sheet.
+    the kinetics sheet are valid, i.e. if they are indeed substrates and products of the respective reaction.
+    Inactive metabolites are not accounted for.
 
     Args:
         data_dict (dict): a dictionary that represents the excel file with the GRASP model.
@@ -173,27 +174,47 @@ def check_met_names_kinetics_order(data_dict: dict) -> bool:
     """
 
     print('\nChecking if the metabolite names in the substrate and product order columns in the kinetics sheet are '
-          'valid, i.e., if they exist in the mets sheet.\n')
+          'valid, i.e., if they are indeed substrates and products of the respective reaction.\n')
 
     flag = False
-    met_set = set(data_dict['mets'].index.values)
+
+    mets_df = data_dict['mets']
+    inactive_mets = set(mets_df[mets_df['active?'].eq(0)].index.values)
+
+    stoic_df = data_dict['stoic']
     kinetics_df = data_dict['kinetics1']
+    kinetics_df.columns = kinetics_df.columns.str.lower()
 
     for rxn in kinetics_df.index:
+
+        rxn_subs = set(stoic_df.loc[rxn][stoic_df.loc[rxn].lt(0)].index.values).difference(inactive_mets)
+        rxn_prods = set(stoic_df.loc[rxn][stoic_df.loc[rxn].gt(0)].index.values).difference(inactive_mets)
+
         subs_order = kinetics_df.loc[rxn, 'substrate order']
         subs_set = set(subs_order.split()) if type(subs_order) is str else None
 
-        if subs_set is not None and len(subs_set.intersection(met_set)) != len(subs_set):
-            print(f'The following metabolites in the substrate order column for reaction {rxn} are not part of '
-                  f'the metabolite list in the mets sheet:\n{subs_set.difference(met_set)}\n')
+        if subs_set is not None and subs_set != rxn_subs:
+            if len(subs_set.difference(rxn_subs)) > 0:
+                print(f'The following metabolites in the substrate order column for reaction {rxn} are not part of '
+                      f'the reaction substrates:\n{subs_set.difference(rxn_subs)}\n')
+            elif len(rxn_subs.difference(subs_set)) > 0:
+                print(f'The following reaction substrates are not part of the substrate order column for '
+                      f'reaction {rxn} :\n{rxn_subs.difference(subs_set)}\n')
             flag = True
 
         prod_order = kinetics_df.loc[rxn, 'product order']
         prod_set = set(prod_order.split()) if type(prod_order) is str else None
 
-        if prod_set is not None and len(prod_set.intersection(met_set)) != len(prod_set):
-            print(f'The following metabolites in the product order column for reaction {rxn} are not part of '
-                  f'the metabolite list in the mets sheet:\n{prod_set.difference(met_set)}\n')
+        if prod_set is not None and prod_set != rxn_prods:
+            if len(prod_set.difference(rxn_prods)) > 0:
+                print(f'The following metabolites in the product order column for reaction {rxn} are not part of '
+                      f'the reaction products:\n{prod_set.difference(rxn_prods)}\n')
+            elif len(rxn_prods.difference(prod_set)) > 0:
+                print(f'The following reaction products are not part of the product order column for '
+                      f'reaction {rxn} :\n{rxn_prods.difference(prod_set)}\n')
             flag = True
+
+    if not flag:
+        print('Everything seems to be OK.\n')
 
     return flag
