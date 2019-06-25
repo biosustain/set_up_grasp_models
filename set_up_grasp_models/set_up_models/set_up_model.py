@@ -175,7 +175,7 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
     # set up measRates
     columns = ['MBo10_mean', 'MBo10_std', 'MBo10_mean2', 'MBo10_std2']
     meas_rates_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
-    meas_rates_df.index.name = 'Fluxes (umol/gdcw/h)'
+    meas_rates_df.index.name = 'Fluxes (umol/gCDW/h)'
     if 'measRates' in base_df.keys():
         index_intersection = set(base_df['measRates'].index.values).intersection(meas_rates_df.index.values)
         meas_rates_df.loc[index_intersection, :] = base_df['measRates'].loc[index_intersection, :]
