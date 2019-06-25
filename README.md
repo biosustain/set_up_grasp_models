@@ -1,78 +1,51 @@
+# set_up_grasp_models
+
+This small package is intended to generate GRASP input model files in a fairly automatic way and check that these are valid.
+
 [![Build Status](https://travis-ci.com/biosustain/set_up_grasp_models.svg?branch=master)](https://travis-ci.com/biosustain/set_up_grasp_models)
 [![Coverage Status](https://coveralls.io/repos/github/biosustain/set_up_grasp_models/badge.svg?branch=master)](https://coveralls.io/github/biosustain/set_up_grasp_models?branch=master)
 
 
-# set_up_grasp_models
+Table of contents
+-----------------
 
-This small package is intended to generate GRASP input model files in a fairly automatic way, and check that these are valid.
-At this point both the model checks and the mechanism generation are working fully, but not the actual process of building the input excel file.
+* [Introduction](#introduction)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Known issues and limitations](#known-issues-and-limitations)
+* [Getting help](#getting-help)
+* [License](#license)
+* [Authors and history](#authors-and-history)
+* [Acknowledgments](#authors-and-acknowledgments)
 
 
-### Model checks
- - `check_met_rxn_order`: checks if the order of reactions and metabolites in all sheets is consistent with the order in the stoichiometry matrix.
- - `check_kinetics_met_separators`: in the kinetics sheet for columns where cells can have multiple values, makes sure these values are not separated by a comma, semi-colon, or dot.
- - `check_balanced_metabolites`: checks if metabolites that are both consumed and produced in the stoichiometric matrix are marked as balanced and the other way around. Checking for mass balances is more accurate though.
- - `check_flux_balance`:  when all fluxes are specified in the measRates sheet, check if all metabolites are mass balanced (well, the ones that are marked as balanced in the mets sheet).
- - `check_thermodynamic_feasibility`: given a dictionary representing a GRASP input file, it checks if the reaction's dG are compatible with the respective fluxes. It works both when all fluxes are specified in measRates and when robust fluxes are calculated for a fully determined system. If the fluxes are not fully specified not the system is fully determined, it doesn't work.
- - `check_rxn_mechanism_order`: given a dictionary representing a GRASP input file, checks if the order of kinetic mechanisms in the kinetics sheet is correct, i.e. massAction, diffusion, freeExchange, and fixedExchange mechanisms come after enzymatic mechanisms and also if fixedExchange mechanisms are the very last ones.
- - `check_met_names_kinetics_order`: given a dictionary representing a GRASP input file, checks if the metabolite names in the substrate and product order columns in the kinetics sheet are valid, i.e., if they exist in the mets sheet.
+
+Introduction
+------------
+
+The idea behind this project is to help us create and validate input excel files for our GRASP in a way that it won't complain or produce wrong results without complaining.
+
+To accomplish this, the package is divided into two main parts:
+ - set_up_models to actually generate the excel files;
+ - check_models to validate existing excel files.
+
+Besides these, there are a few more functions that allows the user to:
+ - change reaction order;
+ - generate GRASP pattern files from mechanisms written in terms of elementary reactions;
+ - remove all leading and trailing spaces from strings;
+ - convert kinetic model's matlab file into a format that can be used for ODE simulation by Matlab.
  
-For an example on how to use these check the file `check_input_model.py` in the examples folder.
+The documentation can be found at [https://set-up-grasp-models.readthedocs.io/](https://set-up-grasp-models.readthedocs.io/).
 
-### Mechanism generation
-
-Created a function `convert_er_mech_to_grasp_pattern` to convert an enzyme mechanism given in terms of elementary reactions (as in the [MASS-toolbox](http://opencobra.github.io/MASS-Toolbox/)) to the pattern file that GRASP takes as input.
-
-As an example, the enzyme mechanism given in terms of elementary reactions for an orderedBiBi mechanism with competitive inhibiting with respect to the first substrate should look like:
-
-```
-E_c + accoa_c <-> E_c&accoa_c
-E_c + pyr_c <-> E_c&pyr_c
-E_c&accoa_c + srtn_c <-> E_c&accoa_c&srnt_c
-E_c&accoa_c&srnt_c <-> E_c&coa_c&nactsrtn_c
-E_c&coa_c&nactsrtn_c <-> E_c&coa_c + nactsrtn_c
-E_c&coa_c <-> E_c + coa_c
-```
-
-The main rules here are: 
- - enzymes must start with `E_`;
- - reactions must be reversible and the conversion sign is `<->`;
- - each elementary reaction must be written in a new line.
- 
-For an example check the examples folder, script `convert_mechanism.py`.
-
-Mechanisms currently tested:
- - orderedBiBi with and without all sorts of inhibitions and activations;
- - orderedUniBi;
- - randomUniBi;
- - randomBiBi with and without competitive inhibition;
- - pingPongBiBi;
- - promiscuous reactions up to a point.
-
-For more details check the mechanism in the folder `tests/test_files/test_set_up_models/convert_mechanism`
- 
-***Always double check the resulting pattern file!***
+Examples can be found in the `examples` folder, including a comprehensive jupyter notebook.
 
 
-### Getting standard Gibbs energies from [eQuilibrator](http://equilibrator.weizmann.ac.il)
 
-Created a function `get_DGs` which, given a list of reaction strings in the form `['R_FBA: m_g3p_c + m_dhap_c <-> m_fdp_c', 'R_ENO: m_2pg_c <-> m_pep_c']` and a file with a mapping between bigg and kegg ids, returns the standard gibbs energy and respective uncertainty for each reaction.
-
-In the folder data you can also find the file with a mapping between bigg and kegg ids named `map_bigg_to_kegg_ids.csv`.
-
-For an example check `get_dGs.py` in the examples folder.
+Installation
+-------------
 
 
-## Documentation
-
-The documentation for the API can be found at [https://set-up-grasp-models.readthedocs.io/](https://set-up-grasp-models.readthedocs.io/).
-
-There are also a couple of examples in the `examples` folder.
-The jupyter lab example requires (besides jupyter lab or notebook) altair v2, altair v3 will probably not work. 
-
-## Installation
-
-To install simply go to the folder and do:
+To install go to the main folder and do:
 
 ```pip install .```
 
@@ -83,11 +56,10 @@ To install simply go to the folder and do:
  - Python 3.6+
  - numpy==1.16.2
  - pandas==0.24.2
- - xlrd==1.2.0
+ - XlsxWriter==1.1.7
+ - equilibrator-api==0.2.1b1
 
-While almost any version of numpy and XlsxWriter should work, the same might not be true for pandas.  
-
-If you use this package to get Gibbs energies from equilibrator you will also need to install equilibrator-api v0.1.26 with `pip install equilibrator-api==0.1.26`.
+While almost any version of numpy and XlsxWriter should work, the same might not be true for pandas, and certainly is not for equilibrator-api.  
 
 
 #### Requirements files:
@@ -111,6 +83,119 @@ To install packages use either pip or conda:
 
 ``` conda/pip install package_name ```
 
-Alternatively, just use the `environment_dev.yml` file to create a conda environment with the right version of python and packages:
 
-```conda env create -f environment_dev.yml```
+Usage
+-----
+
+####Generate GRASP models
+
+
+To generate GRASP input excel files from a plaintext file containing the model reactions and a base GRASP file:
+
+```python
+from set_up_grasp_models.set_up_models.set_up_model import set_up_model
+import os
+
+# file with model reactions
+file_in_stoic = os.path.join('example_files', 'glycolysis_example.txt')
+# GRASP input file with general sheet
+base_excel_file = os.path.join('..', 'base_files', 'GRASP_general.xlsx')
+
+# define metabolomics input file
+file_in_mets_conc = os.path.join('example_files', 'met_concs.xlsx')
+
+# define model name
+model_name = 'glycolysis_v1'
+# define output file
+file_out = os.path.join('example_files', 'output', model_name + '.xlsx')
+
+# generate model
+set_up_model(model_name, file_in_stoic, base_excel_file, file_out,
+            use_equilibrator=True, # optional
+            file_in_mets_conc=file_in_mets_conc) #optional
+```
+
+The reactions defined in the plaintext file should look like:
+
+```
+R_PGM: m_3pg_c <-> m_2pg_c
+R_ENO: m_2pg_c <-> m_pep_c + 1.0 m_h2o_c
+R_PYK: m_adp_c + m_pep_c <-> m_atp_c + 1 m_pyr_c
+```
+
+Where reaction names should be preceeded by ``R_`` and metabolite names by ``m_``, and BiGG IDs should be used as much as possible.
+
+The standard Gibbs energies of reaction can be obtained from equilibrator by setting `use_equilibrator=True`, this is optional.
+
+The `thermoMets` and `metsData` sheets can be filled in if an excel file in long data format is provided with metabolite concentrations (`file_in_mets_conc`).
+
+If there is already a model and you only want to add/remove reactions, you can provide the existing model as `base_excel_file` and the new model will contain the relevant data  defined in `base_excel_file`. 
+
+
+####Check if a model is valid
+
+To check if a GRASP input excel file is valid:
+
+```python
+from set_up_grasp_models.check_models.format_checks import check_met_rxn_order, check_kinetics_met_separators, \
+    check_kinetics_subs_prod_order, check_rxn_mechanism_order
+from set_up_grasp_models.check_models.thermodynamics_checks import check_thermodynamic_feasibility
+from set_up_grasp_models.check_models.mass_balance_checks import check_flux_balance, check_balanced_metabolites
+import os
+import pandas as pd
+
+model_name = 'glycolysis_v3'
+file_in = os.path.join('example_files', 'output', model_name + '.xlsx')
+data_dict = pd.read_excel(file_in, sheet_name=None)
+
+
+# check if the order of metabolites and reactions in all excel sheets is consistent
+check_met_rxn_order(data_dict)
+
+# check metabolite lists separators in kinetics sheet
+check_kinetics_met_separators(data_dict)
+
+# checks if metabolite names in subtrate/product order columns are indeed substrates/products of the respective reaction
+check_kinetics_subs_prod_order(data_dict)
+
+# checks if massAction/diffusion/freeExchange mechanism come after other enzyme mechanisms and fixedExchange comes at the end
+check_rxn_mechanism_order(data_dict)
+
+
+# check if fluxes and Gibbs energies are compatible
+check_thermodynamic_feasibility(data_dict)
+
+# check consistency between stoic sheet and mets sheet, take the results with a grain of salt, there are false positives
+check_balanced_metabolites(data_dict)
+
+
+# check if all metabolites marked as balanced are indeed mass balance, only works if fluxes for all reactions are
+# either specified or can be calculated
+check_flux_balance(data_dict)
+
+```
+
+
+
+Known issues and limitations
+------------------------------
+
+It is possible that even after running all the model checks GRASP still complains about the input file, in that case please file a new issue.
+
+Also the model checks are likely to give you false positives, in the sense that they will say something is wrong when in fact it isn't, be critical :)
+
+
+**Altair**
+
+If using altair v3.0.0, you might get the following output when trying to visualize Gibbs energies and reactions fluxes:
+
+```
+<VegaLite 3 object>
+
+If you see this message, it means the renderer has not been properly enabled
+for the frontend that you are using. For more information, see
+https://altair-viz.github.io/user_guide/troubleshooting.html
+```
+
+In that case either follow the advice on [https://altair-viz.github.io/user_guide/troubleshooting.html](https://altair-viz.github.io/user_guide/troubleshooting.html) or downgrade to altair v2.0.0.
+
