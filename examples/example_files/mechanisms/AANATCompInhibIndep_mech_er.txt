@@ -1,0 +1,13 @@
+E_c + accoa1_c <-> E_c&accoa1_c
+E_c&accoa1_c + mltn_c <-> E_c&accoa1_c&mltn_c
+E_c&accoa1_c + srtn_c <-> E_c&accoa1_c&srnt_c
+E_c&accoa1_c&srnt_c <-> E_c&coa1_c&nactsrtn_c
+E_c&coa1_c&nactsrtn_c <-> E_c&coa1_c + nactsrtn_c
+E_c&coa1_c <-> E_c + coa1_c
+
+E_c + accoa2_c <-> E_c&accoa2_c
+E_c&accoa2_c + mltn_c <-> E_c&accoa2_c&mltn_c
+E_c&accoa2_c + tryptm_c <-> E_c&accoa2_c&tryptm_c
+E_c&accoa2_c&tryptm_c <-> E_c&coa2_c&nacttryptm_c
+E_c&coa2_c&nacttryptm_c <-> E_c&coa2_c + nacttryptm_c
+E_c&coa2_c <-> E_c + coa2_c
