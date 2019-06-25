@@ -170,6 +170,9 @@ def check_rxn_mechanism_order(data_dict: dict) -> bool:
         if mech.strip() == 'fixedExchange':
             fixed_exchange = 1
 
+    if flag is False:
+        print('Everything seems to be OK.\n')
+
     return flag
 
 
