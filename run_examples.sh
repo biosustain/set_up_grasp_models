@@ -1,3 +1,5 @@
+#!/bin/sh
+
 cd examples
 
 python build_model.py
