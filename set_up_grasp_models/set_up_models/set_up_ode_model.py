@@ -5,11 +5,9 @@ def convert_to_ode_model(file_in: str):
     """
     Given an input .m file with the GRASP matlab kinetic model, generates another .m file ready
     to be given as input to a matlab ODE solver.
-
     In particular, the x vector is substituted by two vectors:
       - y, which contains the metabolite concentrations (the quantitities being simulated);
       - Eref, which contains the enzyme concentrations
-
     And instead of returning fluxes the function returns y = S.v.
 
     Args:

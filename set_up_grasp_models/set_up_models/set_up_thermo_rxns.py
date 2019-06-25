@@ -104,12 +104,12 @@ def convert_rxns_to_kegg(rxn_list: list, map_bigg_to_kegg_ids: pd.DataFrame) -> 
     It skips exchange reactions, which should start with 'R_EX_'.
 
     Args:
-        file_rxns (str): path to file with plain text reactions.
-        map_bigg_to_kegg_ids (pd.Dataframe): dataframe with bigg IDs and corresponding KEGG ids.
+        file_rxns: path to file with plain text reactions.
+        map_bigg_to_kegg_ids: dataframe with bigg IDs and corresponding KEGG ids.
 
     Returns:
-        rxn_dict (dict): a dictionary where the keys are the reaction IDs (e.g. R_FBA) and the values the reaction in
-                        terms of KEGG IDs (e.g. C00118 + C00111 = C00354).
+        A dictionary where the keys are the reaction IDs (e.g. R_FBA) and the values the reaction in terms of
+        KEGG IDs (e.g. C00118 + C00111 = C00354).
     """
 
     met_bigg_ids = _parse_rxns(rxn_list)
@@ -129,14 +129,14 @@ def get_dGs(rxn_list: list, file_bigg_kegg_ids: str, pH: float = 7.0, ionic_stre
     It skips exchange reactions, which should start with 'R_EX_'.
 
     Args:
-        file_rxns (str): path to file with plain text reactions.
-        file_bigg_kegg_ids (str): path to file with mapping between bigg and kegg ids.
-        pH (float): pH value to use to calculate standard Gibbs energies.
-        ionic_strength (float): ionic strength value to use to calculate standard Gibbs energies.
-        digits (int): number of digits to round standard gibbs energies and respective uncertainty.
+        file_rxns: path to file with plain text reactions.
+        file_bigg_kegg_ids: path to file with mapping between bigg and kegg ids.
+        pH: pH value to use to calculate standard Gibbs energies.
+        ionic_strength: ionic strength value to use to calculate standard Gibbs energies.
+        digits: number of digits to round standard gibbs energies and respective uncertainty.
 
     Returns:
-        rxn_dG_dict (dict): dictionary with bigg reaction ids as keys and (standard Gibbs energy, uncertainty) as values.
+       Dictionary with bigg reaction ids as keys and (standard Gibbs energy, uncertainty) as values.
     """
 
     map_bigg_to_kegg_ids = pd.read_csv(file_bigg_kegg_ids, index_col=0)
@@ -166,16 +166,16 @@ def _set_up_model_thermo_rxns(base_df: dict, rxns_order: list, rxn_list: list, u
     all standard Gibbs energies from eQuilibrator.
 
     Args:
-        base_df (dict): dictionary with base excel input file.
-        rxns_order (list): list with reaction IDs.
-        rxn_list (list): list with reaction strings.
-        use_equilibrator (bool): flag determining whether or not to get the standard Gibbs energies from eQuilibrator.
-        pH (float): pH value to use to get the standard Gibbs energies from eQuilibrator.
-        ionic_strength (float): ionic strength value to use to get the standard Gibbs energies from eQuilibrator.
-        file_bigg_kegg_ids (str): path to the file containing the metabolites mapping from BiGG to KEGG ids,
+        base_df: dictionary with base excel input file.
+        rxns_order: list with reaction IDs.
+        rxn_list: list with reaction strings.
+        use_equilibrator: flag determining whether or not to get the standard Gibbs energies from eQuilibrator.
+        pH : pH value to use to get the standard Gibbs energies from eQuilibrator.
+        ionic_strength: ionic strength value to use to get the standard Gibbs energies from eQuilibrator.
+        file_bigg_kegg_ids: path to the file containing the metabolites mapping from BiGG to KEGG ids,
 
     Returns:
-        thermo_rxns_df (pd.Dataframe): thermoRxns dataframe for the output excel file.
+        thermoRxns dataframe for the output excel file.
     """
 
     columns = ['∆Gr\'_min (kJ/mol)', '∆Gr\'_max (kJ/mol)']

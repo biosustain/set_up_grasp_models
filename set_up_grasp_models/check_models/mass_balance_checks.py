@@ -6,10 +6,10 @@ def check_flux_balance(data_dict: dict) -> bool:
     If everything is fine flag is 0, otherwise it is set to 1.
 
     Args:
-        data_dict (dict): a dictionary that represents the excel file with the GRASP model
+        data_dict: a dictionary that represents the excel file with the GRASP model.
 
     Returns:
-        bool: whether or not all metabolites mass is balanced
+        Whether or not all metabolites mass is balanced.
 
     """
 
@@ -70,10 +70,10 @@ def check_balanced_metabolites(data_dict: dict) -> bool:
     If everything is fine flag is 0, otherwise it is set to 1.
 
     Args:
-        data_dict (dict): a dictionary that represents the excel file with the GRASP model
+        data_dict: a dictionary that represents the excel file with the GRASP model.
 
     Returns:
-        bool: whether or not metabolites are marked balanced/fixed correctly
+        Whether or not metabolites are marked balanced/fixed correctly.
 
     """
 

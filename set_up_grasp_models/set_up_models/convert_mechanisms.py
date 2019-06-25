@@ -15,10 +15,10 @@ def _get_enz_states(er_mech: str) -> list:
     enzyme state numbers and metabolites that bind/unbind to the respective enzyme states.
 
     Args:
-        er_mech (str): string with elementary reactions that describe the enzyme mechanism.
+        er_mech: string with elementary reactions that describe the enzyme mechanism.
 
     Returns:
-        enz_states_list (list): list with all enzyme state numbers and substrates
+       List with all enzyme state numbers and substrates.
     """
 
     er_mech = er_mech.replace('<->', '')
@@ -69,13 +69,13 @@ def _generate_grasp_pattern(enz_states_list: list, promiscuous: bool, inhib_list
     a "reverse binding".
 
     Args:
-        enz_states_list (list): list of all enzyme state numbers and ligands that bind/unbind.
-        promiscuous (bool): to indicate whether reaction is promiscuous or not.
-        inhib_list (list): list of inhibiting metabolites.
-        activ_list (list): list of activating metabolites.
+        enz_states_list: list of all enzyme state numbers and ligands that bind/unbind.
+        promiscuous: to indicate whether reaction is promiscuous or not.
+        inhib_list: list of inhibiting metabolites.
+        activ_list: list of activating metabolites.
 
     Returns:
-        grasp_pattern (str): the grasp pattern
+        The GRASP pattern.
 
     """
     subs_list = ['A', 'B', 'C', 'D', 'E']
@@ -172,11 +172,11 @@ def convert_er_mech_to_grasp_pattern(file_in: str, file_out: str, promiscuous: b
     Given an input file with a mechanism in the form of elementary reactions, converts it to a GRASP pattern file.
 
     Args:
-        file_in (str): path to the input file with elementary reactions mechanism.
+        file_in: path to the input file with elementary reactions mechanism.
         file_out: path to the output file with GRASP pattern.
-        promiscuous (bool): to indicate whether reaction is promiscuous or not.
-        inhib_list (list): list of inhibiting metabolites.
-        activ_list (list): list of activating metabolites.
+        promiscuous: to indicate whether reaction is promiscuous or not.
+        inhib_list: list of inhibiting metabolites.
+        activ_list: list of activating metabolites.
 
     Returns:
         None
@@ -200,9 +200,10 @@ def generate_mechanisms(file_in_model: str, mech_in_dir: str, pattern_out_dir: s
     the mechanism name and converts it to a patter file to be stored in the pattern_out_dir.
 
     Args:
-        file_in_model (str): path to GRASP input excel file.
+        file_in_model: path to GRASP input excel file.
         mech_in_dir: path to folder with the mechanism files in terms of elementary reactions.
         pattern_out_dir: path to folder with pattern files used by GRASP.
+        hard_coded_mechs: list with mechanisms that are hardcoded in GRASP.
 
     Returns:
         None

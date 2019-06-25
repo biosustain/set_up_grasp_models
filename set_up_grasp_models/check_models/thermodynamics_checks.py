@@ -41,13 +41,13 @@ def calculate_dG(data_dict: dict, gas_constant: float, temperature: float, rxn_o
     It also calculates the mass-action ratio and the part of the dG based on the mass-action ratio.
 
     Args:
-        data_dict (dict): a dictionary that represents the excel file with the GRASP model.
-        gas_constant (float): the gas constant to calculate the Gibbs energy.
-        temperature (float): the temperature to calculate the Gibbs energy.
-        rxn_order (list): a list with the reactions order (optional).
+        data_dict: a dictionary that represents the excel file with the GRASP model.
+        gas_constant: the gas constant to calculate the Gibbs energy.
+        temperature: the temperature to calculate the Gibbs energy.
+        rxn_order: a list with the reactions order (optional).
 
     Returns:
-        tuple: mass action ratio dataframe, dG_Q dataframe, Gibbs energies dataframe
+        Mass action ratio dataframe, dG_Q dataframe, Gibbs energies dataframe.
     """
 
     dG_Q_df = pd.DataFrame()
@@ -189,11 +189,11 @@ def get_robust_fluxes(data_dict: dict, rxn_order: list = None) -> pd.DataFrame:
     unless the system is not fully determined.
 
     Args:
-        data_dict (dict): path to the GRASP input file
-        rxn_order (list): a list with the reactions order (optional)
+        data_dict: path to the GRASP input file
+        rxn_order: a list with the reactions order (optional)
 
     Returns:
-        pd.DataFrame: dataframe with flux mean and std values
+        fluxes_df: dataframe with flux mean and std values
     """
 
     fluxes_df = pd.DataFrame()
@@ -227,10 +227,10 @@ def check_thermodynamic_feasibility(data_dict: dict) -> tuple:
     doesn't work.
 
     Args:
-        data_dict (dict): a dictionary representing a GRASP input file
+        data_dict: a dictionary representing a GRASP input file.
 
     Returns:
-        tuple: whether or not the model is thermodynamically feasible plus fluxes and Gibbs energies dataframes
+        Whether or not the model is thermodynamically feasible plus fluxes and Gibbs energies dataframes.
 
     """
 

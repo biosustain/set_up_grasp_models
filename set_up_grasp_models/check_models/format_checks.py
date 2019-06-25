@@ -8,10 +8,10 @@ def check_met_rxn_order(data_dict: dict) -> bool:
     If everything is fine flag is 0, otherwise it is set to 1.
 
     Args:
-        data_dict (dict): a dictionary that represents the excel file with the GRASP model.
+        data_dict: a dictionary that represents the excel file with the GRASP model.
 
     Returns:
-        flag (bool): whether or not reactions and metabolites order in the different sheets are consistent
+        Whether or not reactions and metabolites order in the different sheets are consistent.
 
     """
 
@@ -94,10 +94,10 @@ def check_kinetics_met_separators(data_dict: dict) -> bool:
     If everything is fine flag is 0, otherwise it is set to 1.
 
     Args:
-        data_dict (dict): a dictionary that represents the excel file with the GRASP model.
+        data_dict: a dictionary that represents the excel file with the GRASP model.
 
     Returns:
-        flag (bool): whether or not lists in the kinetics sheet are separated by a space
+        Whether or not lists in the kinetics sheet are separated by a space.
 
    """
 
@@ -137,10 +137,10 @@ def check_rxn_mechanism_order(data_dict: dict) -> bool:
     enzymatic mechanisms. Also checks if 'fixedExchange' mechanisms are the very last ones. 
     
     Args:
-        data_dict (dict): a dictionary that represents the excel file with the GRASP model.
+        data_dict: a dictionary that represents the excel file with the GRASP model.
 
     Returns:
-        flag (bool): whether or not lists in the kinetics sheet are separated by a space
+        Whether or not lists in the kinetics sheet are separated by a space.
     """
 
     print('\nChecking if non enzymatic mechanisms come only after enzymatic ones and if fixedExchange is the ' +
@@ -183,10 +183,10 @@ def check_kinetics_subs_prod_order(data_dict: dict) -> bool:
     Inactive metabolites are not accounted for.
 
     Args:
-        data_dict (dict): a dictionary that represents the excel file with the GRASP model.
+        data_dict: a dictionary that represents the excel file with the GRASP model.
 
     Returns:
-        flag (bool): whether or not lists in the kinetics sheet are separated by a space
+        Whether or not lists in the kinetics sheet are separated by a space.
     """
 
     print('\nChecking if the metabolite names in the substrate and product order columns in the kinetics sheet are '

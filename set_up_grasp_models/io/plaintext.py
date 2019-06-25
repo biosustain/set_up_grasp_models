@@ -24,10 +24,10 @@ def import_model_from_plaintext(filename: str) -> Model:
     """ Reads a model from a file.
     
     Arguments:
-        filename (str): file path
+        filename: file path.
 
     Returns:
-        Model: model (or respective subclass)
+        A Model object (or respective subclass).
     """
 
     with open(filename, 'r') as stream:
@@ -54,9 +54,12 @@ def write_to_plaintext(rxn_strings: list, file_out: str, print_instructions: boo
     """ Writes a model to a file.
 
     Arguments:
-        rxn_strings (list): list of string reactions
-        file_out (str): file path
-        print_instructions (bool): print plain text format instructions as header
+        rxn_strings: list of string reactions.
+        file_out: file path.
+        print_instructions: print plain text format instructions as header.
+
+    Returns:
+        None
     """
     with open(file_out, 'w') as f_out:
         if print_instructions:

@@ -11,13 +11,13 @@ def _set_up_mets_data(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd.D
     Default values for metsData are [0.99, 1.00, 1.01].
 
     Args:
-        base_df (dict): dict representing the base input excel file.
-        mets_list (list): list of metabolites in the model.
-        mets_conc_df (pd.Dataframe): dataframe with metabolite concentrations averages and respective stdev. Must have
-                                     a column named 'average' and another named 'stdev'.
+        base_df: dict representing the base input excel file.
+        mets_list: list of metabolites in the model.
+        mets_conc_df: dataframe with metabolite concentrations averages and respective stdev. Must have
+                      a column named 'average' and another named 'stdev'.
 
     Returns:
-        mets_data_df (pd.Dataframe): metsData dataframe.
+        metsData dataframe.
     """
 
     columns = ['MBo10_LB2', 'MBo10_meas2', 'MBo10_UB2']
@@ -46,13 +46,13 @@ def _set_up_thermo_mets(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd
     Default values for thermoMets are [10^-12, 10^-1] M.
 
     Args:
-        base_df (dict): dict representing the base input excel file.
-        mets_list (list): list of metabolites in the model.
-        mets_conc_df (pd.Dataframe): dataframe with metabolite concentrations averages and respective stdev. Must have
+        base_df: dict representing the base input excel file.
+        mets_list: list of metabolites in the model.
+        mets_conc_df: dataframe with metabolite concentrations averages and respective stdev. Must have
                                      a column named 'average' and another named 'stdev'.
 
     Returns:
-        thermo_mets_df (pd.Dataframe): thermoMets dataframe.
+        thermoMets dataframe.
     """
 
     columns = ['min (M)', 'max (M)']
@@ -85,13 +85,13 @@ def _get_mets_conc(file_in_met_conc: str, mets_list: list, orient: str = 'column
      - the metabolite names in the columns and two rows named average and stdev (set orient to 'columns', the default)
 
     Args:
-        file_in_met_conc (str): path to file with metabolite concentrations.
-        mets_list (list): list of metabolites in the model.
-        orient (str): whether metabolite names are in columns (default) or in the rows.
+        file_in_met_conc: path to file with metabolite concentrations.
+        mets_lis: list of metabolites in the model.
+        orient: whether metabolite names are in columns (default) or in the rows.
 
     Returns:
-        mets_conc_df (pd.Dataframe): dataframe with metabolite concentrations and respective standard deviation;
-                                        metabolite names on the rows, average and stdev on the columns.
+        Dataframe with metabolite concentrations and respective standard deviation; metabolite names on the rows,
+        average and stdev on the columns.
     """
 
     mets_conc_df = pd.read_excel(file_in_met_conc, index_col=0, header=0)

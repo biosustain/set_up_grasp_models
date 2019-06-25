@@ -11,13 +11,11 @@ def get_stoic(file_in: str) -> tuple:
     From a text file with the reactions in the model, set up a dataframe with the transposed stoichiometric matrix.
 
     Args:
-        file_in (str): path to plain text file with the model reactions.
+        file_in: path to plain text file with the model reactions.
 
     Returns:
-        stoic_df (pd.Dataframe): pandas dataframe with tranposed stoichiometric matrix.
-        rxn_list (list): list with reaction strings.
-        mets_order (list): list with metabolites order.
-        rxns_order (list): list with reactions order.
+        A pandas dataframe with transposed stoichiometric matrix, a list with reaction strings, a list with metabolites
+        order, and a list with reactions order.
     """
     model = import_model_from_plaintext(file_in)
     rxn_list = model.to_string().split('\n')
@@ -43,11 +41,8 @@ def update_stoic(stoic_df: pd.DataFrame, ex_rxns: list, ex_mets: list, non_ex_me
         non_ex_mets_order: list with the order of non-external metabolites
 
     Returns:
-        stoic_df (pd.Dataframe): pandas dataframe with tranposed stoichiometric matrix
-        mets_order (list): list with metabolites order.
-        rxns_order (list): list with reactions order.
-        ex_rxns_to_remove (list): list with exchange reactions to remove.
-        ex_mets_to_remove (list): list with external metabolites to remove
+        A pandas dataframe with tranposed stoichiometric matrix, a list with metabolites order, a list with reactions
+        order, a list with exchange reactions to remove, and a list with external metabolites to remove.
     """
 
     all_ex_rxns = set(stoic_df.filter(regex='EX_', axis=0).index.values)
@@ -90,15 +85,15 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
 
 
     Args:
-        model_name (str): name for the model.
-        file_in_stoic (str): path to plain text file with reactions in the model.
-        base_excel_file (str): path to the excel file to be used as a base.
-        file_out (str): path to the output file.
-        use_equilibrator (bool): flag determining whether or not to get the standard Gibbs energies from eQuilibrator.
-        pH (float): pH value to use to get the standard Gibbs energies from eQuilibrator.
-        ionic_strength (float): ionic strength value to use to get the standard Gibbs energies from eQuilibrator.
-        file_bigg_kegg_ids (str): path to the file containing the metabolites mapping from BiGG to KEGG ids,
-        file_in_mets_conc (str): path to excel file containing metabolites concentrations.
+        model_name: name for the model.
+        file_in_stoic: path to plain text file with reactions in the model.
+        base_excel_file: path to the excel file to be used as a base.
+        file_out: path to the output file.
+        use_equilibrator: flag determining whether or not to get the standard Gibbs energies from eQuilibrator.
+        pH: pH value to use to get the standard Gibbs energies from eQuilibrator.
+        ionic_strength: ionic strength value to use to get the standard Gibbs energies from eQuilibrator.
+        file_bigg_kegg_ids: path to the file containing the metabolites mapping from BiGG to KEGG ids,
+        file_in_mets_conc: path to excel file containing metabolites concentrations.
         file_in_prot_ranges: path to excel file containing protein concentrations (not in use atm).
         file_in_meas_fluxes: path to excel file containing measured fluxes (not in use atm).
 
