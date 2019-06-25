@@ -293,6 +293,7 @@ class TestThermodynamicsChecks(unittest.TestCase):
     def test_check_thermodynamic_feasibility_putida(self, mock_stdout):
         true_res = ('\nChecking if fluxes and Gibbs energies are compatible.\n\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_G6PDH2\n' +
+                    'The flux and ∆G range seem to be incompatible for reaction R_RPE\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_TALA\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_PGI\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_FBA\n' +

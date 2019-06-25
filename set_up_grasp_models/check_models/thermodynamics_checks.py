@@ -252,11 +252,11 @@ def check_thermodynamic_feasibility(data_dict: dict) -> tuple:
         flux_df = flux_df.drop(flux_df.columns[0], axis=1)
 
     for rxn in flux_df.index:
-        if (flux_df.loc[rxn, 'MBo10_mean'] - flux_df.loc[rxn, 'MBo10_std']) > 0 and dG_df.loc[rxn, '∆G_min'] > 0:
+        if flux_df.loc[rxn, 'MBo10_mean'] > 0 and dG_df.loc[rxn, '∆G_min'] > 0:
             print(f'The flux and ∆G range seem to be incompatible for reaction {rxn}')
             flag = True
 
-        if (flux_df.loc[rxn, 'MBo10_mean'] + flux_df.loc[rxn, 'MBo10_std']) < 0 and dG_df.loc[rxn, '∆G_max'] < 0:
+        if flux_df.loc[rxn, 'MBo10_mean'] < 0 and dG_df.loc[rxn, '∆G_max'] < 0:
             print(f'The flux and ∆G range seem to be incompatible for reaction {rxn}')
             flag = True
 
