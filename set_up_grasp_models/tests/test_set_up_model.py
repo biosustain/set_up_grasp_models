@@ -57,18 +57,16 @@ class TestSetUpModel(unittest.TestCase):
 
     def test_set_up_model_not_empty_base_equilibrator(self):
 
-        #true_res = pd.read_excel(os.path.join(self.test_folder, 'true_res_model_v3.xlsx'), sheet_name=None)
         with open(os.path.join(self.test_folder, 'true_res_model_v3.pkl'), 'rb') as f_in:
             true_res = pickle.load(f_in)
 
         general_file = os.path.join(self.test_folder, 'model_v1_manual2_EX.xlsx')
         model_name = 'model_v3'
         file_out = os.path.join(self.test_folder, model_name + '.xlsx')
+
         with patch('builtins.input', side_effect=['']):
             set_up_model(model_name, self.file_in_stoic, general_file, file_out, use_equilibrator=True)
         res = pd.read_excel(os.path.join(self.test_folder, model_name + '.xlsx'), sheet_name=None)
-
-
 
         self.assertListEqual(list(true_res.keys()), list(res.keys()))
         for key in true_res:
