@@ -13,10 +13,6 @@ Table of contents
 * [Installation](#installation)
 * [Usage](#usage)
 * [Known issues and limitations](#known-issues-and-limitations)
-* [Getting help](#getting-help)
-* [License](#license)
-* [Authors and history](#authors-and-history)
-* [Acknowledgments](#authors-and-acknowledgments)
 
 
 
@@ -87,7 +83,7 @@ To install packages use either pip or conda:
 Usage
 -----
 
-####Generate GRASP models
+#### Generate GRASP models
 
 
 To generate GRASP input excel files from a plaintext file containing the model reactions and a base GRASP file:
@@ -132,7 +128,7 @@ The `thermoMets` and `metsData` sheets can be filled in if an excel file in long
 If there is already a model and you only want to add/remove reactions, you can provide the existing model as `base_excel_file` and the new model will contain the relevant data  defined in `base_excel_file`. 
 
 
-####Check if a model is valid
+#### Check if a model is valid
 
 To check if a GRASP input excel file is valid:
 
