@@ -3,7 +3,7 @@ import unittest
 
 import pandas as pd
 
-from set_up_grasp_models.set_up_models.manipulate_model import remove_spaces, reorder_reactions
+from set_up_grasp_models.set_up_models.manipulate_model import remove_spaces, reorder_reactions, rename_columns
 
 
 class TestIO(unittest.TestCase):
@@ -42,4 +42,20 @@ class TestIO(unittest.TestCase):
 
         self.assertListEqual(list(true_res.keys()), list(res.keys()))
         for sheet in true_res.keys():
+            self.assertTrue(true_res[sheet].equals(res[sheet]))
+
+    def test_rename_columns(self):
+        true_res = pd.read_excel(os.path.join(self.test_folder, 'true_res_HMP2360_r0_t0_cols.xlsx'),
+                                 sheet_name=None, index_col=0)
+
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0_cols.xlsx'),
+                                  sheet_name=None, index_col=0)
+        file_out = os.path.join(self.test_folder, 'HMP2360_r0_t0_cols_fixed.xlsx')
+
+        rename_columns(data_dict, file_out)
+        res = pd.read_excel(file_out, sheet_name=None, index_col=0)
+
+        self.assertListEqual(list(true_res.keys()), list(res.keys()))
+        for sheet in true_res.keys():
+            print(sheet)
             self.assertTrue(true_res[sheet].equals(res[sheet]))

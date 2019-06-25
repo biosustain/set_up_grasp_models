@@ -172,6 +172,33 @@ check_flux_balance(data_dict)
 ```
 
 
+To run the above tests it is important that the columns in each sheet have certain names. 
+
+If you didn't use `set_up_model` to build your model, it is highly likely that the columns don't have the expected names. To rename them using the expected names, just run `rename_columns()` as follows:
+
+
+```python
+import os
+import pandas as pd
+
+from set_up_grasp_models.set_up_models.manipulate_model import rename_columns
+
+
+# path to current model
+model_name = 'glycolysis_v2'
+file_in = os.path.join('example_files', 'output', model_name + '.xlsx')
+
+# import current model with pandas
+data_dict = pd.read_excel(file_in, sheet_name=None, index_col=0)
+
+# path to the model with re-ordered reactions - just substitute current one
+file_out = file_in
+
+# remove any leading or trailing spaces in all string cells
+rename_columns(data_dict, file_out)
+```
+
+
 
 Known issues and limitations
 ------------------------------

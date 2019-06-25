@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 
-from set_up_grasp_models.set_up_models.manipulate_model import remove_spaces, reorder_reactions
+from set_up_grasp_models.set_up_models.manipulate_model import remove_spaces, reorder_reactions, rename_columns
 
 
 # list with reaction order
@@ -22,3 +22,7 @@ reorder_reactions(data_dict, rxn_list, file_out)
 
 # remove any leading or trailing spaces in all string cells
 remove_spaces(data_dict, file_out)
+
+# renames columns names, so that they are standard and cause no problems with other functions
+rename_columns(data_dict, file_out)
+

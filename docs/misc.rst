@@ -56,6 +56,32 @@ This function removes all leading and trailing spaces from string fields.
 
 
 
+Rename columns in the model
+--------------------------------------
+
+Since this package assumes certain column names, it is important that they are correct. To make sure just run:
+
+.. code-block:: python
+
+    from set_up_grasp_models.set_up_models.manipulate_model import rename_columns
+
+    # path to current model
+    model_name = 'glycolysis_v2'
+    file_in = os.path.join('example_files', 'output', model_name + '.xlsx')
+
+    # import current model with pandas
+    data_dict = pd.read_excel(file_in, sheet_name=None, index_col=0)
+
+    # path to the model with re-ordered reactions - just substitute current one
+    file_out = file_in
+
+    # remove any leading or trailing spaces in all string cells
+    rename_columns(data_dict, file_out)
+
+
+This will rename all columns to standard names.
+
+
 Convert model .m file to ODE format
 --------------------------------------
 
