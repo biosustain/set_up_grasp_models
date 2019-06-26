@@ -6,12 +6,11 @@ Author: Daniel Machado
 """
 
 
-from builtins import object
 from collections import OrderedDict
 from re import compile
 
 
-class ReactionParser(object):
+class ReactionParser:
 
     def __init__(self):
         id_re = '[a-zA-Z]\w*'
