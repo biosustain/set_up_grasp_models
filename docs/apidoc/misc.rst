@@ -16,6 +16,13 @@ Remove leading and trailing spaces
 
 
 
+Rename columns in the model
+--------------------------------------
+
+.. autofunction:: set_up_grasp_models.set_up_models.manipulate_model.rename_columns
+
+
+
 Convert model .m file to ODE format
 --------------------------------------
 

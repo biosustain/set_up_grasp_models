@@ -12,7 +12,7 @@ Plaintext
     :members:
 
 
-Parser
+Stoic
 ----------
 
 .. automodule:: set_up_grasp_models.io.stoic
