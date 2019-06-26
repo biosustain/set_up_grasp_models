@@ -1,9 +1,6 @@
 Set up GRASP models
 =========================
 
-Most of this subpackage is still under construction, only the mechanism conversion part is working.
-
-
 
 Set up models
 -------------------
