@@ -1,0 +1,8 @@
+Sphinx==2.0.1
+sphinx-autobuild
+
+# if using typehints
+sphinx-autodoc-typehints==1.6.0
+
+mock
+autodoc
