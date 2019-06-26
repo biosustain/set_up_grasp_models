@@ -80,12 +80,12 @@ def rename_columns(data_dict: dict, file_out: str):
                           'protData': ['MBo10_LB2', 'MBo10_meas2', 'MBo10_UB2'],
                           'metsData': ['MBo10_LB2', 'MBo10_meas2', 'MBo10_UB2'],
                           'kinetics1': ['kinetic mechanism', 'substrate order', 'product order', 'promiscuous',
-                                        'inhibitors', 'activators', 'negative effector', 'positive effector',
-                                        'allosteric', 'subunits', 'mechanism_ref_type', 'mechanism_ref',
-                                        'inhibitors_ref_type', 'inhibitors_ref', 'activators_ref_type',
-                                        'activators_ref', 'negative_effectors_ref_type', 'negative_effectors_ref',
-                                        'positive_effectors_ref_type', 'positive_effectors_ref', 'subunits_ref_type',
-                                        'subunits_ref', 'comments']}
+                                        'inhibitors', 'activators', 'negative effectors', 'positive effectors',
+                                        'allosteric', 'subunits', 'mechanism_refs_type', 'mechanism_refs',
+                                        'inhibitors_refs_type', 'inhibitors_refs', 'activators_refs_type',
+                                        'activators_refs', 'negative_effectors_refs_type', 'negative_effectors_refs',
+                                        'positive_effectors_refs_type', 'positive_effectors_refs', 'subunits_refs_type',
+                                        'subunits_refs', 'comments']}
 
     sheet_index_name = {'stoic': 'rxn ID',
                         'mets': 'ID',
