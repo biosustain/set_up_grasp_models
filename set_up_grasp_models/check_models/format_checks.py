@@ -18,8 +18,8 @@ def check_met_rxn_order(data_dict: dict) -> bool:
     print('\nChecking if the order of reactions and metabolites is the same in all excel sheets.\n')
 
     flag = False
-    rxn_list = data_dict['stoic'].iloc[:, 0].values
-    met_list = data_dict['stoic'].columns.values[1:]
+    rxn_list = data_dict['stoic'].index.values
+    met_list = data_dict['stoic'].columns.values
     flux_df = data_dict['measRates']
 
     met_sheets = {'mets', 'poolConst', 'thermo_ineq_constraints', 'thermoMets', 'metsData'}
@@ -27,7 +27,7 @@ def check_met_rxn_order(data_dict: dict) -> bool:
 
     for key in list(data_dict.keys())[2:]:
 
-        id_list = data_dict[key].iloc[:, 0].values
+        id_list = data_dict[key].index.values
 
         if key in met_sheets:
 
@@ -155,12 +155,12 @@ def check_rxn_mechanism_order(data_dict: dict) -> bool:
     for i, mech in enumerate(kinetics_df['kinetic mechanism']):
 
         if mech_hard_coded == 1 and mech.strip() not in hard_coded_mechs:
-            print(f'Enzymatic mechanism {mech} for reaction {kinetics_df.iloc[i][0]} ' +
+            print(f'Enzymatic mechanism {mech} for reaction {kinetics_df.index[i]} ' +
                   f'should come before \'diffusion\', \'freeExchange\', \'fixedExchange\', \'massAction\'.')
             flag = True
 
         if fixed_exchange == 1 and mech.strip() != 'fixedExchange':
-            print(f'Mechanism {mech} for reaction {kinetics_df.iloc[i][0]} should come before ' +
+            print(f'Mechanism {mech} for reaction {kinetics_df.index[i]} should come before ' +
                   f'fixedExchange mechanisms.')
             flag = True
 
@@ -195,18 +195,13 @@ def check_kinetics_subs_prod_order(data_dict: dict) -> bool:
     flag = False
 
     mets_df = data_dict['mets']
-    mets_df.index = mets_df.iloc[:, 0]
     inactive_mets = set(mets_df[mets_df['active?'].eq(0)].index.values)
 
     stoic_df = data_dict['stoic']
-    stoic_df_orig = stoic_df.copy()
-    stoic_df.index = stoic_df.iloc[:, 0]
-    del stoic_df[stoic_df.columns[0]]
 
     kinetics_df = data_dict['kinetics1']
-    kinetics_df.index = kinetics_df.iloc[:, 0]
-
     kinetics_df.columns = kinetics_df.columns.str.lower()
+
     for rxn in kinetics_df.index:
 
         rxn_subs = set(stoic_df.loc[rxn][stoic_df.loc[rxn].lt(0)].index.values).difference(inactive_mets)
@@ -238,7 +233,5 @@ def check_kinetics_subs_prod_order(data_dict: dict) -> bool:
 
     if not flag:
         print('Everything seems to be OK.\n')
-
-    data_dict['stoic'] = stoic_df_orig
 
     return flag

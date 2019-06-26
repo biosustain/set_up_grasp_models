@@ -57,17 +57,17 @@ def calculate_dG(data_dict: dict, gas_constant: float, temperature: float, rxn_o
     stoic_df = data_dict['stoic']
 
     mets_conc_df = data_dict['thermoMets']
-    mets_conc_df['mean (M)'] = (mets_conc_df.iloc[:, 1] + mets_conc_df.iloc[:, 2]) / 2.
+    mets_conc_df['mean (M)'] = (mets_conc_df['min (M)'] + mets_conc_df['max (M)']) / 2.
 
     dG_std_df = data_dict['thermoRxns']
-    dG_std_df['∆Gr_mean'] = (dG_std_df.iloc[:, 1] + dG_std_df.iloc[:, 2]) / 2.
+    dG_std_df['∆Gr_mean'] = (dG_std_df['∆Gr\'_min (kJ/mol)'] + dG_std_df['∆Gr\'_max (kJ/mol)']) / 2.
 
-    rxn_names = stoic_df['rxn ID'].values
+    rxn_names = stoic_df.index.values
 
-    stoic_matrix = stoic_df.iloc[:, 1:].values
+    stoic_matrix = stoic_df.values
 
-    min_met_conc = mets_conc_df.iloc[:, 1].values
-    max_met_conc = mets_conc_df.iloc[:, 2].values
+    min_met_conc = mets_conc_df['min (M)'].values
+    max_met_conc = mets_conc_df['max (M)'].values
 
     dG_list_mean, dG_Q_list_mean, ma_ratio_list_mean = _get_dG_list(rxn_names, stoic_matrix,
                                                                     mets_conc_df['mean (M)'].values,
@@ -75,10 +75,10 @@ def calculate_dG(data_dict: dict, gas_constant: float, temperature: float, rxn_o
                                                                     dG_std_df['∆Gr_mean'].values,
                                                                     gas_constant, temperature)
     dG_list_min, dG_Q_list_min, ma_ratio_list_min = _get_dG_list(rxn_names, stoic_matrix, max_met_conc, min_met_conc,
-                                                                 dG_std_df.iloc[:, 1].values,
+                                                                 dG_std_df['∆Gr\'_min (kJ/mol)'].values,
                                                                  gas_constant, temperature)
     dG_list_max, dG_Q_list_max, ma_ratio_list_max = _get_dG_list(rxn_names, stoic_matrix, min_met_conc, max_met_conc,
-                                                                 dG_std_df.iloc[:, 2].values,
+                                                                 dG_std_df['∆Gr\'_max (kJ/mol)'].values,
                                                                  gas_constant, temperature)
 
     ma_df['ma_min'] = ma_ratio_list_min
@@ -148,8 +148,8 @@ def _compute_robust_fluxes(stoic_matrix: np.ndarray, meas_rates: np.ndarray, mea
 def _get_balanced_s_matrix(data_dict: dict) -> tuple:
 
     stoic_df = data_dict['stoic']
-    stoic_matrix = np.transpose(stoic_df.iloc[:, 1:].values)
-    rxn_list = stoic_df['rxn ID'].values
+    stoic_matrix = np.transpose(stoic_df.values)
+    rxn_list = stoic_df.index.values
 
     mets_df = data_dict['mets']
     balanced_mets_ind = np.where(mets_df['balanced?'].values == 1)
@@ -162,15 +162,16 @@ def _get_balanced_s_matrix(data_dict: dict) -> tuple:
 def _get_meas_rates(data_dict: dict, rxn_list: list) -> tuple:
 
     meas_rates_df = data_dict['measRates']
-    meas_rates_ids = meas_rates_df.iloc[:, 0].values
+    meas_rates_ids = meas_rates_df.index.values
 
     meas_rates_mean = np.zeros(len(rxn_list))
     meas_rates_std = np.zeros(len(rxn_list))
-    for rxn_i, rxn in enumerate(rxn_list):
-        for meas_rxn_i in range(len(meas_rates_df.index)):
-            if rxn == meas_rates_ids[meas_rxn_i]:
-                meas_rates_mean[rxn_i] = meas_rates_df.iloc[meas_rxn_i, 1]
-                meas_rates_std[rxn_i] = meas_rates_df.iloc[meas_rxn_i, 2]
+
+    meas_rates = zip(list(np.nonzero(np.in1d(rxn_list, meas_rates_ids))[0]), list(meas_rates_ids))
+
+    for meas_rxn_ind, meas_rxn in meas_rates:
+        meas_rates_mean[meas_rxn_ind] = meas_rates_df.loc[meas_rxn, 'MBo10_mean']
+        meas_rates_std[meas_rxn_ind] = meas_rates_df.loc[meas_rxn, 'MBo10_std']
 
     return meas_rates_mean, meas_rates_std
 
@@ -247,9 +248,6 @@ def check_thermodynamic_feasibility(data_dict: dict) -> tuple:
 
     if len(stoic_df.index) != len(flux_df.index):
         flux_df = get_robust_fluxes(data_dict)
-    else:
-        flux_df.index = flux_df.iloc[:, 0]
-        flux_df = flux_df.drop(flux_df.columns[0], axis=1)
 
     for rxn in flux_df.index:
         if flux_df.loc[rxn, 'MBo10_mean'] > 0 and dG_df.loc[rxn, '∆G_min'] > 0:

@@ -5,12 +5,14 @@ from set_up_grasp_models.check_models.format_checks import check_met_rxn_order, 
     check_rxn_mechanism_order, check_kinetics_subs_prod_order
 from set_up_grasp_models.check_models.thermodynamics_checks import check_thermodynamic_feasibility
 from set_up_grasp_models.check_models.mass_balance_checks import check_flux_balance, check_balanced_metabolites
+from set_up_grasp_models.set_up_models.manipulate_model import rename_columns
 
 
 # import the model
 file_in = os.path.join('models', 'HMP2360_r0_t0.xlsx')
-data_dict = pd.read_excel(file_in, sheet_name=None)
+data_dict = pd.read_excel(file_in, sheet_name=None, index_col=0)
 
+rename_columns(data_dict, file_out=file_in)
 
 # check metabolite lists separators in kinetics sheet
 check_kinetics_met_separators(data_dict)

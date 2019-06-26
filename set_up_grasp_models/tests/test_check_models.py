@@ -23,7 +23,7 @@ class TestFormatChecks(unittest.TestCase):
                     'dots, commas, and semi-colons.\n\n' +
                     'Everything seems to be OK.\n\n')
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0.xlsx'), sheet_name=None)
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0.xlsx'), sheet_name=None, index_col=0)
         flag = check_kinetics_met_separators(data_dict)
 
         self.assertEqual(False, flag)
@@ -49,7 +49,7 @@ class TestFormatChecks(unittest.TestCase):
                     'Make sure all metabolites are separated by a single space in column "promiscuous" row:\n' +
                     ' AANAT;AANAT_tryptm\n\n')
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0_not_correct.xlsx'), sheet_name=None)
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0_not_correct.xlsx'), sheet_name=None, index_col=0)
         flag = check_kinetics_met_separators(data_dict)
 
         self.assertEqual(True, flag)
@@ -60,7 +60,7 @@ class TestFormatChecks(unittest.TestCase):
         true_res = ('\nChecking if the order of reactions and metabolites is the same in all excel sheets.\n\n' +
                     'Everything seems to be OK.\n\n')
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0.xlsx'), sheet_name=None)
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0.xlsx'), sheet_name=None, index_col=0)
         flag = check_met_rxn_order(data_dict)
 
         self.assertEqual(False, flag)
@@ -88,7 +88,8 @@ class TestFormatChecks(unittest.TestCase):
                     ' \'pterin2_c\' \'fivehtp_e\' \'trp_e\' \'nactsertn_e\' \'nactryptm_e\' \'meltn_e\'\n' +
                     ' \'srtn_e\']\n\n')
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0_not_correct.xlsx'), sheet_name=None)
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0_not_correct.xlsx'), sheet_name=None,
+                                  index_col=0)
         flag = check_met_rxn_order(data_dict)
 
         self.assertEqual(True, flag)
@@ -124,7 +125,7 @@ class TestFormatChecks(unittest.TestCase):
                     ' \'EX_srtn\' \'EX_fivehtp\' \'EX_nactsertn\' \'EX_meltn\' \'EX_nactryptm\']\n\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0_not_correct_meas_rates.xlsx'),
-                                  sheet_name=None)
+                                  sheet_name=None, index_col=0)
         flag = check_met_rxn_order(data_dict)
 
         self.assertEqual(True, flag)
@@ -144,7 +145,7 @@ class TestFormatChecks(unittest.TestCase):
                     'Mechanism massAction for reaction EX_meltn should come before fixedExchange mechanisms.\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0_mech_order.xlsx'),
-                                  sheet_name=None)
+                                  sheet_name=None, index_col=0)
         flag = check_rxn_mechanism_order(data_dict)
 
         self.assertEqual(True, flag)
@@ -187,7 +188,7 @@ class TestFormatChecks(unittest.TestCase):
                     '\'nactsertn_c\'}\n\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0_mech_met_names_kinetics.xlsx'),
-                                  sheet_name=None)
+                                  sheet_name=None, index_col=0)
         flag = check_kinetics_subs_prod_order(data_dict)
 
         self.assertEqual(True, flag)
@@ -204,7 +205,7 @@ class TestFormatChecks(unittest.TestCase):
                     'the reaction products:\n{\'m_f6p_c\'}\n\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v2_3_no_reg_ma_EMP_ED_2.xlsx'),
-                                  sheet_name=None)
+                                  sheet_name=None, index_col=0)
         flag = check_kinetics_subs_prod_order(data_dict)
 
         self.assertEqual(True, flag)
@@ -235,7 +236,7 @@ class TestMassBalanceChecks(unittest.TestCase):
                 'm_nadp_c is marked as not balanced but it seems to be balanced.\n' +
                 'm_co2_c is marked as balanced but it does not seem to be balanced.\n')
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base.xlsx'), sheet_name=None)
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base.xlsx'), sheet_name=None, index_col=0)
         flag = check_balanced_metabolites(data_dict)
 
         self.assertEqual(True, flag)
@@ -253,7 +254,7 @@ class TestMassBalanceChecks(unittest.TestCase):
                     'The flux for m_f6p_c is not balanced. The difference in flux is 50\n' +
                     'The flux for m_3pg_c is not balanced. The difference in flux is 750\n')
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base.xlsx'), sheet_name=None)
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base.xlsx'), sheet_name=None, index_col=0)
         flag = check_flux_balance(data_dict)
 
         self.assertEqual(True, flag)
@@ -264,7 +265,8 @@ class TestMassBalanceChecks(unittest.TestCase):
         true_res = ('\nChecking if the fluxes for each metabolite production/consumptions add up to zero.\n\n'+
                     'Everything seems to be OK.\n')
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base_fixed.xlsx'), sheet_name=None)
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base_fixed.xlsx'), sheet_name=None,
+                                  index_col=0)
         flag = check_flux_balance(data_dict)
 
         self.assertEqual(False, flag)
@@ -276,7 +278,7 @@ class TestMassBalanceChecks(unittest.TestCase):
                     'Not all fluxes are specified in measRates.\n\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base_incomplete_fluxes.xlsx'),
-                                  sheet_name=None)
+                                  sheet_name=None, index_col=0)
         flag = check_flux_balance(data_dict)
 
         self.assertEqual(False, flag)
@@ -303,7 +305,7 @@ class TestThermodynamicsChecks(unittest.TestCase):
                     'The flux and ∆G range seem to be incompatible for reaction R_EX_pyr\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_EX_pep\n')
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base.xlsx'), sheet_name=None)
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v1_base.xlsx'), sheet_name=None, index_col=0)
         flag, flux_df, dG_df = check_thermodynamic_feasibility(data_dict)
         self.assertEqual(True, flag)
         self.assertEqual(true_res, mock_stdout.getvalue())
@@ -313,7 +315,7 @@ class TestThermodynamicsChecks(unittest.TestCase):
         true_res = ('\nChecking if fluxes and Gibbs energies are compatible.\n\n' +
                     'Everything seems to be OK.\n')
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0.xlsx'), sheet_name=None)
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'HMP2360_r0_t0.xlsx'), sheet_name=None, index_col=0)
         flag, dG_df, flux_df = check_thermodynamic_feasibility(data_dict)
 
         self.assertEqual(False, flag)
@@ -327,7 +329,7 @@ class TestThermodynamicsChecks(unittest.TestCase):
         temperature = 298  # in K
         gas_constant = 8.314 * 10 ** -3  # in kJ K^-1 mol^-1
 
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v2_manual.xlsx'), sheet_name=None)
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v2_manual.xlsx'), sheet_name=None, index_col=0)
         ma_df, dG_Q_df, dG_df = calculate_dG(data_dict, gas_constant, temperature)
 
         self.assertTrue(ma_df.equals(true_res_ma))
