@@ -119,9 +119,9 @@ def check_kinetics_met_separators(data_dict: dict) -> bool:
             flag_list.append(flag)
             flag = _check_kinetics_column(data_dict[key], 'activators')
             flag_list.append(flag)
-            flag = _check_kinetics_column(data_dict[key], 'negative effector')
+            flag = _check_kinetics_column(data_dict[key], 'negative effectors')
             flag_list.append(flag)
-            flag = _check_kinetics_column(data_dict[key], 'positive effector')
+            flag = _check_kinetics_column(data_dict[key], 'positive effectors')
             flag_list.append(flag)
 
     if not any(flag_list):

@@ -197,10 +197,10 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
 
     # set up kinetics1
     columns = ['kinetic mechanism', 'substrate order', 'product order', 'promiscuous', 'inhibitors',
-               'activators', 'negative effector', 'positive effector', 'allosteric', 'subunits',
-               'mechanism_ref_type', 'mechanism_ref', 'inhibitors_ref_type', 'inhibitors_ref',
-               'activators_ref_type', 'activators_ref', 'negative_effectors_ref_type', 'negative_effectors_ref',
-               'positive_effectors_ref_type', 'positive_effectors_ref', 'subunits_ref_type', 'subunits_ref',
+               'activators', 'negative effectors', 'positive effectors', 'allosteric', 'subunits',
+               'mechanism_refs_type', 'mechanism_refs', 'inhibitors_refs_type', 'inhibitors_refs',
+               'activators_refs_type', 'activators_refs', 'negative_effectors_refs_type', 'negative_effectors_refs',
+               'positive_effectors_refs_type', 'positive_effectors_refs', 'subunits_refs_type', 'subunits_refs',
                'comments']
     kinetics_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
     kinetics_df.index.name = 'reaction ID'
