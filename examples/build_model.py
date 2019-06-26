@@ -17,7 +17,7 @@ def generate_base_model():
 def check_fluxes():
 
     file_in = os.path.join('models', 'model_v1_manual3.xlsx')
-    data_dict = pd.read_excel(file_in, sheet_name=None)
+    data_dict = pd.read_excel(file_in, sheet_name=None, index_col=0)
     check_flux_balance(data_dict)
 
 
