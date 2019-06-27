@@ -106,9 +106,12 @@ def rename_columns(data_dict: dict, file_out: str):
 
         if sheet in sheet_column_names:
 
-            if len(data_dict[sheet].columns) != len(sheet_column_names[sheet]):
+            if len(data_dict[sheet].columns) < len(sheet_column_names[sheet]):
                 for col_i in range(len(data_dict[sheet].columns), len(sheet_column_names[sheet])):
                     data_dict[sheet][col_i] = np.zeros([len(data_dict[sheet].index), 1])
+            elif len(data_dict[sheet].columns) > len(sheet_column_names[sheet]):
+                for col_i in range(len(sheet_column_names[sheet]), len(data_dict[sheet].columns)):
+                    sheet_column_names[sheet].append(data_dict[sheet].columns[col_i])
 
             data_dict[sheet].columns = sheet_column_names[sheet]
 
