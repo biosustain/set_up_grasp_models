@@ -53,7 +53,7 @@ To install go to the main folder and do:
  - numpy==1.16.2
  - pandas==0.24.2
  - XlsxWriter==1.1.7
- - equilibrator-api==0.2.1b1
+ - equilibrator-api==0.2.4
 
 While almost any version of numpy and XlsxWriter should work, the same might not be true for pandas, and certainly is not for equilibrator-api.  
 
