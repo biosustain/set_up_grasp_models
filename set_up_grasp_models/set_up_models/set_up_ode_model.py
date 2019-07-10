@@ -26,7 +26,7 @@ def convert_to_ode_model(file_in: str):
         while line:
             if line.startswith('function'):
                 new_line = line.replace('[f,grad]', 'y')
-                new_line = re.sub('= (\S+)\(x', r'= \1_ode(y,Eref', new_line)
+                new_line = re.sub('= (\S+)\(x', r'= \1_ode(y,Eref,metsRefConc', new_line)
                 ode_model += f'{new_line}\n'
 
             if line.startswith('else'):
@@ -53,7 +53,7 @@ def convert_to_ode_model(file_in: str):
 
             line = f_in.readline()
 
-    ode_model += '\ny = Sred*(E.*v);'
+    ode_model += '\ny = (1./metsRefConc) .* (Sred*(E.*v));'
 
     file_out = f'{file_in[:-2]}_ode.m'
 
