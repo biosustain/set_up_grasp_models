@@ -86,7 +86,7 @@ def _get_mets_conc(file_in_met_conc: str, mets_list: list, orient: str = 'column
 
     Args:
         file_in_met_conc: path to file with metabolite concentrations.
-        mets_lis: list of metabolites in the model.
+        mets_list: list of metabolites in the model.
         orient: whether metabolite names are in columns (default) or in the rows.
 
     Returns:
