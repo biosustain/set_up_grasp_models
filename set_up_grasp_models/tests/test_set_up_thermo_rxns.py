@@ -162,26 +162,25 @@ class TestSetUpThermoRxns(unittest.TestCase):
         self.assertDictEqual(true_res, rxn_dict)
 
     def test_get_dGs(self):
-        true_res = {'R_GLCtex': (0.0, 0.0), 'R_GLCabcpp': (-26.39, 0.31), 'R_GLK': (-17.23, 0.44),
-                    'R_GLCNtex': (0.0, 0.0), 'R_GLCNt2rpp': (0.0, 0.0), 'R_GNK': (-10.0, 3.28),
-                    'R_2DHGLCNtex': (0.0, 0.0), 'R_2DHGLCNkt_tpp': (0.0, 0.0), 'R_2DHGLCK': (-11.99, 3.54),
-                    'R_PGLCNDH_NAD': (-16.56, 1.91), 'R_PGLCNDH_NADP': (-17.33, 1.94), 'R_G6PDH2': (-2.4, 1.35),
-                    'R_G6PDH2_NAD': (-3.17, 1.38), 'R_G6PDH2_NADP': (-2.4, 1.35), 'R_PGL': (-21.05, 1.69),
-                    'R_GND_NAD': (10.29, 3.24), 'R_GND_NADP': (11.07, 3.24), 'R_RPI': (-3.69, 1.64),
-                    'R_RPE': (-3.38, 1.18), 'R_TKT1': (-2.15, 2.38), 'R_TKT2': (-9.99, 1.96), 'R_TALA': (-0.58, 1.44),
-                    'R_EDD': (-42.99, 2.62), 'R_EDA': (15.55, 2.12), 'R_PGI': (2.53, 0.39), 'R_FBP': (-11.39, 0.71),
-                    'R_FBA': (-19.82, 0.54), 'R_TPI': (-5.44, 0.56), 'R_GAPD': (7.85, 0.41), 'R_PGK': (-18.47, 0.45),
-                    'R_PGM': (4.25, 0.37), 'R_ENO': (-4.08, 0.31), 'R_PYK': (-27.62, 0.43), 'R_GTHPi': (-309.8, 3.4),
-                    'R_GTHOr': (-17.3, 0.8), 'R_AXPr': (-183.86, 0.8), 'R_NADr': (64.28, 0.56),
-                    'R_NADPr': (65.06, 0.61)}
+        true_res = {'R_GLCtex': (0.0, 0.0), 'R_GLCabcpp': (-26.39, 0.31), 'R_GLK': (-17.27, 0.44),
+                    'R_GLCNtex': (0.0, 0.0), 'R_GLCNt2rpp': (0.0, 0.0), 'R_GNK': (-10.03, 3.27),
+                    'R_2DHGLCNtex': (0.0, 0.0), 'R_2DHGLCNkt_tpp': (0.0, 0.0), 'R_2DHGLCK': (-11.8, 3.53),
+                    'R_PGLCNDH_NAD': (-16.77, 1.91), 'R_PGLCNDH_NADP': (-17.58, 1.94), 'R_G6PDH2': (-2.37, 1.35),
+                    'R_G6PDH2_NAD': (-3.17, 1.38), 'R_G6PDH2_NADP': (-2.37, 1.35), 'R_PGL': (-21.07, 1.69),
+                    'R_GND_NAD': (10.27, 3.23), 'R_GND_NADP': (11.08, 3.24), 'R_RPI': (-4.33, 1.67),
+                    'R_RPE': (-3.37, 1.18), 'R_TKT1': (-1.48, 2.39), 'R_TKT2': (-9.98, 1.96), 'R_TALA': (-0.61, 1.44),
+                    'R_EDD': (-42.98, 2.62), 'R_EDA': (15.53, 2.11), 'R_PGI': (2.52, 0.39), 'R_FBP': (-11.44, 0.71),
+                    'R_FBA': (-19.8, 0.54), 'R_TPI': (-5.46, 0.56), 'R_GAPD': (7.82, 0.41), 'R_PGK': (-18.45, 0.45),
+                    'R_PGM': (4.23, 0.37), 'R_ENO': (-4.09, 0.31), 'R_PYK': (-27.65, 0.43), 'R_GTHPi': (-309.6, 3.39),
+                    'R_GTHOr': (-17.5, 0.8), 'R_AXPr': (-183.85, 0.8), 'R_NADr': (64.27, 0.56),
+                    'R_NADPr': (65.08, 0.61)}
 
         with patch('builtins.input', side_effect=['']):
             rxn_dG_dict = get_dGs(self.rxn_list, self.file_bigg_kegg_ids, pH=7.0, ionic_strength=0.1, digits=2)
         self.assertDictEqual(true_res, rxn_dG_dict)
 
-
     def test_set_up_thermo_rxns(self):
-        true_res = pd.read_pickle(os.path.join(self.test_folder, 'true_res_thermo_rxns.pkl'))
+        true_res = pd.read_hdf(os.path.join(self.test_folder, 'true_res_thermo_rxns.h5'), key='df', mode='r')
 
         rxns_order = ['R_GLCtex', 'R_GLCabcpp', 'R_GLK', 'R_GLCNt2rpp', 'R_GNK', 'R_2DHGLCNkt_tpp', 'R_2DHGLCK',
                       'R_PGLCNDH_NAD', 'R_PGLCNDH_NADP', 'R_GLCDpp', 'R_GAD2ktpp', 'R_G6PDH2', 'R_G6PDH2_NAD',

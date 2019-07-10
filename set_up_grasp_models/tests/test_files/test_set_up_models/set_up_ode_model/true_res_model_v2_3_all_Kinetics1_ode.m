@@ -1,4 +1,4 @@
-function y = model_v2_3_all_Kinetics1_ode(y,Eref,model,fixedExch,Sred,kinInactRxns,subunits,flag)
+function y = model_v2_3_all_Kinetics1_ode(y,Eref,metsRefConc,model,fixedExch,Sred,kinInactRxns,subunits,flag)
 
 v = zeros(49,size(Eref,2));
 E = zeros(49,size(Eref,2));
@@ -136,4 +136,4 @@ v(47,:) = r_R_EX_f6p1(m_m_f6p_c,ones(1,size(y,2)),model.rxnParams(47).kineticPar
 v(48,:) = r_R_EX_3pg1(m_m_3pg_c,ones(1,size(y,2)),model.rxnParams(48).kineticParams);
 v(49,:) = r_R_GLCtex1(ones(1,size(y,2)),m_m_glc__D_p,model.rxnParams(49).kineticParams);
 
-y = Sred*(E.*v);
+y = (1./metsRefConc) .* (Sred*(E.*v));
