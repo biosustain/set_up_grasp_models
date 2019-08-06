@@ -39,7 +39,7 @@ def _set_up_mets_data(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd.D
     return mets_data_df
 
 
-def _set_up_thermo_mets(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd.DataFrame) -> pd.DataFrame:
+def _set_up_thermo_mets(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd.DataFrame) -> tuple:
     """
     Given the base excel input file, the list of metabolites in the model and a dataframe with metabolite
     concentrations averages and respective stdev, fills in the thermoMets sheet.
@@ -52,7 +52,7 @@ def _set_up_thermo_mets(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd
                                      a column named 'average' and another named 'stdev'.
 
     Returns:
-        thermoMets dataframe.
+        thermoMets dataframe and list of measured metabolites.
     """
 
     columns = ['min (M)', 'max (M)']
@@ -71,7 +71,11 @@ def _set_up_thermo_mets(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd
         thermo_mets_df.loc[mets_conc_df.index.values, 'min (M)'] = mets_conc_df.loc[mets_conc_df.index.values, 'min']
         thermo_mets_df.loc[mets_conc_df.index.values, 'max (M)'] = mets_conc_df.loc[mets_conc_df.index.values, 'max']
 
-    return thermo_mets_df
+        measured_mets = mets_conc_df.index.values
+    else:
+        measured_mets = []
+
+    return thermo_mets_df, measured_mets
 
 
 def _get_mets_conc(file_in_met_conc: str, mets_list: list, orient: str = 'columns') -> pd.DataFrame:

@@ -61,6 +61,10 @@ class TestSetUpMets(unittest.TestCase):
     def test_set_up_thermo_mets(self):
         true_res = pd.read_pickle(os.path.join(self.test_folder, 'true_res_thermo_mets.pkl'))
 
+        true_measured_mets = ['m_gthrd_c', 'm_nad_c', 'm_pyr_c', 'm_f6p_c', 'm_g3p_c', 'm_g6p_c', 'm_r5p_c',
+                              'm_s7p_c', 'm_ru5p__D_c', 'm_dhap_c', 'm_gthox_c', 'm_nadh_c', 'm_6pgc_c',
+                              'm_adp_c', 'm_nadp_c', 'm_pep_c', 'm_fdp_c', 'm_atp_c', 'm_nadph_c']
+
         mets_order = ['m_glc__D_e', 'm_glc__D_p', 'm_atp_c', 'm_glc__D_c', 'm_adp_c', 'm_pi_c', 'm_g6p_c', 'm_glcn_p',
                       'm_glcn_c', 'm_6pgc_c', 'm_2dhglcn_p', 'm_2dhglcn_c', 'm_6p2dhglcn_c', 'm_nadh_c', 'm_nad_c',
                       'm_nadph_c', 'm_nadp_c', 'm_q8_c', 'm_q8h2_c', 'm_6pgl_c', 'm_co2_c', 'm_ru5p__D_c', 'm_r5p_c',
@@ -70,9 +74,10 @@ class TestSetUpMets(unittest.TestCase):
                       'm_g3p_e', 'm_e4p_e', 'm_f6p_e', 'm_3pg_e']
 
         mets_conc_df = pd.read_pickle(os.path.join(self.test_folder, 'true_res_met_conc.pkl'))
-        res = _set_up_thermo_mets(self.base_df, mets_order, mets_conc_df)
+        mets_conc_res, measured_mets_res = _set_up_thermo_mets(self.base_df, mets_order, mets_conc_df)
 
-        self.assertTrue(true_res.equals(res))
+        self.assertTrue(true_res.equals(mets_conc_res))
+        self.assertListEqual(true_measured_mets, list(measured_mets_res))
 
     def test_set_up_mets_data(self):
         true_res = pd.read_pickle(os.path.join(self.test_folder, 'true_res_mets_data.pkl'))

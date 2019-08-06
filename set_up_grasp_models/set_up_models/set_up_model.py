@@ -117,12 +117,15 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
     stoic_df, rxn_list, mets_order, rxns_order = get_stoic(file_in_stoic)
     stoic_df.to_excel(writer, sheet_name='stoic')
 
+    # set up thermoMets, part 1
     mets_conc_df = _get_mets_conc(file_in_mets_conc, mets_order, orient=mets_orient) if file_in_mets_conc else None
+    thermo_mets_df, measured_mets = _set_up_thermo_mets(base_df, mets_order, mets_conc_df)
 
     # set up mets
-    columns = ['Metabolite name', 'balanced?', 'active?', 'fixed?']
+    columns = ['Metabolite name', 'balanced?', 'active?', 'fixed?', 'measured?']
     mets_df = pd.DataFrame(index=mets_order, columns=columns, data=np.zeros([len(mets_order), len(columns)]))
     mets_df.index.name = 'ID'
+    mets_df.loc[measured_mets, 'measured?'] = np.repeat(1, len(measured_mets))
     if 'mets' in base_df.keys():
         index_intersection = set(base_df['mets'].index.values).intersection(mets_df.index.values)
         mets_df.loc[index_intersection, :] = base_df['mets'].loc[index_intersection, :]
@@ -168,8 +171,7 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
                                                pH, ionic_strength)
     thermo_rxns_df.to_excel(writer, sheet_name='thermoRxns')
 
-    # set up thermoMets
-    thermo_mets_df = _set_up_thermo_mets(base_df, mets_order, mets_conc_df)
+    # set up thermoMets, part 2
     thermo_mets_df.to_excel(writer, sheet_name='thermoMets')
 
     # set up measRates
