@@ -162,8 +162,8 @@ def _set_up_model_thermo_rxns(base_df: dict, rxns_order: list, rxn_list: list, u
         -> pd.DataFrame:
     """
     Fills in the thermoRxns sheet on the excel GRASP input file.
-    First it copies any values that may be defined in base_df, and then if use_equilibrator is set to True, it gets
-    all standard Gibbs energies from eQuilibrator.
+    If use_equilibrator is set to True, it first gets all standard Gibbs energies from eQuilibrator, then it copies any
+    values that may be defined in base_df.
 
     Args:
         base_df: dictionary with base excel input file.
@@ -182,9 +182,7 @@ def _set_up_model_thermo_rxns(base_df: dict, rxns_order: list, rxn_list: list, u
     thermo_rxns_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
     thermo_rxns_df.index.name = 'rxn'
 
-    if 'thermoRxns' in base_df.keys():
-        index_intersection = set(base_df['thermoRxns'].index.values).intersection(thermo_rxns_df.index.values)
-        thermo_rxns_df.loc[index_intersection, :] = base_df['thermoRxns'].loc[index_intersection, :]
+
 
     if use_equilibrator:
         if file_bigg_kegg_ids and not os.path.isfile(file_bigg_kegg_ids):
@@ -206,5 +204,9 @@ def _set_up_model_thermo_rxns(base_df: dict, rxns_order: list, rxn_list: list, u
         rxn_dG_df['max'] = rxn_dG_df['average'] + rxn_dG_df['stdev']
         thermo_rxns_df.loc[rxn_dG_df.index.values, '∆Gr\'_min (kJ/mol)'] = rxn_dG_df.loc[rxn_dG_df.index.values, 'min']
         thermo_rxns_df.loc[rxn_dG_df.index.values, '∆Gr\'_max (kJ/mol)'] = rxn_dG_df.loc[rxn_dG_df.index.values, 'max']
+
+    if 'thermoRxns' in base_df.keys():
+        index_intersection = set(base_df['thermoRxns'].index.values).intersection(thermo_rxns_df.index.values)
+        thermo_rxns_df.loc[index_intersection, :] = base_df['thermoRxns'].loc[index_intersection, :]
 
     return thermo_rxns_df
