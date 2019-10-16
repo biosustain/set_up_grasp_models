@@ -43,6 +43,7 @@ def _set_up_thermo_mets(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd
     """
     Given the base excel input file, the list of metabolites in the model and a dataframe with metabolite
     concentrations averages and respective stdev, fills in the thermoMets sheet.
+    First fills in concentrations from mets_conc_df and then fromthe base_df.
     Default values for thermoMets are [10^-12, 10^-1] M.
 
     Args:
@@ -60,10 +61,6 @@ def _set_up_thermo_mets(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd
                                                                                  (len(mets_list), 1)))
     thermo_mets_df.index.name = 'met'
 
-    if 'thermoMets' in base_df.keys():
-        index_intersection = set(base_df['thermoMets'].index.values).intersection(thermo_mets_df.index.values)
-        thermo_mets_df.loc[index_intersection, :] = base_df['thermoMets'].loc[index_intersection, :]
-
     if mets_conc_df is not None:
         mets_conc_df['min'] = mets_conc_df['average'] - mets_conc_df['stdev']
         mets_conc_df['max'] = mets_conc_df['average'] + mets_conc_df['stdev']
@@ -74,6 +71,10 @@ def _set_up_thermo_mets(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd
         measured_mets = mets_conc_df.index.values
     else:
         measured_mets = []
+
+    if 'thermoMets' in base_df.keys():
+        index_intersection = set(base_df['thermoMets'].index.values).intersection(thermo_mets_df.index.values)
+        thermo_mets_df.loc[index_intersection, :] = base_df['thermoMets'].loc[index_intersection, :]
 
     return thermo_mets_df, measured_mets
 
