@@ -68,6 +68,9 @@ class TestSetUpModel(unittest.TestCase):
             set_up_model(model_name, self.file_in_stoic, general_file, file_out, use_equilibrator=True)
         res = pd.read_excel(os.path.join(self.test_folder, model_name + '.xlsx'), sheet_name=None)
 
+        #with open(os.path.join(self.test_folder, 'true_res_model_v3.pkl'), 'wb') as handle:
+        #   pickle.dump(res, handle)
+
         self.assertListEqual(list(true_res.keys()), list(res.keys()))
         for key in true_res:
             print(key)
@@ -89,7 +92,10 @@ class TestSetUpModel(unittest.TestCase):
 
         res = pd.read_excel(os.path.join(self.test_folder, model_name + '.xlsx'), sheet_name=None)
 
-        self.assertListEqual(list(true_res.keys()), list(res.keys()))#
+        #with open('true_res_model_v4.pkl', 'wb') as handle:
+        #    pickle.dump(res, handle)
+
+        self.assertListEqual(list(true_res.keys()), list(res.keys()))
 
         for key in true_res:
             self.assertTrue(true_res[key].equals(res[key]))
