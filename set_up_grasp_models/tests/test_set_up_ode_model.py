@@ -7,6 +7,7 @@ from set_up_grasp_models.set_up_models.set_up_ode_model import convert_to_ode_mo
 class TestSetUpODEModel(unittest.TestCase):
 
     def setUp(self):
+        self.maxDiff =None
         this_dir, this_filename = os.path.split(__file__)
         self.test_folder = os.path.join(this_dir, 'test_files', 'test_set_up_models', 'set_up_ode_model')
         self.file_in = os.path.join(self.test_folder, 'model_v2_3_all_Kinetics1.m')

@@ -53,7 +53,7 @@ def convert_to_ode_model(file_in: str):
 
             line = f_in.readline()
 
-    ode_model += '\ny = (1./metsRefConc) .* (Sred*(E.*v));'
+    ode_model += '\ny = (1./(metsRefConc.*10^6)) .* (Sred*(E.*v));'
 
     file_out = f'{file_in[:-2]}_ode.m'
 
