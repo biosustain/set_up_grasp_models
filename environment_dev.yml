@@ -105,10 +105,10 @@ dependencies:
   - pip:
     - appdirs==1.4.3
     - backports-csv==1.0.7
-    - component-contribution==0.2.4
+    - component-contribution==0.2.6
     - cycler==0.10.0
     - defusedxml==0.6.0
-    - equilibrator-cache==0.2.4
+    - equilibrator-cache==0.2.6
     - et-xmlfile==1.0.1
     - future==0.17.1
     - importlib-resources==1.0.2
