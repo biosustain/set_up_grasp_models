@@ -20,10 +20,10 @@ def _set_up_mets_data(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd.D
         metsData dataframe.
     """
 
-    columns = ['MBo10_LB2', 'MBo10_meas2', 'MBo10_UB2']
+    columns = ['lower_bound', 'mean', 'upper_bound']
     mets_data_df = pd.DataFrame(index=mets_list, columns=columns, data=np.tile(np.array([0.99, 1.00, 1.01]),
                                                                                (len(mets_list), 1)))
-    mets_data_df.index.name = 'met'
+    mets_data_df.index.name = 'metabolite ID'
     if 'metsData' in base_df.keys():
         index_intersection = set(base_df['metsData'].index.values).intersection(mets_data_df.index.values)
         mets_data_df.loc[index_intersection, :] = base_df['metsData'].loc[index_intersection, :]
@@ -33,8 +33,8 @@ def _set_up_mets_data(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd.D
         mets_conc_df['ub'] = (mets_conc_df['average'] + mets_conc_df['stdev']) / mets_conc_df['average']
         mets_conc_df = mets_conc_df.dropna()
 
-        mets_data_df.loc[mets_conc_df.index.values, 'MBo10_LB2'] = mets_conc_df.loc[mets_conc_df.index.values, 'lb']
-        mets_data_df.loc[mets_conc_df.index.values, 'MBo10_UB2'] = mets_conc_df.loc[mets_conc_df.index.values, 'ub']
+        mets_data_df.loc[mets_conc_df.index.values, 'lower_bound'] = mets_conc_df.loc[mets_conc_df.index.values, 'lb']
+        mets_data_df.loc[mets_conc_df.index.values, 'upper_bound'] = mets_conc_df.loc[mets_conc_df.index.values, 'ub']
 
     return mets_data_df
 
@@ -43,7 +43,7 @@ def _set_up_thermo_mets(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd
     """
     Given the base excel input file, the list of metabolites in the model and a dataframe with metabolite
     concentrations averages and respective stdev, fills in the thermoMets sheet.
-    First fills in concentrations from mets_conc_df and then fromthe base_df.
+    First fills in concentrations from mets_conc_df and then from the base_df.
     Default values for thermoMets are [10^-12, 10^-1] M.
 
     Args:
@@ -59,7 +59,7 @@ def _set_up_thermo_mets(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd
     columns = ['min (M)', 'max (M)']
     thermo_mets_df = pd.DataFrame(index=mets_list, columns=columns, data=np.tile(np.array([10 ** -12, 10 ** -1]),
                                                                                  (len(mets_list), 1)))
-    thermo_mets_df.index.name = 'met'
+    thermo_mets_df.index.name = 'metabolite ID'
 
     if mets_conc_df is not None:
         mets_conc_df['min'] = mets_conc_df['average'] - mets_conc_df['stdev']

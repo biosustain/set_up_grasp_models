@@ -211,6 +211,7 @@ def check_kinetics_subs_prod_order(data_dict: dict) -> bool:
         subs_set = set(subs_order.split()) if type(subs_order) is str else None
 
         if subs_set is not None and subs_set != rxn_subs:
+
             if len(subs_set.difference(rxn_subs)) > 0:
                 print(f'The following metabolites in the substrate order column for reaction {rxn} are not part of '
                       f'the reaction substrates:\n{subs_set.difference(rxn_subs)}\n')

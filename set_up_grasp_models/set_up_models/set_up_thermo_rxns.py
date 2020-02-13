@@ -180,7 +180,7 @@ def _set_up_model_thermo_rxns(base_df: dict, rxns_order: list, rxn_list: list, u
 
     columns = ['∆Gr\'_min (kJ/mol)', '∆Gr\'_max (kJ/mol)']
     thermo_rxns_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
-    thermo_rxns_df.index.name = 'rxn'
+    thermo_rxns_df.index.name = 'reaction ID'
 
 
 

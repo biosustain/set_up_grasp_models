@@ -6,7 +6,7 @@ import pandas as pd
 from set_up_grasp_models.set_up_models.manipulate_model import remove_spaces, reorder_reactions, rename_columns
 
 
-class TestIO(unittest.TestCase):
+class TestManipulateModel(unittest.TestCase):
 
     def setUp(self):
         this_dir, this_filename = os.path.split(__file__)

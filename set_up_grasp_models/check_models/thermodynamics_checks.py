@@ -170,8 +170,8 @@ def _get_meas_rates(data_dict: dict, rxn_list: list) -> tuple:
     meas_rates = zip(list(np.nonzero(np.in1d(rxn_list, meas_rates_ids))[0]), list(meas_rates_ids))
 
     for meas_rxn_ind, meas_rxn in meas_rates:
-        meas_rates_mean[meas_rxn_ind] = meas_rates_df.loc[meas_rxn, 'vref_mean (umol/gCDW/h)']
-        meas_rates_std[meas_rxn_ind] = meas_rates_df.loc[meas_rxn, 'vref_std (umol/gCDW/h)']
+        meas_rates_mean[meas_rxn_ind] = meas_rates_df.loc[meas_rxn, 'vref_mean (mmol/L/h)']
+        meas_rates_std[meas_rxn_ind] = meas_rates_df.loc[meas_rxn, 'vref_std (mmol/L/h)']
 
     return meas_rates_mean, meas_rates_std
 
@@ -209,8 +209,8 @@ def get_robust_fluxes(data_dict: dict, rxn_order: list = None) -> pd.DataFrame:
     v_mean[inactive_rxns_ind] = 0
     v_std[inactive_rxns_ind] = 0
 
-    fluxes_df['vref_mean (umol/gCDW/h)'] = v_mean
-    fluxes_df['vref_std (umol/gCDW/h)'] = v_std
+    fluxes_df['vref_mean (mmol/L/h)'] = v_mean
+    fluxes_df['vref_std (mmol/L/h)'] = v_std
 
     fluxes_df.index = rxn_list
     if rxn_order:
@@ -250,11 +250,11 @@ def check_thermodynamic_feasibility(data_dict: dict) -> tuple:
         flux_df = get_robust_fluxes(data_dict)
 
     for rxn in flux_df.index:
-        if flux_df.loc[rxn, 'vref_mean (umol/gCDW/h)'] > 0 and dG_df.loc[rxn, '∆G_min'] > 0:
+        if flux_df.loc[rxn, 'vref_mean (mmol/L/h)'] > 0 and dG_df.loc[rxn, '∆G_min'] > 0:
             print(f'The flux and ∆G range seem to be incompatible for reaction {rxn}')
             flag = True
 
-        if flux_df.loc[rxn, 'vref_mean (umol/gCDW/h)'] < 0 and dG_df.loc[rxn, '∆G_max'] < 0:
+        if flux_df.loc[rxn, 'vref_mean (mmol/L/h)'] < 0 and dG_df.loc[rxn, '∆G_max'] < 0:
             print(f'The flux and ∆G range seem to be incompatible for reaction {rxn}')
             flag = True
 

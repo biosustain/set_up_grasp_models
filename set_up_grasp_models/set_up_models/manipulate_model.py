@@ -72,13 +72,13 @@ def rename_columns(data_dict: dict, file_out: str):
         None
     """
 
-    sheet_column_names = {'mets': ['Metabolite name', 'balanced?', 'active?', 'fixed?'],
-                          'rxns': ['reaction name', 'transportRxn?', 'modelled?', 'isoenzymes'],
+    sheet_column_names = {'mets': ['Metabolite name', 'balanced?', 'active?', 'constant?', 'measured?'],
+                          'rxns': ['reaction name', 'transport reaction?', 'modelled?', 'isoenzymes'],
                           'thermoRxns': ['∆Gr\'_min (kJ/mol)', '∆Gr\'_max (kJ/mol)'],
                           'thermoMets': ['min (M)', 'max (M)'],
-                          'measRates': ['MBo10_mean', 'MBo10_std', 'MBo10_mean2', 'MBo10_std2'],
-                          'protData': ['MBo10_LB2', 'MBo10_meas2', 'MBo10_UB2'],
-                          'metsData': ['MBo10_LB2', 'MBo10_meas2', 'MBo10_UB2'],
+                          'measRates': ['vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)', 'vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)'],
+                          'protData': ['lower_bound', 'mean', 'upper_bound'],
+                          'metsData': ['lower_bound', 'mean', 'upper_bound'],
                           'kinetics1': ['kinetic mechanism', 'substrate order', 'product order', 'promiscuous',
                                         'inhibitors', 'activators', 'negative effectors', 'positive effectors',
                                         'allosteric', 'subunits', 'mechanism_refs_type', 'mechanism_refs',
@@ -88,16 +88,16 @@ def rename_columns(data_dict: dict, file_out: str):
                                         'subunits_refs', 'comments']}
 
     sheet_index_name = {'stoic': 'rxn ID',
-                        'mets': 'ID',
-                        'rxns': 'ID',
-                        'splitRatios': 'ID',
-                        'poolConst': 'met',
-                        'thermo_ineq_constraints': 'met',
-                        'thermoRxns': 'rxn',
-                        'thermoMets': 'met',
-                        'measRates': 'Fluxes (umol/gCDW/h)',
-                        'protData': 'enzyme/rxn',
-                        'metsData': 'met',
+                        'mets': 'metabolite ID',
+                        'rxns': 'reaction ID',
+                        'splitRatios': 'reaction ID',
+                        'poolConst': 'metabolite ID',
+                        'thermo_ineq_constraints': 'metabolite ID',
+                        'thermoRxns': 'reaction ID',
+                        'thermoMets': 'metabolite ID',
+                        'measRates': 'reaction ID',
+                        'protData': 'reaction/enzyme ID',
+                        'metsData': 'metabolite ID',
                         'kinetics1': 'reaction ID'}
 
     writer = pd.ExcelWriter(file_out, engine='xlsxwriter')

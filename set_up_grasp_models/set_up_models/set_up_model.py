@@ -122,9 +122,9 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
     thermo_mets_df, measured_mets = _set_up_thermo_mets(base_df, mets_order, mets_conc_df)
 
     # set up mets
-    columns = ['Metabolite name', 'balanced?', 'active?', 'fixed?', 'measured?']
+    columns = ['Metabolite name', 'balanced?', 'active?', 'constant?', 'measured?']
     mets_df = pd.DataFrame(index=mets_order, columns=columns, data=np.zeros([len(mets_order), len(columns)]))
-    mets_df.index.name = 'ID'
+    mets_df.index.name = 'metabolite ID'
     mets_df.loc[measured_mets, 'measured?'] = np.repeat(1, len(measured_mets))
     if 'mets' in base_df.keys():
         index_intersection = set(base_df['mets'].index.values).intersection(mets_df.index.values)
@@ -132,9 +132,9 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
     mets_df.to_excel(writer, sheet_name='mets')
 
     # set up rxns
-    columns = ['reaction name', 'transportRxn?', 'modelled?', 'isoenzymes']
+    columns = ['reaction name', 'transport reaction?', 'modelled?', 'isoenzymes']
     rxns_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
-    rxns_df.index.name = 'ID'
+    rxns_df.index.name = 'reaction ID'
     if 'rxns' in base_df.keys():
         index_intersection = set(base_df['rxns'].index.values).intersection(rxns_df.index.values)
         rxns_df.loc[index_intersection, :] = base_df['rxns'].loc[index_intersection, :]
@@ -142,7 +142,7 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
 
     # set up splitRatios
     split_ratios_df = pd.DataFrame(index=rxns_order)
-    split_ratios_df.index.name = 'ID'
+    split_ratios_df.index.name = 'reaction ID'
     if 'splitRatios' in base_df.keys():
         index_intersection = set(base_df['splitRatios'].index.values).intersection(split_ratios_df.index.values)
         split_ratios_df.loc[index_intersection, :] = base_df['splitRatios'].loc[index_intersection, :]
@@ -150,7 +150,7 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
 
     # set up poolConst
     pool_const_df = pd.DataFrame(index=mets_order)
-    pool_const_df.index.name = 'met'
+    pool_const_df.index.name = 'metabolite ID'
     if 'poolConst' in base_df.keys():
         index_intersection = set(base_df['poolConst'].index.values).intersection(pool_const_df.index.values)
         pool_const_df.loc[index_intersection, :] = base_df['poolConst'].loc[index_intersection, :]
@@ -158,7 +158,7 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
 
     # set up thermo_ineq_constraints
     thermo_ineq_constraints_df = pd.DataFrame(index=mets_order)
-    thermo_ineq_constraints_df.index.name = 'met'
+    thermo_ineq_constraints_df.index.name = 'metabolite ID'
     if 'thermo_ineq_constraints' in base_df.keys():
         index_intersection = set(base_df['thermo_ineq_constraints'].index.values).intersection(
             thermo_ineq_constraints_df.index.values)
@@ -175,19 +175,19 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
     thermo_mets_df.to_excel(writer, sheet_name='thermoMets')
 
     # set up measRates
-    columns = ['MBo10_mean', 'MBo10_std', 'MBo10_mean2', 'MBo10_std2']
+    columns = ['vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)', 'vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)']
     meas_rates_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
-    meas_rates_df.index.name = 'Fluxes (umol/gCDW/h)'
+    meas_rates_df.index.name = 'reaction ID'
     if 'measRates' in base_df.keys():
         index_intersection = set(base_df['measRates'].index.values).intersection(meas_rates_df.index.values)
         meas_rates_df.loc[index_intersection, :] = base_df['measRates'].loc[index_intersection, :]
     meas_rates_df.to_excel(writer, sheet_name='measRates')
 
     # set up protData
-    columns = ['MBo10_LB2', 'MBo10_meas2', 'MBo10_UB2']
+    columns = ['lower_bound', 'mean', 'upper_bound']
     prot_data_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.tile(np.array([0.99, 1.00, 1.01]),
                                                                                 (len(rxns_order), 1)))
-    prot_data_df.index.name = 'enzyme/rxn'
+    prot_data_df.index.name = 'reaction/enzyme ID'
     if 'protData' in base_df.keys():
         index_intersection = set(base_df['protData'].index.values).intersection(prot_data_df.index.values)
         prot_data_df.loc[index_intersection, :] = base_df['protData'].loc[index_intersection, :]
