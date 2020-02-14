@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="set_up_grasp_models",
-    version="0.1.0",
+    version="0.2.0",
     author="Marta Matos",
     author_email="marta.ra.matos@gmail.com",
     description="A package to set up and check GRASP input files",
@@ -11,7 +11,7 @@ setuptools.setup(
     install_requires=["numpy",
                       "pandas",
                       "XlsxWriter",
-                      "equilibrator-api==0.2.4"],
+                      "equilibrator-api==0.2.6"],
     python_requires='>=3.6',
     classifiers=[
         "Programming Language :: Python :: 3.6+",
