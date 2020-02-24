@@ -63,10 +63,180 @@ def update_stoic(stoic_df: pd.DataFrame, ex_rxns: list, ex_mets: list, non_ex_me
     return stoic_df, mets_order, rxns_order, ex_rxns_to_remove, ex_mets_to_remove
 
 
+def _add_general_sheet(writer, base_df: pd.DataFrame, base_excel_file: str, model_name: str):
+
+    try:
+        general_df = base_df['general']
+    except KeyError:
+        raise KeyError(f'The base excel file {base_excel_file} must contain a sheet named \'general\'')
+
+    general_df.iloc[0, 0] = model_name
+    general_df.to_excel(writer, sheet_name='general')
+
+    return writer
+
+
+def _add_stoic_sheet(writer, file_in_stoic: str) -> tuple:
+
+    stoic_df, rxn_list, mets_order, rxns_order = get_stoic(file_in_stoic)
+    stoic_df.to_excel(writer, sheet_name='stoic')
+
+    return writer, rxn_list, mets_order, rxns_order
+
+
+def _add_thermo_mets_sheet(writer, base_df: pd.DataFrame, file_in_mets_conc: str, mets_order: list, mets_orient: str):
+
+    mets_conc_df = _get_mets_conc(file_in_mets_conc, mets_order, orient=mets_orient) if file_in_mets_conc else None
+    thermo_mets_df, measured_mets = _set_up_thermo_mets(base_df, mets_order, mets_conc_df)
+    thermo_mets_df.to_excel(writer, sheet_name='thermoMets')
+
+    return writer, mets_conc_df, measured_mets
+
+
+def _add_mets_sheet(writer, base_df: pd.DataFrame, mets_order: list, measured_mets: list):
+
+    columns = ['Metabolite name', 'balanced?', 'active?', 'constant?', 'measured?']
+    mets_df = pd.DataFrame(index=mets_order, columns=columns, data=np.zeros([len(mets_order), len(columns)]))
+    mets_df.index.name = 'metabolite ID'
+    mets_df.loc[measured_mets, 'measured?'] = np.repeat(1, len(measured_mets))
+
+    if 'mets' in base_df.keys():
+        index_intersection = set(base_df['mets'].index.values).intersection(mets_df.index.values)
+        mets_df.loc[index_intersection, :] = base_df['mets'].loc[index_intersection, :]
+
+    mets_df.to_excel(writer, sheet_name='mets')
+
+    return writer
+
+
+def _add_rxns_sheet(writer, base_df: pd.DataFrame, rxns_order: list):
+
+    columns = ['reaction name', 'transport reaction?', 'modelled?', 'isoenzymes']
+    rxns_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
+    rxns_df.index.name = 'reaction ID'
+    if 'rxns' in base_df.keys():
+        index_intersection = set(base_df['rxns'].index.values).intersection(rxns_df.index.values)
+        rxns_df.loc[index_intersection, :] = base_df['rxns'].loc[index_intersection, :]
+    rxns_df.to_excel(writer, sheet_name='rxns')
+
+    return writer
+
+
+def _add_split_ratios_sheet(writer, base_df: pd.DataFrame, rxns_order: list):
+
+    split_ratios_df = pd.DataFrame(index=rxns_order)
+    split_ratios_df.index.name = 'reaction ID'
+
+    if 'splitRatios' in base_df.keys():
+        index_intersection = set(base_df['splitRatios'].index.values).intersection(split_ratios_df.index.values)
+        split_ratios_df.loc[index_intersection, :] = base_df['splitRatios'].loc[index_intersection, :]
+
+    split_ratios_df.to_excel(writer, sheet_name='splitRatios')
+
+    return writer
+
+
+def _add_pool_const_sheet(writer, base_df: pd.DataFrame, mets_order: list):
+
+    pool_const_df = pd.DataFrame(index=mets_order)
+    pool_const_df.index.name = 'metabolite ID'
+
+    if 'poolConst' in base_df.keys():
+        index_intersection = set(base_df['poolConst'].index.values).intersection(pool_const_df.index.values)
+        pool_const_df.loc[index_intersection, :] = base_df['poolConst'].loc[index_intersection, :]
+
+    pool_const_df.to_excel(writer, sheet_name='poolConst')
+
+    return writer
+
+
+def _add_thermo_ineq_constraints_sheet(writer, base_df: pd.DataFrame, mets_order: list):
+
+    thermo_ineq_constraints_df = pd.DataFrame(index=mets_order)
+    thermo_ineq_constraints_df.index.name = 'metabolite ID'
+
+    if 'thermo_ineq_constraints' in base_df.keys():
+        index_intersection = set(base_df['thermo_ineq_constraints'].index.values).intersection(
+            thermo_ineq_constraints_df.index.values)
+        thermo_ineq_constraints_df.loc[index_intersection, :] = base_df['thermo_ineq_constraints'].loc[
+                                                                index_intersection, :]
+    thermo_ineq_constraints_df.to_excel(writer, sheet_name='thermo_ineq_constraints')
+
+    return writer
+
+
+def _add_thermo_rxns(writer, base_df: pd.DataFrame, rxns_order: list, rxn_list: list, use_equilibrator: bool,
+                     file_bigg_kegg_ids: str, pH: float, ionic_strength: float):
+
+    thermo_rxns_df = _set_up_model_thermo_rxns(base_df, rxns_order, rxn_list, use_equilibrator, file_bigg_kegg_ids,
+                                               pH, ionic_strength)
+    thermo_rxns_df.to_excel(writer, sheet_name='thermoRxns')
+
+    return writer
+
+
+def _add_meas_rates_sheet(writer, base_df: pd.DataFrame, rxns_order: list):
+
+    columns = ['vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)', 'vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)']
+    meas_rates_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
+    meas_rates_df.index.name = 'reaction ID'
+
+    if 'measRates' in base_df.keys():
+        index_intersection = set(base_df['measRates'].index.values).intersection(meas_rates_df.index.values)
+        meas_rates_df.loc[index_intersection, :] = base_df['measRates'].loc[index_intersection, :]
+
+    meas_rates_df.to_excel(writer, sheet_name='measRates')
+
+    return writer
+
+
+def _add_prot_data_sheet(writer, base_df: pd.DataFrame, rxns_order: list):
+    columns = ['lower_bound', 'mean', 'upper_bound']
+    prot_data_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.tile(np.array([0.99, 1.00, 1.01]),
+                                                                                (len(rxns_order), 1)))
+    prot_data_df.index.name = 'reaction/enzyme ID'
+
+    if 'protData' in base_df.keys():
+        index_intersection = set(base_df['protData'].index.values).intersection(prot_data_df.index.values)
+        prot_data_df.loc[index_intersection, :] = base_df['protData'].loc[index_intersection, :]
+
+    prot_data_df.to_excel(writer, sheet_name='protData')
+
+    return writer
+
+
+def _add_mets_data_sheet(writer, base_df: pd.DataFrame, mets_order: list, mets_conc_df: pd.DataFrame):
+
+    mets_data_df = _set_up_mets_data(base_df, mets_order, mets_conc_df)
+    mets_data_df.to_excel(writer, sheet_name='metsData')
+
+    return writer
+
+
+def _add_kinetics_sheet(writer, base_df: pd.DataFrame, rxns_order: list):
+
+    columns = ['kinetic mechanism', 'substrate order', 'product order', 'promiscuous', 'inhibitors',
+               'activators', 'negative effectors', 'positive effectors', 'allosteric', 'subunits',
+               'mechanism_refs_type', 'mechanism_refs', 'inhibitors_refs_type', 'inhibitors_refs',
+               'activators_refs_type', 'activators_refs', 'negative_effectors_refs_type', 'negative_effectors_refs',
+               'positive_effectors_refs_type', 'positive_effectors_refs', 'subunits_refs_type', 'subunits_refs',
+               'comments']
+    kinetics_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
+    kinetics_df.index.name = 'reaction ID'
+
+    if 'kinetics1' in base_df.keys():
+        index_intersection = set(base_df['kinetics1'].index.values).intersection(kinetics_df.index.values)
+        kinetics_df.loc[index_intersection, :] = base_df['kinetics1'].loc[index_intersection, :]
+
+    kinetics_df.to_excel(writer, sheet_name='kinetics1')
+
+    return writer
+
+
 def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file_out: str,
                  use_equilibrator: bool = False, pH: float = 7.0, ionic_strength: float = 0.1,
                  file_bigg_kegg_ids: str = None, file_in_mets_conc: str = None, mets_orient: str = 'columns',
-                 file_in_prot_ranges: str = None, file_in_meas_fluxes: str = None):
+                 file_in_meas_fluxes: str = None, fluxes_orient: str = 'columns', file_in_prot_ranges: str = None):
     """
     Sets up the excel input model file template. A base excel file must be given. This file must contain at least
     the general sheet, for that one can use the file 'GRASP_general.xlsx' in base_files. In this case an excel
@@ -92,10 +262,12 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
         use_equilibrator: flag determining whether or not to get the standard Gibbs energies from eQuilibrator.
         pH: pH value to use to get the standard Gibbs energies from eQuilibrator.
         ionic_strength: ionic strength value to use to get the standard Gibbs energies from eQuilibrator.
-        file_bigg_kegg_ids: path to the file containing the metabolites mapping from BiGG to KEGG ids,
+        file_bigg_kegg_ids: path to the file containing the metabolites mapping from BiGG to KEGG ids.
         file_in_mets_conc: path to excel file containing metabolites concentrations.
-        file_in_prot_ranges: path to excel file containing protein concentrations (not in use atm).
+        mets_orient: string specifying the orientation of metabolite concentrations, either 'rows' or 'columns'.
         file_in_meas_fluxes: path to excel file containing measured fluxes (not in use atm).
+        fluxes_orient: string specifying the orientation of measured fluxes, either 'rows' or 'columns'.
+        file_in_prot_ranges: path to excel file containing protein concentrations (not in use atm).
 
     Returns:
         None
@@ -105,110 +277,32 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
 
     base_df = pd.read_excel(base_excel_file, index_col=0, header=0, sheet_name=None)
 
-    # set up general
-    try:
-        general_df = base_df['general']
-    except KeyError:
-        raise KeyError(f'The base excel file {base_excel_file} must contain a sheet named \'general\'')
-    general_df.iloc[0, 0] = model_name
-    general_df.to_excel(writer, sheet_name='general')
+    writer = _add_general_sheet(writer, base_df, base_excel_file, model_name)
 
-    # set up stoic
-    stoic_df, rxn_list, mets_order, rxns_order = get_stoic(file_in_stoic)
-    stoic_df.to_excel(writer, sheet_name='stoic')
+    writer, rxn_list, mets_order, rxns_order = _add_stoic_sheet(writer, file_in_stoic)
 
-    # set up thermoMets, part 1
-    mets_conc_df = _get_mets_conc(file_in_mets_conc, mets_order, orient=mets_orient) if file_in_mets_conc else None
-    thermo_mets_df, measured_mets = _set_up_thermo_mets(base_df, mets_order, mets_conc_df)
+    writer, mets_conc_df, measured_mets = _add_thermo_mets_sheet(writer, base_df, file_in_mets_conc, mets_order,
+                                                                 mets_orient)
 
-    # set up mets
-    columns = ['Metabolite name', 'balanced?', 'active?', 'constant?', 'measured?']
-    mets_df = pd.DataFrame(index=mets_order, columns=columns, data=np.zeros([len(mets_order), len(columns)]))
-    mets_df.index.name = 'metabolite ID'
-    mets_df.loc[measured_mets, 'measured?'] = np.repeat(1, len(measured_mets))
-    if 'mets' in base_df.keys():
-        index_intersection = set(base_df['mets'].index.values).intersection(mets_df.index.values)
-        mets_df.loc[index_intersection, :] = base_df['mets'].loc[index_intersection, :]
-    mets_df.to_excel(writer, sheet_name='mets')
+    writer = _add_mets_sheet(writer, base_df, mets_order, measured_mets)
 
-    # set up rxns
-    columns = ['reaction name', 'transport reaction?', 'modelled?', 'isoenzymes']
-    rxns_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
-    rxns_df.index.name = 'reaction ID'
-    if 'rxns' in base_df.keys():
-        index_intersection = set(base_df['rxns'].index.values).intersection(rxns_df.index.values)
-        rxns_df.loc[index_intersection, :] = base_df['rxns'].loc[index_intersection, :]
-    rxns_df.to_excel(writer, sheet_name='rxns')
+    writer = _add_rxns_sheet(writer, base_df, rxns_order)
 
-    # set up splitRatios
-    split_ratios_df = pd.DataFrame(index=rxns_order)
-    split_ratios_df.index.name = 'reaction ID'
-    if 'splitRatios' in base_df.keys():
-        index_intersection = set(base_df['splitRatios'].index.values).intersection(split_ratios_df.index.values)
-        split_ratios_df.loc[index_intersection, :] = base_df['splitRatios'].loc[index_intersection, :]
-    split_ratios_df.to_excel(writer, sheet_name='splitRatios')
+    writer = _add_split_ratios_sheet(writer, base_df, rxns_order)
 
-    # set up poolConst
-    pool_const_df = pd.DataFrame(index=mets_order)
-    pool_const_df.index.name = 'metabolite ID'
-    if 'poolConst' in base_df.keys():
-        index_intersection = set(base_df['poolConst'].index.values).intersection(pool_const_df.index.values)
-        pool_const_df.loc[index_intersection, :] = base_df['poolConst'].loc[index_intersection, :]
-    pool_const_df.to_excel(writer, sheet_name='poolConst')
+    writer = _add_pool_const_sheet(writer, base_df, mets_order)
 
-    # set up thermo_ineq_constraints
-    thermo_ineq_constraints_df = pd.DataFrame(index=mets_order)
-    thermo_ineq_constraints_df.index.name = 'metabolite ID'
-    if 'thermo_ineq_constraints' in base_df.keys():
-        index_intersection = set(base_df['thermo_ineq_constraints'].index.values).intersection(
-            thermo_ineq_constraints_df.index.values)
-        thermo_ineq_constraints_df.loc[index_intersection, :] = base_df['thermo_ineq_constraints'].loc[
-                                                                index_intersection, :]
-    thermo_ineq_constraints_df.to_excel(writer, sheet_name='thermo_ineq_constraints')
+    writer = _add_thermo_ineq_constraints_sheet(writer, base_df, mets_order)
 
-    # set up thermoRxns
-    thermo_rxns_df = _set_up_model_thermo_rxns(base_df, rxns_order, rxn_list, use_equilibrator, file_bigg_kegg_ids,
-                                               pH, ionic_strength)
-    thermo_rxns_df.to_excel(writer, sheet_name='thermoRxns')
+    writer = _add_thermo_rxns(writer, base_df, rxns_order, rxn_list, use_equilibrator, file_bigg_kegg_ids, pH,
+                              ionic_strength)
 
-    # set up thermoMets, part 2
-    thermo_mets_df.to_excel(writer, sheet_name='thermoMets')
+    writer = _add_meas_rates_sheet(writer, base_df, rxns_order)
 
-    # set up measRates
-    columns = ['vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)', 'vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)']
-    meas_rates_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
-    meas_rates_df.index.name = 'reaction ID'
-    if 'measRates' in base_df.keys():
-        index_intersection = set(base_df['measRates'].index.values).intersection(meas_rates_df.index.values)
-        meas_rates_df.loc[index_intersection, :] = base_df['measRates'].loc[index_intersection, :]
-    meas_rates_df.to_excel(writer, sheet_name='measRates')
+    writer = _add_prot_data_sheet(writer, base_df, rxns_order)
 
-    # set up protData
-    columns = ['lower_bound', 'mean', 'upper_bound']
-    prot_data_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.tile(np.array([0.99, 1.00, 1.01]),
-                                                                                (len(rxns_order), 1)))
-    prot_data_df.index.name = 'reaction/enzyme ID'
-    if 'protData' in base_df.keys():
-        index_intersection = set(base_df['protData'].index.values).intersection(prot_data_df.index.values)
-        prot_data_df.loc[index_intersection, :] = base_df['protData'].loc[index_intersection, :]
-    prot_data_df.to_excel(writer, sheet_name='protData')
+    writer = _add_mets_data_sheet(writer, base_df, mets_order, mets_conc_df)
 
-    # set up metsData
-    mets_data_df = _set_up_mets_data(base_df, mets_order, mets_conc_df)
-    mets_data_df.to_excel(writer, sheet_name='metsData')
-
-    # set up kinetics1
-    columns = ['kinetic mechanism', 'substrate order', 'product order', 'promiscuous', 'inhibitors',
-               'activators', 'negative effectors', 'positive effectors', 'allosteric', 'subunits',
-               'mechanism_refs_type', 'mechanism_refs', 'inhibitors_refs_type', 'inhibitors_refs',
-               'activators_refs_type', 'activators_refs', 'negative_effectors_refs_type', 'negative_effectors_refs',
-               'positive_effectors_refs_type', 'positive_effectors_refs', 'subunits_refs_type', 'subunits_refs',
-               'comments']
-    kinetics_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
-    kinetics_df.index.name = 'reaction ID'
-    if 'kinetics1' in base_df.keys():
-        index_intersection = set(base_df['kinetics1'].index.values).intersection(kinetics_df.index.values)
-        kinetics_df.loc[index_intersection, :] = base_df['kinetics1'].loc[index_intersection, :]
-    kinetics_df.to_excel(writer, sheet_name='kinetics1')
+    writer = _add_kinetics_sheet(writer, base_df, rxns_order)
 
     writer.save()
