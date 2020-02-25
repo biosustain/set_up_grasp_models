@@ -4,6 +4,7 @@ import pandas as pd
 from set_up_grasp_models.io.plaintext import import_model_from_plaintext
 from set_up_grasp_models.set_up_models.set_up_mets import _get_mets_conc, _set_up_thermo_mets, _set_up_mets_data
 from set_up_grasp_models.set_up_models.set_up_thermo_rxns import _set_up_model_thermo_rxns
+from set_up_grasp_models.set_up_models.set_up_meas_rates import _get_meas_fluxes, _set_up_meas_rates
 
 
 def get_stoic(file_in: str) -> tuple:
@@ -86,7 +87,11 @@ def _add_stoic_sheet(writer, file_in_stoic: str) -> tuple:
 
 def _add_thermo_mets_sheet(writer, base_df: pd.DataFrame, file_in_mets_conc: str, mets_order: list, mets_orient: str):
 
-    mets_conc_df = _get_mets_conc(file_in_mets_conc, mets_order, orient=mets_orient) if file_in_mets_conc else None
+    if file_in_mets_conc:
+        mets_conc_df = _get_mets_conc(file_in_mets_conc, mets_order, orient=mets_orient)
+    else:
+        mets_conc_df = None
+
     thermo_mets_df, measured_mets = _set_up_thermo_mets(base_df, mets_order, mets_conc_df)
     thermo_mets_df.to_excel(writer, sheet_name='thermoMets')
 
@@ -175,15 +180,13 @@ def _add_thermo_rxns(writer, base_df: pd.DataFrame, rxns_order: list, rxn_list: 
     return writer
 
 
-def _add_meas_rates_sheet(writer, base_df: pd.DataFrame, rxns_order: list):
+def _add_meas_rates_sheet(writer, base_df: pd.DataFrame, file_in_meas_fluxes: str, rxns_order: list, fluxes_orient: str):
+    if file_in_meas_fluxes:
+        rxn_fluxes_df = _get_meas_fluxes(file_in_meas_fluxes, rxns_order, orient=fluxes_orient)
+    else:
+        rxn_fluxes_df = None
 
-    columns = ['vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)', 'vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)']
-    meas_rates_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
-    meas_rates_df.index.name = 'reaction ID'
-
-    if 'measRates' in base_df.keys():
-        index_intersection = set(base_df['measRates'].index.values).intersection(meas_rates_df.index.values)
-        meas_rates_df.loc[index_intersection, :] = base_df['measRates'].loc[index_intersection, :]
+    meas_rates_df = _set_up_meas_rates(base_df, rxn_fluxes_df, rxns_order)
 
     meas_rates_df.to_excel(writer, sheet_name='measRates')
 
@@ -297,7 +300,7 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
     writer = _add_thermo_rxns(writer, base_df, rxns_order, rxn_list, use_equilibrator, file_bigg_kegg_ids, pH,
                               ionic_strength)
 
-    writer = _add_meas_rates_sheet(writer, base_df, rxns_order)
+    writer = _add_meas_rates_sheet(writer, base_df, file_in_meas_fluxes, rxns_order, fluxes_orient)
 
     writer = _add_prot_data_sheet(writer, base_df, rxns_order)
 

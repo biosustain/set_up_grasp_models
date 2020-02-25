@@ -161,7 +161,7 @@ def get_dGs(rxn_list: list, file_bigg_kegg_ids: str, pH: float = 7.0, ionic_stre
     return rxn_dG_dict
 
 
-def _set_up_model_thermo_rxns(base_df: dict, rxns_order: list, rxn_list: list, use_equilibrator:bool,
+def _set_up_model_thermo_rxns(base_df: pd.DataFrame, rxns_order: list, rxn_list: list, use_equilibrator:bool,
                               file_bigg_kegg_ids: str = None, pH: float = 7.0, ionic_strength: float = 0.1) \
         -> pd.DataFrame:
     """

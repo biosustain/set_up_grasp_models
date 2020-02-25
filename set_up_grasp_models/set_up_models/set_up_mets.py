@@ -84,6 +84,7 @@ def _get_mets_conc(file_in_met_conc: str, mets_list: list, orient: str = 'column
     Given an excel file with the metabolite concentrations and the list of metabolites in the model, it returns
     a dataframe with only the concentrations of the metabolites in the model: average and respective standard
     deviation.
+    The metabolite names in the excel file with metabolite concentrations are not expected to start with m_
 
     The file must have either:
      - the metabolite names in the rows and two columns named average and stdev (set orient to 'rows')
