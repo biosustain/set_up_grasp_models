@@ -335,3 +335,17 @@ class TestThermodynamicsChecks(unittest.TestCase):
         self.assertTrue(ma_df.equals(true_res_ma))
         self.assertTrue(dG_Q_df.equals(true_res_dG_Q))
         self.assertTrue(dG_df.equals(true_res_dG))
+
+    def test_marinas_model(self):
+        from set_up_grasp_models.check_models.thermodynamics_checks import _compute_robust_fluxes, _get_balanced_s_matrix, _get_meas_rates, _get_inactive_reactions
+
+        data_dict = pd.read_excel(os.path.join(self.test_folder, 'marinas_model.xlsx'), sheet_name=None, index_col=0)
+
+        stoic_balanced, rxn_list = _get_balanced_s_matrix(data_dict)
+
+        meas_rates_mean, meas_rates_std = _get_meas_rates(data_dict, rxn_list)
+        with self.assertRaises(RuntimeError) as context:
+            _compute_robust_fluxes(stoic_balanced, meas_rates_mean, meas_rates_std,rxn_list)
+
+        self.assertTrue("The reactions are ['r73' 'r74' 'r81' 'r52']" in str(context.exception))
+

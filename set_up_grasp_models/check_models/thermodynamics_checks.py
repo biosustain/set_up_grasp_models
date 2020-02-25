@@ -105,7 +105,8 @@ def calculate_dG(data_dict: dict, gas_constant: float, temperature: float, rxn_o
     return ma_df, dG_Q_df, dG_df
 
 
-def _compute_robust_fluxes(stoic_matrix: np.ndarray, meas_rates: np.ndarray, meas_rates_std: np.ndarray) -> tuple:
+def _compute_robust_fluxes(stoic_matrix: np.ndarray, meas_rates: np.ndarray, meas_rates_std: np.ndarray,
+                           rxn_list: list) -> tuple:
 
     # Determine measured fluxes and decompose stoichiometric matrix
     id_meas = np.where(meas_rates != 0)
@@ -131,6 +132,12 @@ def _compute_robust_fluxes(stoic_matrix: np.ndarray, meas_rates: np.ndarray, mea
     # If the system is fully determined, compute as follows
     if len(zero_sing_vals[0]) == 0:
         v_mean[id_unkn] = -np.matmul(np.matmul(np.linalg.pinv(stoic_unkn), stoic_meas), meas_rates[id_meas])
+        if len(np.where(v_mean == 0)[0]) > len(id_meas[0]):
+            zero_flux_rxns = list(set(np.where(v_mean == 0)[0]).difference(set(id_meas[0])))
+            raise RuntimeError('According to compute robust fluxes, there are reactions with zero flux in the model.\n'+
+                                'Those reactions should be removed.\n' +
+                                f'The reactions are {np.array(rxn_list)[[zero_flux_rxns]]}')
+
         v_mean[np.where(v_mean == 0)] = meas_rates[id_meas]
         v_std[id_unkn] = np.diag(np.matmul(
             np.matmul(np.matmul(np.matmul(np.linalg.pinv(stoic_unkn), stoic_meas), Dm), np.transpose(stoic_meas)),
@@ -204,7 +211,7 @@ def get_robust_fluxes(data_dict: dict, rxn_order: list = None) -> pd.DataFrame:
     meas_rates_mean, meas_rates_std = _get_meas_rates(data_dict, rxn_list)
     inactive_rxns_ind = _get_inactive_reactions(data_dict)
 
-    v_mean, v_std = _compute_robust_fluxes(stoic_balanced, meas_rates_mean, meas_rates_std)
+    v_mean, v_std = _compute_robust_fluxes(stoic_balanced, meas_rates_mean, meas_rates_std, rxn_list)
 
     v_mean[inactive_rxns_ind] = 0
     v_std[inactive_rxns_ind] = 0
