@@ -57,7 +57,7 @@ class TestSetUpMeasRates(unittest.TestCase):
 
     def test_set_up_meas_rates(self):
         true_res = pd.read_csv(os.path.join(self.test_folder, 'true_res_set_up_meas_rates.csv'), index_col=0)
-        true_res.columns = ['vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)', 'vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)']
+        true_res.columns = ['vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)', 'vref_mean2 (mmol/L/h)', 'vref_std2 (mmol/L/h)']
 
         rxns_order = ['R_r1', 'R_r2', 'R_r3', 'R_r4', 'R_r5', 'R_r6', 'R_r7', 'R_r8', 'R_r9', 'R_r10', 'R_r11', 'R_r12',
                       'R_r13', 'R_r14', 'R_r15', 'R_r16', 'R_r17', 'R_r18', 'R_r19', 'R_r20', 'R_r21', 'R_r22', 'R_r23',

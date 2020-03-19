@@ -20,7 +20,7 @@ def _set_up_meas_rates(base_df, rxn_fluxes_df, rxns_order):
     Returns:
         measRates dataframe.
     """
-    columns = ['vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)', 'vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)']
+    columns = ['vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)', 'vref_mean2 (mmol/L/h)', 'vref_std2 (mmol/L/h)']
     meas_rates_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
     meas_rates_df.index.name = 'reaction ID'
 
@@ -30,6 +30,10 @@ def _set_up_meas_rates(base_df, rxn_fluxes_df, rxns_order):
                 rxn_fluxes_df.index.values, 'vref_mean']
             meas_rates_df.loc[rxn_fluxes_df.index.values, 'vref_std (mmol/L/h)'] = rxn_fluxes_df.loc[
                 rxn_fluxes_df.index.values, 'vref_std']
+
+            meas_rates_df['vref_mean2 (mmol/L/h)'] = meas_rates_df['vref_mean (mmol/L/h)']
+            meas_rates_df['vref_std2 (mmol/L/h)'] = meas_rates_df['vref_std (mmol/L/h)']
+
         except KeyError:
             raise KeyError(
                 'The reaction IDs in the reaction fluxes dataframe do not match the reaction IDs in the rxns_order variable.')
