@@ -57,7 +57,7 @@ def _set_up_thermo_mets(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd
     """
 
     columns = ['min (M)', 'max (M)']
-    thermo_mets_df = pd.DataFrame(index=mets_list, columns=columns, data=np.tile(np.array([10 ** -12, 10 ** -1]),
+    thermo_mets_df = pd.DataFrame(index=mets_list, columns=columns, data=np.tile(np.array([10 ** -9, 10 ** -1]),
                                                                                  (len(mets_list), 1)))
     thermo_mets_df.index.name = 'metabolite ID'
 
