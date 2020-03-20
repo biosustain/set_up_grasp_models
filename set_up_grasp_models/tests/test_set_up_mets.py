@@ -76,6 +76,10 @@ class TestSetUpMets(unittest.TestCase):
         mets_conc_df = pd.read_pickle(os.path.join(self.test_folder, 'true_res_met_conc.pkl'))
         mets_conc_res, measured_mets_res = _set_up_thermo_mets(self.base_df, mets_order, mets_conc_df)
 
+        #import pickle
+        #with open(os.path.join(self.test_folder, 'true_res_thermo_mets.pkl'), 'wb') as handle:
+        #    pickle.dump(mets_conc_res, handle)
+
         self.assertTrue(true_res.equals(mets_conc_res))
         self.assertListEqual(true_measured_mets, list(measured_mets_res))
 
@@ -92,5 +96,9 @@ class TestSetUpMets(unittest.TestCase):
 
         mets_conc_df = pd.read_pickle(os.path.join(self.test_folder, 'true_res_met_conc.pkl'))
         res = _set_up_mets_data(self.base_df, mets_order, mets_conc_df)
+
+        #import pickle
+        #with open(os.path.join(self.test_folder, 'true_res_mets_data.pkl'), 'wb') as handle:
+        #    pickle.dump(res, handle)
 
         self.assertTrue(true_res.equals(res))

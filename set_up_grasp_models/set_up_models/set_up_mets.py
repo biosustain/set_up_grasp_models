@@ -29,8 +29,8 @@ def _set_up_mets_data(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd.D
         mets_data_df.loc[index_intersection, :] = base_df['metsData'].loc[index_intersection, :]
 
     if mets_conc_df is not None:
-        mets_conc_df['lb'] = (mets_conc_df['average'] - mets_conc_df['stdev']) / mets_conc_df['average']
-        mets_conc_df['ub'] = (mets_conc_df['average'] + mets_conc_df['stdev']) / mets_conc_df['average']
+        mets_conc_df['lb'] = (mets_conc_df['average'] - 2 * mets_conc_df['stdev']) / mets_conc_df['average']
+        mets_conc_df['ub'] = (mets_conc_df['average'] + 2 * mets_conc_df['stdev']) / mets_conc_df['average']
         mets_conc_df = mets_conc_df.dropna()
 
         mets_data_df.loc[mets_conc_df.index.values, 'lower_bound'] = mets_conc_df.loc[mets_conc_df.index.values, 'lb']
@@ -62,8 +62,8 @@ def _set_up_thermo_mets(base_df: pd.DataFrame, mets_list: list, mets_conc_df: pd
     thermo_mets_df.index.name = 'metabolite ID'
 
     if mets_conc_df is not None:
-        mets_conc_df['min'] = mets_conc_df['average'] - mets_conc_df['stdev']
-        mets_conc_df['max'] = mets_conc_df['average'] + mets_conc_df['stdev']
+        mets_conc_df['min'] = mets_conc_df['average'] - 2 * mets_conc_df['stdev']
+        mets_conc_df['max'] = mets_conc_df['average'] + 2 * mets_conc_df['stdev']
 
         thermo_mets_df.loc[mets_conc_df.index.values, 'min (M)'] = mets_conc_df.loc[mets_conc_df.index.values, 'min']
         thermo_mets_df.loc[mets_conc_df.index.values, 'max (M)'] = mets_conc_df.loc[mets_conc_df.index.values, 'max']

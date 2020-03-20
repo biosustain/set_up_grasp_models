@@ -204,8 +204,8 @@ def _set_up_model_thermo_rxns(base_df: pd.DataFrame, rxns_order: list, rxn_list:
         rxn_dG_df = pd.DataFrame().from_dict(rxn_dG_dict, orient='index')
         rxn_dG_df.columns = ['average', 'stdev']
 
-        rxn_dG_df['min'] = rxn_dG_df['average'] - rxn_dG_df['stdev']
-        rxn_dG_df['max'] = rxn_dG_df['average'] + rxn_dG_df['stdev']
+        rxn_dG_df['min'] = rxn_dG_df['average'] - 2 * rxn_dG_df['stdev']
+        rxn_dG_df['max'] = rxn_dG_df['average'] + 2 * rxn_dG_df['stdev']
         thermo_rxns_df.loc[rxn_dG_df.index.values, '∆Gr\'_min (kJ/mol)'] = rxn_dG_df.loc[rxn_dG_df.index.values, 'min']
         thermo_rxns_df.loc[rxn_dG_df.index.values, '∆Gr\'_max (kJ/mol)'] = rxn_dG_df.loc[rxn_dG_df.index.values, 'max']
 
