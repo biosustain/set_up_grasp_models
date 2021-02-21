@@ -9,6 +9,7 @@ from math import isnan
 import numpy as np
 import pandas as pd
 from equilibrator_api import ComponentContribution, Reaction, Q_, ccache, parse_reaction_formula
+from equilibrator_cache.exceptions import MissingDissociationConstantsException
 
 from set_up_grasp_models.model.parser import ReactionParser
 
@@ -152,11 +153,15 @@ def get_dGs(rxn_list: list, file_bigg_kegg_ids: str, pH: float = 7.0, ionic_stre
         if not rxn.is_balanced():
             print(f'{rxn_id} is not balanced.')
 
-        res = eq_api.standard_dg_prime(rxn)
-        dG0 = res.value.magnitude
-        dG0_std = res.error.magnitude
+        try:
+            res = eq_api.standard_dg_prime(rxn)
+            dG0 = res.value.magnitude
+            dG0_std = res.error.magnitude
+            rxn_dG_dict[rxn_id] = (round(dG0, digits), round(dG0_std, digits))
 
-        rxn_dG_dict[rxn_id] = (round(dG0, digits), round(dG0_std, digits))
+        except MissingDissociationConstantsException:
+            print(f'There is no standard Gibbs energy for {rxn_id}.')
+            rxn_dG_dict[rxn_id] = (0, 0)
 
     return rxn_dG_dict
 
