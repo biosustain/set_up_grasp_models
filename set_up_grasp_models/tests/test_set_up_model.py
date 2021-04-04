@@ -18,7 +18,7 @@ class TestSetUpModel(unittest.TestCase):
 
         true_res = pd.read_excel(os.path.join(self.test_folder, 'true_res_model_v1.xlsx'), sheet_name=None)
 
-        general_file = os.path.join(self.test_folder, 'GRASP_general.xlsx')
+        general_file = os.path.join(self.test_folder, '..', '..',  '..', '..', '..', 'base_files', 'GRASP_general.xlsx')
         model_name = 'model_v1'
         file_out = os.path.join(self.test_folder, model_name + '.xlsx')
 
@@ -123,7 +123,6 @@ class TestSetUpModel(unittest.TestCase):
         res = pd.read_excel(os.path.join(self.test_folder, model_name + '.xlsx'), sheet_name=None)
 
         self.assertListEqual(list(true_res.keys()), list(res.keys()))
-
         for key in true_res:
             print(key)
             self.assertTrue(true_res[key].equals(res[key]))

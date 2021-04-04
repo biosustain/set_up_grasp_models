@@ -72,11 +72,11 @@ def rename_columns(data_dict: dict, file_out: str):
         None
     """
 
-    sheet_column_names = {'mets': ['Metabolite name', 'balanced?', 'active?', 'constant?', 'measured?'],
-                          'rxns': ['reaction name', 'transport reaction?', 'modelled?', 'isoenzymes'],
+    sheet_column_names = {'mets': ['Metabolite name', 'balanced?'],
+                          'rxns': ['reaction name', 'transport reaction?', 'isoenzymes'],
                           'thermoRxns': ['∆Gr\'_min (kJ/mol)', '∆Gr\'_max (kJ/mol)'],
                           'thermoMets': ['min (M)', 'max (M)'],
-                          'measRates': ['vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)', 'vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)'],
+                          'measRates': ['vref_mean (mmol/L/h)', 'vref_std (mmol/L/h)'],
                           'protData': ['lower_bound', 'mean', 'upper_bound'],
                           'metsData': ['lower_bound', 'mean', 'upper_bound'],
                           'kinetics1': ['kinetic mechanism', 'substrate order', 'product order', 'promiscuous',

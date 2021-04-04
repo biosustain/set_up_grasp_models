@@ -83,9 +83,6 @@ def check_balanced_metabolites(data_dict: dict) -> bool:
             if mets_df['balanced?'][i] == 1:
                 print(f'{met} is marked as balanced but it does not seem to be balanced.')
                 flag = True
-            if mets_df['constant?'][i] == 0:
-                print(f'{met} is not set as constant but maybe it should, since it does not seem to be balanced.')
-                flag = True
 
     if flag is False:
         print('Everything seems to be OK.')

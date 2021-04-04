@@ -100,10 +100,9 @@ def _add_thermo_mets_sheet(writer, base_df: pd.DataFrame, file_in_mets_conc: str
 
 def _add_mets_sheet(writer, base_df: pd.DataFrame, mets_order: list, measured_mets: list):
 
-    columns = ['Metabolite name', 'balanced?', 'active?', 'constant?', 'measured?']
+    columns = ['Metabolite name', 'balanced?']
     mets_df = pd.DataFrame(index=mets_order, columns=columns, data=np.zeros([len(mets_order), len(columns)]))
     mets_df.index.name = 'metabolite ID'
-    mets_df.loc[measured_mets, 'measured?'] = np.repeat(1, len(measured_mets))
 
     if 'mets' in base_df.keys():
         index_intersection = set(base_df['mets'].index.values).intersection(mets_df.index.values)
@@ -116,27 +115,14 @@ def _add_mets_sheet(writer, base_df: pd.DataFrame, mets_order: list, measured_me
 
 def _add_rxns_sheet(writer, base_df: pd.DataFrame, rxns_order: list):
 
-    columns = ['reaction name', 'transport reaction?', 'modelled?', 'isoenzymes']
+    columns = ['reaction name', 'transport reaction?', 'isoenzymes']
     rxns_df = pd.DataFrame(index=rxns_order, columns=columns, data=np.zeros([len(rxns_order), len(columns)]))
     rxns_df.index.name = 'reaction ID'
+
     if 'rxns' in base_df.keys():
         index_intersection = set(base_df['rxns'].index.values).intersection(rxns_df.index.values)
         rxns_df.loc[index_intersection, :] = base_df['rxns'].loc[index_intersection, :]
     rxns_df.to_excel(writer, sheet_name='rxns')
-
-    return writer
-
-
-def _add_split_ratios_sheet(writer, base_df: pd.DataFrame, rxns_order: list):
-
-    split_ratios_df = pd.DataFrame(index=rxns_order)
-    split_ratios_df.index.name = 'reaction ID'
-
-    if 'splitRatios' in base_df.keys():
-        index_intersection = set(base_df['splitRatios'].index.values).intersection(split_ratios_df.index.values)
-        split_ratios_df.loc[index_intersection, :] = base_df['splitRatios'].loc[index_intersection, :]
-
-    split_ratios_df.to_excel(writer, sheet_name='splitRatios')
 
     return writer
 
@@ -290,8 +276,6 @@ def set_up_model(model_name: str, file_in_stoic: str, base_excel_file: str, file
     writer = _add_mets_sheet(writer, base_df, mets_order, measured_mets)
 
     writer = _add_rxns_sheet(writer, base_df, rxns_order)
-
-    writer = _add_split_ratios_sheet(writer, base_df, rxns_order)
 
     writer = _add_pool_const_sheet(writer, base_df, mets_order)
 

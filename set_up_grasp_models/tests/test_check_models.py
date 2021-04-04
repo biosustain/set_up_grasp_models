@@ -198,11 +198,19 @@ class TestFormatChecks(unittest.TestCase):
     def test_check_met_names_kinetics_order_2(self, mock_stdout):
         true_res = ('\nChecking if the metabolite names in the substrate and product order columns in the kinetics ' +
                     'sheet are valid, i.e., if they are indeed substrates and products of the respective ' +
-                    'reaction.\n\n' +
+                    'reaction.\n' +
+                    'Take the results with a grain of salt though, as you might not want to include all '+
+                    'substrates/products in the reactions\' mechanisms.\n\n' +
+                    'The following reaction products are not part of the product order column for reaction R_EDD :\n' +
+                    '{\'m_h2o_c\'}\n\n' +
                     'The following metabolites in the substrate order column for reaction R_PGI are not part of ' +
                     'the reaction substrates:\n{\'m_g6p_c\'}\n\n' +
                     'The following metabolites in the product order column for reaction R_PGI are not part of ' +
-                    'the reaction products:\n{\'m_f6p_c\'}\n\n')
+                    'the reaction products:\n{\'m_f6p_c\'}\n\n' +
+                    'The following reaction substrates are not part of the substrate order column for reaction ' +
+                    'R_FBP :\n{\'m_h2o_c\'}\n\n' +
+                    'The following reaction products are not part of the product order column for reaction R_ENO :\n' +
+                    '{\'m_h2o_c\'}\n\n')
 
         data_dict = pd.read_excel(os.path.join(self.test_folder, 'model_v2_3_no_reg_ma_EMP_ED_2.xlsx'),
                                   sheet_name=None, index_col=0)
@@ -229,9 +237,7 @@ class TestMassBalanceChecks(unittest.TestCase):
                 'm_adp_c is marked as not balanced but it seems to be balanced.\n' +
                 'm_pi_c is marked as not balanced but it seems to be balanced.\n' +
                 'm_glcn_e is marked as balanced but it does not seem to be balanced.\n' +
-                'm_glcn_e is not set as constant but maybe it should, since it does not seem to be balanced.\n' +
                 'm_2dhglcn_e is marked as balanced but it does not seem to be balanced.\n' +
-                'm_2dhglcn_e is not set as constant but maybe it should, since it does not seem to be balanced.\n' +
                 'm_nadph_c is marked as not balanced but it seems to be balanced.\n' +
                 'm_nadp_c is marked as not balanced but it seems to be balanced.\n' +
                 'm_co2_c is marked as balanced but it does not seem to be balanced.\n')
@@ -292,12 +298,10 @@ class TestThermodynamicsChecks(unittest.TestCase):
         self.test_folder = os.path.join(this_dir, 'test_files', 'test_check_models')
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
-    def test_check_thermodynamic_feasibility_putida(self, mock_stdout):
+    def test_check_thermodynamic_feasibility(self, mock_stdout):
         true_res = ('\nChecking if fluxes and Gibbs energies are compatible.\n\n' +
-                    'The flux and ∆G range seem to be incompatible for reaction R_G6PDH2\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_RPE\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_TALA\n' +
-                    'The flux and ∆G range seem to be incompatible for reaction R_PGI\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_FBA\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_TPI\n' +
                     'The flux and ∆G range seem to be incompatible for reaction R_GAPD\n' +
@@ -335,17 +339,4 @@ class TestThermodynamicsChecks(unittest.TestCase):
         self.assertTrue(ma_df.equals(true_res_ma))
         self.assertTrue(dG_Q_df.equals(true_res_dG_Q))
         self.assertTrue(dG_df.equals(true_res_dG))
-
-    def test_marinas_model(self):
-        from set_up_grasp_models.check_models.thermodynamics_checks import _compute_robust_fluxes, _get_balanced_s_matrix, _get_meas_rates, _get_inactive_reactions
-
-        data_dict = pd.read_excel(os.path.join(self.test_folder, 'marinas_model.xlsx'), sheet_name=None, index_col=0)
-
-        stoic_balanced, rxn_list = _get_balanced_s_matrix(data_dict)
-
-        meas_rates_mean, meas_rates_std = _get_meas_rates(data_dict, rxn_list)
-        with self.assertRaises(RuntimeError) as context:
-            _compute_robust_fluxes(stoic_balanced, meas_rates_mean, meas_rates_std,rxn_list)
-
-        self.assertTrue("The reactions are ['r73' 'r74' 'r81' 'r52']" in str(context.exception))
 

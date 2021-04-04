@@ -190,12 +190,11 @@ def check_kinetics_subs_prod_order(data_dict: dict) -> bool:
     """
 
     print('\nChecking if the metabolite names in the substrate and product order columns in the kinetics sheet are '
-          'valid, i.e., if they are indeed substrates and products of the respective reaction.\n')
+          'valid, i.e., if they are indeed substrates and products of the respective reaction.\n'
+          'Take the results with a grain of salt though, as you might not want to include all substrates/products in '
+          'the reactions\' mechanisms.\n')
 
     flag = False
-
-    mets_df = data_dict['mets']
-    inactive_mets = set(mets_df[mets_df['active?'].eq(0)].index.values)
 
     stoic_df = data_dict['stoic']
 
@@ -204,8 +203,8 @@ def check_kinetics_subs_prod_order(data_dict: dict) -> bool:
 
     for rxn in kinetics_df.index:
 
-        rxn_subs = set(stoic_df.loc[rxn][stoic_df.loc[rxn].lt(0)].index.values).difference(inactive_mets)
-        rxn_prods = set(stoic_df.loc[rxn][stoic_df.loc[rxn].gt(0)].index.values).difference(inactive_mets)
+        rxn_subs = set(stoic_df.loc[rxn][stoic_df.loc[rxn].lt(0)].index.values)
+        rxn_prods = set(stoic_df.loc[rxn][stoic_df.loc[rxn].gt(0)].index.values)
 
         subs_order = kinetics_df.loc[rxn, 'substrate order']
         subs_set = set(subs_order.split()) if type(subs_order) is str else None

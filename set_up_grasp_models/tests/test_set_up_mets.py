@@ -44,7 +44,7 @@ class TestSetUpMets(unittest.TestCase):
         self.assertTrue(true_res.equals(res))
 
     def test_get_mets_conc_rows(self):
-        true_res = pd.read_pickle(os.path.join(self.test_folder, 'true_res_met_conc.pkl'))
+        true_res = pd.read_pickle(os.path.join(self.test_folder, 'true_res_met_conc_rows.pkl'))
 
         mets_order = ['m_glc__D_e', 'm_glc__D_p', 'm_atp_c', 'm_glc__D_c', 'm_adp_c', 'm_pi_c', 'm_g6p_c', 'm_glcn_p',
                       'm_glcn_c', 'm_6pgc_c', 'm_2dhglcn_p', 'm_2dhglcn_c', 'm_6p2dhglcn_c', 'm_nadh_c', 'm_nad_c',
