@@ -20,10 +20,3 @@ Rename columns in the model
 --------------------------------------
 
 .. autofunction:: set_up_grasp_models.set_up_models.manipulate_model.rename_columns
-
-
-
-Convert model .m file to ODE format
---------------------------------------
-
-.. autofunction:: set_up_grasp_models.set_up_models.set_up_ode_model.convert_to_ode_model
