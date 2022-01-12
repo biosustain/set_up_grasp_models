@@ -4,7 +4,7 @@ This small package is intended to generate GRASP input model files in a fairly a
 
 [![Build Status](https://travis-ci.com/biosustain/set_up_grasp_models.svg?branch=master)](https://travis-ci.com/biosustain/set_up_grasp_models)
 [![Coverage Status](https://coveralls.io/repos/github/biosustain/set_up_grasp_models/badge.svg?branch=master)](https://coveralls.io/github/biosustain/set_up_grasp_models?branch=master)
-
+[![Documentation Status](https://readthedocs.org/projects/set-up-grasp-models/badge/?version=latest)](https://set-up-grasp-models.readthedocs.io/en/latest/?badge=latest)
 
 Table of contents
 -----------------
