@@ -80,20 +80,3 @@ Since this package assumes certain column names, it is important that they are c
 
 
 This will rename all columns to standard names.
-
-
-Convert model .m file to ODE format
---------------------------------------
-
-The matlab file in which the model is specified cannot be used as input to matlab's ODE solvers.
-
-This function takes in that matlab file and converts it into a format that can be given as input to matlab's ODE solvers.
-
-.. code-block:: python
-
-    from set_up_grasp_models.set_up_models.set_up_ode_model import convert_to_ode_model
-
-    model_name = 'glycolysis_v2'
-    file_in = os.path.join('example_files', 'output', model_name + '_Kinetics1.m')
-
-    convert_to_ode_model(file_in)
