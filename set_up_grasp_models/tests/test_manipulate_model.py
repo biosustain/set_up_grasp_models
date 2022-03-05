@@ -27,6 +27,7 @@ class TestManipulateModel(unittest.TestCase):
 
         self.assertListEqual(list(true_res.keys()), list(res.keys()))
         for sheet in true_res.keys():
+            print(sheet)
             self.assertTrue(true_res[sheet].equals(res[sheet]))
 
     def test_remove_spaces(self):
