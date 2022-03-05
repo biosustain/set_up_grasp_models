@@ -29,7 +29,6 @@ Besides these, there are a few more functions that allows the user to:
  - change reaction order;
  - generate GRASP pattern files from mechanisms written in terms of elementary reactions;
  - remove all leading and trailing spaces from strings;
- - convert kinetic model's matlab file into a format that can be used for ODE simulation by Matlab.
  
 The documentation can be found at [https://set-up-grasp-models.readthedocs.io/](https://set-up-grasp-models.readthedocs.io/).
 
