@@ -1,7 +1,7 @@
 alabaster==0.7.12
 appdirs==1.4.4
 Babel==2.9.1
-certifi==2021.10.8
+certifi==2022.12.7
 charset-normalizer==2.0.10
 component-contribution==0.2.6
 cycler==0.11.0
